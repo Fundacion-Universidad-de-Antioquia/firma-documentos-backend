@@ -1,0 +1,9 @@
+[sign]
+employee = { width = 0.294, heigh = 0.047 }
+manager = { width = 0.294, heigh = 0.047 }
+
+[env.pdf]
+libreoffice-script = '/usr/bin/libreoffice'
+libreoffice-params = '--headless --convert-to pdf --outdir'
+pdf-outdir = 'docs'
+remove-script = '/usr/bin/rm'
