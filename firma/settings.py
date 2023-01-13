@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-cl(9_l#dh_&0$nv=@)b4g7va9uqg3dep@q$w6b%rrrw%+w*qw5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]', '0.0.0.0']
 
 
 # Application definition
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     # Apps
     'api.base.documents',
+    'api.base.employees',
     'tasks',
 ]
 
@@ -96,24 +97,15 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-
-    'mariabd': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'firmafudea',
-        'USER': 'strapi',
-        'PASSWORD': 'strapi',
-        'HOST': 'mysql.backend',
-        'PORT': '3306',
-    }
 }
 
 
 # Odoo API
 ODOO_API = {
-    'URL': env('ODOO_URL'),
-    'USERNAME': env('ODOO_USERNAME'),
-    'API_KEY': env('ODOO_API_KEY'),
-    'DATABASE': env('ODOO_DATABASE')
+    'URL': os.getenv('ODOO_URL'),
+    'USERNAME': os.getenv('ODOO_USERNAME'),
+    'API_KEY': os.getenv('ODOO_API_KEY'),
+    'DATABASE': os.getenv('ODOO_DATABASE')
 }
 
 # Password validation
@@ -164,4 +156,12 @@ DOCUMENTS_URL = '/docs/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Celery confs
-CELERY_BROKER_URL = 'redis://localhost:6379'
+# CELERY_BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get(
+    "CELERY_BACKEND", "redis://127.0.0.1:6379/0")
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Bogota'

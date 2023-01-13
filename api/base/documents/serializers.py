@@ -11,6 +11,8 @@ class FilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Files
         fields = ['id', 'created_by',
+                  'contract_template',
+                  'employees_data',
                   'contract_name',
                   'employees_data_name',
                   ]

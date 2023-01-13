@@ -6,6 +6,7 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 
 from .models import Files
 from .serializers import FilesSerializer
+from .tasks import send_contract_sign_task
 
 
 class FilesAPIView(APIView):
@@ -26,10 +27,15 @@ class FilesAPIView(APIView):
         # create the record on database
 
         if file_serializer.is_valid(raise_exception=True):
-            file_serializer.save()
-            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+            new_file = file_serializer.save()
 
-        # add task to celery
+            # add task to celery
+            print(f"Tipo new file{type(new_file)}")
+            print(f"Contract: {new_file.contract_template}")
+            print(f"Data: {new_file.employees_data}")
+            send_contract_sign_task.delay(new_file.id)
+
+            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -43,6 +49,8 @@ class FilesAPIView(APIView):
         # Validation
         if files:
             files_serializer = FilesSerializer(files, many=True)
+
+            # Create new celery task
             return Response(files_serializer.data, status=status.HTTP_200_OK)
 
         return Response({'message': 'No existe registro de archivos con ese id'}, status=status.HTTP_400_BAD_REQUEST)

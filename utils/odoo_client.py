@@ -1,0 +1,210 @@
+import odoorpc
+
+
+class OdooClient():
+
+    def __init__(self):
+        self.url = 'fundacionudea.net'
+        self.username = 'gertic@fundacionudea.co'
+        self.api_key = '116f36698eee0860aa76154e8040184175cb303d'
+        self.password = 'Cesar.1990'
+        self.database = 'odoo_data'
+
+        # Prepare conenction
+        self.odoo = odoorpc.ODOO(
+            host=self.url, port=443, protocol='jsonrpc+ssl')
+
+        # Login to Odoo
+        self.odoo.login(self.database, self.username, self.password)
+
+        self.user = self.odoo.env.user
+
+    '''
+        Obtener la lista de proyectos de Odoo
+        Se hace la consulta en Odoo de los departamentos, modelo hr.department
+    '''
+
+    def get_projects(self, project_id=False):
+        # Projects are Employee Departments in Odoo (hr.department)
+        domain = [("hr.department", "=", project_id)] if project_id else []
+        fields = ["id", "name"]
+        projects = self.api.execute_kw(self.database, self.uid, self.api_key,
+                                       "hr.department", "search_read", [domain, fields])
+
+        return projects
+
+    '''
+        Obtener la lista de empleados de un proyecto desde Odoo
+        Se hace la consulta en Odoo de los empleados, modelo hr.employee
+        Se pide los empleados que pertenecen al departamento identificado con project_id
+    '''
+
+    def get_employees(self, project_id):
+        domain = [("department_id", "=", project_id)]
+        fields = ["name", "work_email", "identification_id", "work_phone",
+                  "job_title", "x_studio_fecha_de_ingreso", "x_studio_salario_empleado_1", "x_studio_tipo_de_contrato", "x_studio_banco", "x_studio_tipo_de_cuenta", "x_studio_nmero_de_cuenta_bancaria", "x_studio_arl", "x_studio_descripcin_cambios"]
+        employees = self.api.execute_kw(self.database, self.uid, self.api_key,
+                                        "hr.employee", "search_read", [domain, fields])
+
+        return employees
+
+    def upload_new_contract_sign(self, name, document_64):
+        '''
+        Crea nuevo registro de contrato con el PDF generado
+        Recibe el documento PDF en base64
+        1- Subir PDF, registro de ir.attachment
+        :param str name: proyecto_cc.pdf
+        :param base64 document_64:
+        :return: ID del documento creado
+        '''
+
+        attachment_vals = {
+            'name': name,
+            'type': 'binary',
+            'mimetype': 'application/pdf',
+            'store_fname': name,
+            'datas': document_64
+        }
+
+        # Subir documento
+        new_attachment = self.odoo.env['ir.attachment']
+        attachment_id = new_attachment.create(attachment_vals)
+
+        template_vals = {
+            'attachment_id': attachment_id
+        }
+
+        # Crear documento para firmar
+        sign_template = self.odoo.env['sign.template']
+        template_id = sign_template.create(template_vals)
+
+        return template_id
+
+    def update_contract_sign(self, template_id=0, numpage=1):
+        '''
+        Actualiza el contrato previamente creado con el campo de firma
+        model = sign.template
+        Item Type: Signature
+        :param str doc_name: proyecto_cc.pdf
+        :param str document_id: xxxx
+            document_id: positivo: sign.template id en base de datos (ya debe estar en la BD)
+        :param numpage
+        :return: Booleano True si agregó la firma
+        '''
+
+        # Campo de firma del Gerente es tipo Compañia
+        sign_field_company = {
+            'type_id': 1,
+            'required': True,
+            'name': 'Firma',
+            'template_id': template_id,
+            'responsible_id': 2,  # 1: Customer, 2: Company, 3: Employee, 4: Standard
+            'page': numpage,
+            'posX': 0.065,
+            'posY': 0.811,
+            'width': 0.319,
+            'height': 0.051
+        }
+
+        # Campo de empleado tipo Empleado
+        sign_field_employee = {
+            'type_id': 1,
+            'required': True,
+            'name': 'Firma',
+            'template_id': template_id,
+            'responsible_id': 3,  # 1: Customer, 2: Company, 3: Employee, 4: Standard
+            'page': numpage,
+            'posX': 0.626,
+            'posY': 0.811,
+            'width': 0.277,
+            'height': 0.055
+        }
+
+        # Create sign items
+        # update_from_pdfviewer(self, template_id=None, duplicate=None, sign_items=None, name=None):
+
+        sign_template = self.odoo.env['sign.template']
+        sign_item = self.odoo.env['sign.item']
+
+        item_id_company = sign_item.create(sign_field_company)
+        item_id_employee = sign_item.create(sign_field_employee)
+
+        return (item_id_company, item_id_employee)
+
+    def send_sign_contract(self, document_name="", template_id=0, employee={}, company_email=""):
+        '''
+        Send email with document request
+        '''
+
+        # Get id from company representative in Odoo
+        company_email_id = self.search_employee(employee_email=company_email)
+
+        # Get Id from employee in Odoo
+        employee_id = self.search_employee(employee_email=employee.email)
+
+        print(f'Datos del correo: template_id->{template_id}, \
+                company_id->{company_email_id}, \
+                employee_id->{employee_id}')
+
+        request_fields = {
+            'template_id': template_id,
+            'signer_ids': [[0, 'virtual_25', {'role_id': 2, 'partner_id': company_email_id}],  # 13444 es el ID en Odoo del Director de la fundación
+                           [0, 'virtual_37', {'role_id': 3, 'partner_id': employee_id}]],
+            'signer_id': False,
+            'signers_count': 2,
+            'has_default_template': True,
+            'follower_ids': [[6, False, []]],
+            'subject': f'Solicitud de firma {document_name}',
+            'filename': document_name,
+            'message_cc': '<p><br></p>',
+            'attachment_ids': [[6, False, []]],
+            'message': '<p>Hola.</p><p>Mensaje desde el cliente API, no responder</p>'
+        }
+
+        # Prepare email request
+        sign_email = self.odoo.env['sign.send.request']
+        email_id = sign_email.create(request_fields)
+
+        print(f'ID de plantilla de email {email_id}')
+
+        request_sign = sign_email.send_request(email_id)
+
+        print(f'Correo enviado código {request_sign}')
+
+        return request_sign
+
+    def search_employee(self, employee_name="", employee_email=""):
+        '''
+        Search contact and return ID
+        In case the contact doesn't exist, create a new One
+
+        '''
+
+        partner = self.odoo.env['res.partner']
+
+        # Partner id is Interger, but the result is type integer[], get the first
+        partner_id = partner.search([('email', '=', employee_email)])[0]
+
+        if partner_id == None:
+            partner_id = partner.create(
+                {'is_company': False,
+                 'company_type': 'person',
+                 'type': 'contact',
+                 'user_ids': [],
+                 'name': employee_name,
+                 'email': employee_email}
+            )
+
+        return partner_id
+
+
+'''
+user_count = api.execute_kw(database, uid, password,
+                            "res.users", "search_count", [[]])
+print(f"User count is: {user_count}")
+
+companies = api.execute_kw(database, uid, password, "res.users", "read", [
+                           uid, ["login", "name", "company_id"]])
+print("User companies: ")
+print(companies)
+'''
