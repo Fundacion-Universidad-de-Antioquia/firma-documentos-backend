@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import os
-from firma.celery import app
+from firma.celery    import app
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from .models import Files
@@ -17,14 +17,14 @@ def send_contract_sign_task(files_id):
     # get files from database
     files = Files.objects.filter(id=files_id).first()
 
+    '''
     contract_path = os.path.join(
         settings.MEDIA_ROOT+'/docs/', files.contract_name)
     employees_data_path = os.path.join(
-        settings.MEDIA_ROOT+'/docs/', files.employees_data_name)
-
-    print(f'Employees file before sending task: {employees_data_path}')
+       settings.MEDIA_ROOT+'/docs/', files.employees_data_name)
+    '''
 
     # Send contract to odoo
-    document.create_pdfs(contract_path, employees_data_path)
+    document.create_pdfs(files.contract_template , files.employees_data)
     logger.info("Odoo contracts sent")
     pass

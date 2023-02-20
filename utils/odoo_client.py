@@ -3,6 +3,7 @@ import odoorpc
 
 class OdooClient():
 
+    # TODO: Exception to manage the connection via internet
     def __init__(self):
         self.url = 'fundacionudea.net'
         self.username = 'gertic@fundacionudea.co'
@@ -100,10 +101,11 @@ class OdooClient():
             'template_id': template_id,
             'responsible_id': 2,  # 1: Customer, 2: Company, 3: Employee, 4: Standard
             'page': numpage,
-            'posX': 0.065,
-            'posY': 0.811,
-            'width': 0.319,
-            'height': 0.051
+            'posX': 0.128,
+            # posY: 0,612,
+            'posY': 0.606,
+            'width': 0.373,
+            'height': 0.064
         }
 
         # Campo de empleado tipo Empleado
@@ -114,10 +116,11 @@ class OdooClient():
             'template_id': template_id,
             'responsible_id': 3,  # 1: Customer, 2: Company, 3: Employee, 4: Standard
             'page': numpage,
-            'posX': 0.626,
-            'posY': 0.811,
-            'width': 0.277,
-            'height': 0.055
+            'posX': 0.538,
+            'posY': 0.606,
+            # posY: 0,612, 
+            'width': 0.326,
+            'height': 0.064
         }
 
         # Create sign items
@@ -131,7 +134,7 @@ class OdooClient():
 
         return (item_id_company, item_id_employee)
 
-    def send_sign_contract(self, document_name="", template_id=0, employee={}, company_email=""):
+    def send_sign_contract(self, document_name="", employee_email="", template_id=0, company_email=""):
         '''
         Send email with document request
         '''
@@ -140,7 +143,7 @@ class OdooClient():
         company_email_id = self.search_employee(employee_email=company_email)
 
         # Get Id from employee in Odoo
-        employee_id = self.search_employee(employee_email=employee.email)
+        employee_id = self.search_employee(employee_email=employee_email)
 
         print(f'Datos del correo: template_id->{template_id}, \
                 company_id->{company_email_id}, \

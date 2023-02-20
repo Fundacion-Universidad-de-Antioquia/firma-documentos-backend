@@ -26,7 +26,9 @@ class FilesAPIView(APIView):
         # Get the files (docx, xlsx)
         # create the record on database
 
+        print("Request data all: ", request.data)
         if file_serializer.is_valid(raise_exception=True):
+
             new_file = file_serializer.save()
 
             # add task to celery

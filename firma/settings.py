@@ -45,8 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Libshttps://www.elespectador.com/
+    # Libs installed
     'rest_framework',
+    'corsheaders',
 
     # Apps
     'api.base.documents',
@@ -57,14 +58,16 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    
+    # CORS Middleware, suggested higher than CommonMiddleware (https://github.com/adamchainz/django-cors-headers)
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-ROOT_URLCONF = 'firma.urls'
 
 TEMPLATES = [
     {
@@ -165,3 +168,22 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Bogota'
+
+
+# CORS options, must enable in MIDDLEWARE section and INSTALLED_APPS section
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:4200',
+)
+
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+ROOT_URLCONF = 'firma.urls'

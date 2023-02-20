@@ -21,7 +21,6 @@ try:
         host="${SQL_HOST}",
         port="${SQL_PORT}",
     )
-    print("Connectado Niño")
 except psycopg2.OperationalError:
     sys.exit(-1)
 sys.exit(0)
