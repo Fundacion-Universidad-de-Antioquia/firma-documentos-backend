@@ -20,5 +20,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/documents/', include('api.base.documents.urls'))
+    # path('api/documents/', include('api.base.documents.urls'))
+    path('enviar_datos/', include('api.base.documents.urls'))
 ] + static(settings.DOCUMENTS_URL, document_root=settings.MEDIA_ROOT)

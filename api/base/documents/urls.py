@@ -5,5 +5,6 @@ from . import views
 
 # /api/documents
 urlpatterns = [
-    path('', views.files_list_upload_view),
+    # path('', views.files_list_upload_view),
+    path('', views.UploadFilesView.as_view()),
 ]
