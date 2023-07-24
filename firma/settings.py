@@ -47,12 +47,13 @@ INSTALLED_APPS = [
 
     # Libs installed
     'rest_framework',
+    'oauth2_provider',
     'corsheaders',
 
     # Apps
     'api.base.documents',
     'api.base.employees',
-    'tasks',
+    'api.base.users',
 ]
 
 MIDDLEWARE = [
@@ -100,6 +101,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
+    'postgres': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('POSTGRES_DB', 'firma'),
+        'USER': os.getenv('POSTGRES_USER', 'firma'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'firma'),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+    }
 }
 
 
@@ -108,7 +117,8 @@ ODOO_API = {
     'URL': os.getenv('ODOO_URL'),
     'USERNAME': os.getenv('ODOO_USERNAME'),
     'API_KEY': os.getenv('ODOO_API_KEY'),
-    'DATABASE': os.getenv('ODOO_DATABASE')
+    'DATABASE': os.getenv('ODOO_DATABASE'),
+    'PASSWORD': os.getenv('ODOO_PASSWORD'),
 }
 
 # Password validation
@@ -129,6 +139,47 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL='users.User'
+
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {
+        'read': 'Read scope',
+        'write': 'Write scope',
+        'groups': 'Access to your groups',
+        'uploadzip': 'Upload Zip file wih contracts'
+    }
+}
+
+LOGIN_URL='/admin/login/'
+
+# Authentication and Authorization
+# https://django-oauth-toolkit.readthedocs.io/en/latest/rest-framework/getting_started.html 
+REST_FRAMEWORK = {
+    # Authentication backend
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    ),
+    
+    # Persmissions
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+}
+
+# CORS options, must enable in MIDDLEWARE section and INSTALLED_APPS section
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -168,22 +219,5 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Bogota'
-
-
-# CORS options, must enable in MIDDLEWARE section and INSTALLED_APPS section
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200',
-)
-
-
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
 
 ROOT_URLCONF = 'firma.urls'

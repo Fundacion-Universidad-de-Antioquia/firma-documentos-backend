@@ -1,27 +1,19 @@
-import zipfile
 from rest_framework import status
 from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
+from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 
-from .models import Files
-from .serializers import FilesSerializer
-from .tasks import send_contract_sign_task
-
-# List http methods
-# POST
-# GET
-# PUT
-# DELETE
-# PATCH
+from .models import Files, ZipFile
+from .serializers import FilesSerializer, ZipFileSerializer
+from .tasks import send_contract_sign_task, send_zip_file_task
 
 class FilesAPIView(APIView):
     queryset = Files.objects.order_by('created_by')
     parser_classes = (MultiPartParser, JSONParser)
     # add permission to check if user is authenticated
     # permission_classes = [permissions.IsAuthenticated]
-
 
     '''
     Upload documents (docx, xlsx)
@@ -71,65 +63,41 @@ class FilesAPIView(APIView):
         return Response({'message': 'No existe registro de archivos con ese id'}, status=status.HTTP_400_BAD_REQUEST)
 
 # Create a view to upload zip file and extract it
-class UploadZipFile(APIView):
+class ZipFileView(APIView):
     parser_classes = (MultiPartParser, JSONParser)
+    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
+    queryset = ZipFile.objects.all()
 
-    '''
-    def post(self, request, format=None):
-        file_serializer = FilesSerializer(data=request.data or None)
-
-        if file_serializer.is_valid(raise_exception=True):
-            new_file = file_serializer.save()
-
-            # add task to celery
-            print(f"Tipo new file{type(new_file)}")
-            print(f"Contract: {new_file.contract_template}")
-            print(f"Data: {new_file.employees_data}")
-
-            # Extract zip file
-            # zip_ref = zipfile.ZipFile(new_file.contract_template, 'r')
-            # zip_ref.extractall('media/zip_files')
-            # zip_ref.close()
-
-            # send_contract_sign_task.delay(new_file.id)
-
-
-            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    '''
+    def get(self, request):
+        '''
+        Must define what to response when get method is called
+        '''
+        return Response ({"message": "Este es tu dato: CORRECTO"}, status=status.HTTP_200_OK)
 
     # create post method and return response "Hola Angie"
     def post(self, request, format=None):
-        return Response ({"message": "Archivos recividos"}, status=status.HTTP_200_OK)
-    
-    # create get method and return response "Hola Angie"
-    def get(self, request):
-        return Response ({"message": "Este es tu dato: CORRECTO"}, status=status.HTTP_200_OK)
+        '''
+        Get the zip file and unzip it in media folder
+        Get the xls file and save it in media folder too
+        Create new Celery Task
+        '''
 
-# Create serializer to upload zip file
-'''
-class FilesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Files
-        fields = ('id', 'contract_template', 'employees_data', 'created_by')
+        file_serializer = ZipFileSerializer(data=request.data or None)
 
-    # Validate input
-    def validate(self, data):
-        # Validate contract template
-        contract_template = data.get('contract_template')
-        if not contract_template:
-            raise serializers.ValidationError('No se ha seleccionado un archivo de contrato')
+        if file_serializer.is_valid(raise_exception=True):
 
-        # Validate employees data
-        employees_data = data.get('employees_data')
-        if not employees_data:
-            raise serializers.ValidationError('No se ha seleccionado un archivo de datos de empleados')
+            # Get the data and save to database, define the model with fields
+            # new_file = file_serializer.save()
 
-        # Validate created_by
-        created_by = data.get('created_by')
-        if not created_by:
-            raise serializers.ValidationError('No se ha seleccionado un usuario')
+            # Unzip the zip file
+            zip_file = request.FILES['zip_file']
+            xls_file = request.FILES['xlsx_file']
+            company_sign = request.data['company_sign']
 
-        return data
-'''
+            # Create Task
+            send_zip_file_task.delay(zip_file, xls_file, company_sign)           
+
+            return Response ({"message": "Archivos recividos"}, status=status.HTTP_200_OK)
+        
+        else:
+            return Response ({"message": "No se ha seleccionado un archivo"}, status=status.HTTP_400_BAD_REQUEST)

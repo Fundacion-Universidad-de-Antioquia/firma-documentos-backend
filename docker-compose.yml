@@ -1,20 +1,20 @@
 version: "3.8"
 services:
-  backend:
-    build:
-      context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    command: /start
-    volumes:
-      - .:/app
-      - ./media/:/app/media/
-    ports:
-      - "8000:8000"
-    env_file:
-      - ./.environ/.dev
-    depends_on:
-      - redis
-      - db
+  # backend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/local/django/Dockerfile
+  #   command: /start
+  #   volumes:
+  #     - .:/app
+  #     - ./media/:/app/media/
+  #   ports:
+  #     - "8000:8000"
+  #   env_file:
+  #     - ./.environ/.dev
+  #   depends_on:
+  #     - redis
+  #     - db
 
   db:
     image: postgres:15.1-alpine

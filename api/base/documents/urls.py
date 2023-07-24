@@ -1,10 +1,10 @@
 from django.urls import path, include
 from rest_framework import routers
-from . import views
+from .views import ZipFileView, FilesAPIView
 
 
 # /api/documents
 urlpatterns = [
-    # path('', views.files_list_upload_view),
-    path('', views.UploadZipFile.as_view()),
+    path('', FilesAPIView.as_view()),
+    path('upload_zip', ZipFileView.as_view()),
 ]

@@ -1,24 +1,41 @@
 import odoorpc
 
+# import django setings
+from django.conf import settings
+
 
 class OdooClient():
 
-    # TODO: Exception to manage the connection via internet
     def __init__(self):
+        # import odoo data connection from django config
+        '''
+        self.url = settings.ODOO_API['URL']
+        self.username = settings.ODOO_API['USERNAME']
+        self.api_key = settings.ODOO_API['API_KEY']
+        self.database = settings.ODOO_API['DATABASE']
+        self.password = settings.ODOO_API['PASSWORD']
+        '''
+
+        # TODO: Remove this test data
+        
         self.url = 'fundacionudea.net'
         self.username = 'gertic@fundacionudea.co'
         self.api_key = '116f36698eee0860aa76154e8040184175cb303d'
         self.password = 'Cesar.1990'
         self.database = 'odoo_data'
-
-        # Prepare conenction
-        self.odoo = odoorpc.ODOO(
+     
+        
+        # Create exeception to manage the connection via internet to Odoo
+        try:
+            # Prepare conenction
+            self.odoo = odoorpc.ODOO(
             host=self.url, port=443, protocol='jsonrpc+ssl')
-
-        # Login to Odoo
-        self.odoo.login(self.database, self.username, self.password)
-
-        self.user = self.odoo.env.user
+            
+            # Login to Odoo
+            self.odoo.login(self.database, self.username, self.password)
+            self.user = self.odoo.env.user
+        except Exception as e:
+            print(f"No se pudo conectar a Odoo {e}")
 
     '''
         Obtener la lista de proyectos de Odoo
@@ -81,7 +98,7 @@ class OdooClient():
 
         return template_id
 
-    def update_contract_sign(self, template_id=0, numpage=1):
+    def update_contract_sign(self, template_id=0, numpage=1, second_field=True):
         '''
         Actualiza el contrato previamente creado con el campo de firma
         model = sign.template
@@ -90,6 +107,7 @@ class OdooClient():
         :param str document_id: xxxx
             document_id: positivo: sign.template id en base de datos (ya debe estar en la BD)
         :param numpage
+        :param second_field: True si se agrega el campo de firma de la Fundación
         :return: Booleano True si agregó la firma
         '''
 
@@ -129,29 +147,26 @@ class OdooClient():
         sign_template = self.odoo.env['sign.template']
         sign_item = self.odoo.env['sign.item']
 
-        item_id_company = sign_item.create(sign_field_company)
+        if second_field:  
+            item_id_company = sign_item.create(sign_field_company)
+            
         item_id_employee = sign_item.create(sign_field_employee)
 
         return (item_id_company, item_id_employee)
 
-    def send_sign_contract(self, document_name="", employee_email="", template_id=0, company_email=""):
+    def send_sign_contract(self, template_id=0, document_name="", employee_id="", company_id=""):
         '''
         Send email with document request
+        :param str document_name: proyecto_cc.pdf
+        :param str employee_id: ID del empleado en Odoo
+        :param str template_id: ID del documento a firmar en Odoo
+        :param str company_id: Id del firmante de la fundación
         '''
 
-        # Get id from company representative in Odoo
-        company_email_id = self.search_employee(employee_email=company_email)
-
-        # Get Id from employee in Odoo
-        employee_id = self.search_employee(employee_email=employee_email)
-
-        print(f'Datos del correo: template_id->{template_id}, \
-                company_id->{company_email_id}, \
-                employee_id->{employee_id}')
-
+        # FIXME: Agregar company_id como firmante cuando sea necesario
         request_fields = {
             'template_id': template_id,
-            'signer_ids': [[0, 'virtual_25', {'role_id': 2, 'partner_id': company_email_id}],  # 13444 es el ID en Odoo del Director de la fundación
+            'signer_ids': [[0, 'virtual_25', {'role_id': 2, 'partner_id': company_id}],  # 13444 es el ID en Odoo del Director de la fundación
                            [0, 'virtual_37', {'role_id': 3, 'partner_id': employee_id}]],
             'signer_id': False,
             'signers_count': 2,
@@ -161,7 +176,7 @@ class OdooClient():
             'filename': document_name,
             'message_cc': '<p><br></p>',
             'attachment_ids': [[6, False, []]],
-            'message': '<p>Hola.</p><p>Mensaje desde el cliente API, no responder</p>'
+            'message': '<p>Hola.</p><p>Mensaje generado automáticamente, no responder</p>'
         }
 
         # Prepare email request
@@ -176,28 +191,37 @@ class OdooClient():
 
         return request_sign
 
-    def search_employee(self, employee_name="", employee_email=""):
+    def search_employee(self, employee_email=""):
         '''
         Search contact and return ID
-        In case the contact doesn't exist, create a new One
-
+        In case the contact doesn't exist, return None
         '''
 
         partner = self.odoo.env['res.partner']
-
-        # Partner id is Interger, but the result is type integer[], get the first
-        partner_id = partner.search([('email', '=', employee_email)])[0]
-
-        if partner_id == None:
-            partner_id = partner.create(
-                {'is_company': False,
-                 'company_type': 'person',
-                 'type': 'contact',
-                 'user_ids': [],
-                 'name': employee_name,
-                 'email': employee_email}
-            )
-
+        try:
+            # Partner id is Interger, but the result is type integer[], get the first
+            partner_id = partner.search([('email', '=', employee_email)])[0]
+        except IndexError:
+            partner_id = None
+        
+        return partner_id
+    
+    def create_employee(self, employee_name="", employee_email=""):
+        '''
+        Create employee in Odoo
+        '''
+        partner = self.odoo.env['res.partner']
+        
+        partner_id = partner.create(
+            {'is_company': False,
+             'company_type': 'person',
+             'type': 'contact',
+             'user_ids': [],
+             'name': employee_name,
+             'email': employee_email
+            }
+        )
+        
         return partner_id
 
 

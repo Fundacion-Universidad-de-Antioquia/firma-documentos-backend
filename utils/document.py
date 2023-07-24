@@ -25,6 +25,9 @@ def convert_pdf_to_base64(pdf_document):
     return (pdf_data, total_pages)
 
 
+
+
+
 def convert_to_pdf(contract_path):
     '''
     Create the PDF file (contract) from the docx file
@@ -91,6 +94,8 @@ def create_pdfs(template_file, employees_file):
         document_name = document_context['NOMBRE_ARCHIVO']
         print(f'Document name: {document_name}')
 
+        # FIXME: When get the end of XLSX file, take None data:
+        # TypeError: join() argument must be str, bytes, or os.PathLike object, not 'NoneType'
         document_path = os.path.join(
             settings.MEDIA_ROOT+'/docs/', document_name)
 
@@ -106,16 +111,26 @@ def create_pdfs(template_file, employees_file):
         # Convert to base64 PDF, get a tuple (encoded_pdf, numpages)
         pdf_document_64, numpages = convert_pdf_to_base64(pdf_document)
 
+        employee_id = odoo.search_employee(employee_email=document_context['CORREO_TRABAJADOR'])
+        
+        if employee_id is None:
+            employee_id = odoo.create_employee(
+                employee_name=document_context['Nombre_Completo'],
+                employee_email=document_context['CORREO_TRABAJADOR']
+            )
+
+        company_id = odoo.search_employee(employee_email=document_context['CORREO_FUNDACION'])
+
         # Send document to Odoo
         odoo_document_id = odoo.upload_new_contract_sign(
             document_name, pdf_document_64)
         odoo_contract_sign = odoo.update_contract_sign(
             template_id=odoo_document_id, numpage=numpages)
         odoo_send_contract = odoo.send_sign_contract(
-            document_name=document_name+'.pdf',
-            employee_email=document_context['CORREO_TRABAJADOR'],
-            template_id=odoo_document_id, 
-            company_email=document_context['CORREO_FUNDACION']
+            template_id = odoo_document_id,
+            document_name=document_name,
+            employee_id=employee_id,
+            company_id=company_id
         )
 
         # Create new record of document_signed
