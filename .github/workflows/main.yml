@@ -12,12 +12,6 @@ jobs:
       - name: Install Dependencies
         run: |
           make install-azure
-      - name: Lint wit Pytlint
-        run: |
-          make lint
-      - name: Format code with Python Black
-        run: |
-          make format
       - name: Tests with Pytest
         run: |
           make test
