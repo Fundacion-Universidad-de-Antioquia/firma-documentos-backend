@@ -9,8 +9,5 @@ install-azure:
 lint:
 	pylint --disable=R,C *.py
 
-format:
-	black *.py
-
 test:
 	python manage.py test
