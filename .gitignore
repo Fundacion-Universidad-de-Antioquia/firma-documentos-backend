@@ -1,4 +1,5 @@
 .evn
+Taskfile.yml
 db.sqlite3
 fdvenv/
 media/
