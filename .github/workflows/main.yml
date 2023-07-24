@@ -1,0 +1,23 @@
+name: Python web application test with GitHub Actions
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        run: |
+          make install-azure
+      - name: Lint wit Pytlint
+        run: |
+          make lint
+      - name: Format code with Python Black
+        run: |
+          make format
+      - name: Tests with Pytest
+        run: |
+          make test
