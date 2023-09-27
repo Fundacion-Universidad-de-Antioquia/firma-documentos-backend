@@ -10,6 +10,7 @@ venv/
 migrations/
 __pycache__/
 __blobstorage__/
+tasks/__pycache__/
 __azurite_db_blob__.json
 __azurite_db_blob_exent__.json
 firma.toml
