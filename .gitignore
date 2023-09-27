@@ -1,4 +1,4 @@
-.evn
+.env
 Taskfile.yml
 db.sqlite3
 fdvenv/
@@ -7,7 +7,7 @@ media/
 media/docs/ 
 docs/
 venv/
-./environ
+.environ/
 migrations/
 __pycache__/
 __blobstorage__/
