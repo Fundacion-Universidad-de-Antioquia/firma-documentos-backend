@@ -22,8 +22,7 @@ class OdooClient():
         self.username = 'gertic@fundacionudea.co'
         self.api_key = '116f36698eee0860aa76154e8040184175cb303d'
         self.password = 'Cesar.1990'
-        self.database = 'odoo_data'
-     
+        self.database = 'odoo_data'     
         
         # Create exeception to manage the connection via internet to Odoo
         try:
@@ -119,9 +118,8 @@ class OdooClient():
             'template_id': template_id,
             'responsible_id': 2,  # 1: Customer, 2: Company, 3: Employee, 4: Standard
             'page': numpage,
-            'posX': 0.128,
-            # posY: 0,612,
-            'posY': 0.606,
+            'posX': 0.107,
+            'posY': 0.714,
             'width': 0.373,
             'height': 0.064
         }
@@ -134,9 +132,8 @@ class OdooClient():
             'template_id': template_id,
             'responsible_id': 3,  # 1: Customer, 2: Company, 3: Employee, 4: Standard
             'page': numpage,
-            'posX': 0.538,
-            'posY': 0.606,
-            # posY: 0,612, 
+            'posX': 0.531,
+            'posY': 0.714, 
             'width': 0.326,
             'height': 0.064
         }
@@ -163,6 +160,8 @@ class OdooClient():
         :param str company_id: Id del firmante de la fundación
         '''
 
+        print(f"ID Del empleado: {company_id}")
+
         # FIXME: Agregar company_id como firmante cuando sea necesario
         request_fields = {
             'template_id': template_id,
@@ -178,6 +177,8 @@ class OdooClient():
             'attachment_ids': [[6, False, []]],
             'message': '<p>Hola.</p><p>Mensaje generado automáticamente, no responder</p>'
         }
+
+        print("Preparar correo")
 
         # Prepare email request
         sign_email = self.odoo.env['sign.send.request']

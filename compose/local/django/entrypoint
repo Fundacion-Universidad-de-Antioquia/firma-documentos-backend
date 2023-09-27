@@ -14,6 +14,7 @@ import sys
 import psycopg2
 
 try:
+    print("Connecting to PostgreSQL")
     psycopg2.connect(
         dbname="${SQL_DATABASE}",
         user="${SQL_USER}",

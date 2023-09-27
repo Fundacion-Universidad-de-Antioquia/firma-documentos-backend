@@ -16,18 +16,19 @@ import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-#  Initialize enviroment vars from .env file
+# Load environment variables
 env = environ.Env()
-environ.Env.read_env()
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-cl(9_l#dh_&0$nv=@)b4g7va9uqg3dep@q$w6b%rrrw%+w*qw5'
+# Generate the Secret Key from start.sh script
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -88,44 +89,19 @@ TEMPLATES = [
 ]
 
 DRF_TYPED_VIEWS = {
-    "schema_packages": ["pydantic"]
+    'schema_packages': ['pydantic']
 }
 
 WSGI_APPLICATION = 'firma.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'pg_local': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('POSTGRES_DB', 'firma'),
-        'USER': os.getenv('POSTGRES_USER', 'firma'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'firma'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
-    },
-
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('POSTGRES_DB', 'firma'),
-        'USER': os.getenv('POSTGRES_USER', 'firma'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'firma'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
-    },
-    # 
-}
-
-
 # Odoo API
 ODOO_API = {
-    'URL': os.getenv('ODOO_URL'),
-    'USERNAME': os.getenv('ODOO_USERNAME'),
-    'API_KEY': os.getenv('ODOO_API_KEY'),
-    'DATABASE': os.getenv('ODOO_DATABASE'),
-    'PASSWORD': os.getenv('ODOO_PASSWORD'),
+    'ODOO_URL': env('ODOO_URL'),
+    'ODOO_USERNAME': env('ODOO_USERNAME'),
+    'API_KEY': env('ODOO_API_KEY'),
+    'DATABASE': env('ODOO_DATABASE'),
+    'PASSWORD': env('ODOO_PASSWORD'),
 }
 
 # Password validation
@@ -154,11 +130,12 @@ OAUTH2_PROVIDER = {
         'read': 'Read scope',
         'write': 'Write scope',
         'groups': 'Access to your groups',
-        'uploadzip': 'Upload Zip file wih contracts'
+        'uploadfiles': 'Upload contract files and XLS database'
     }
 }
 
-LOGIN_URL='/admin/login/'
+# LOGIN_URL='/admin/login/'
+LOGIN_URL='/admin/'
 
 # Authentication and Authorization
 # https://django-oauth-toolkit.readthedocs.io/en/latest/rest-framework/getting_started.html 
@@ -170,7 +147,8 @@ REST_FRAMEWORK = {
     
     # Persmissions
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ),
 
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
@@ -211,38 +189,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 DOCUMENTS_URL = '/docs/'
 
-# Create blob endpoint to azurite storage for media files
-AZURITE_DOCUMENTS_STORAGE = {
-    'ACCOUNT_NAME': os.getenv('AZURITE_ACCOUNT_NAME', 'devstoreaccount1'),
-    'ACCOUNT_KEY': os.getenv('AZURITE_ACCOUNT_KEY', 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=='),
-    'ENDPOINT': os.getenv('AZURITE_ENDPOINT', 'http://127.0.0.1:10000/devstoreaccount1'),
-    'CONTAINER': os.getenv('AZURITE_CONTAINER', 'media'),
-    'URL': 'http://127.0.0.1:10000/devstoreaccount1/media-test/docs',
-}
-
-# Create blob endpoint connection to azure storage for media files
-AZURE_STORAGE = {
-    'ACCOUNT_NAME': os.getenv('AZURE_ACCOUNT_NAME', 'jupiterstorage'),
-    'ACCOUNT_KEY': os.getenv('AZURE_ACCOUNT_KEY', 'm4s$lfRa80OPhlpHlsTi'),
-    'ENDPOINT': os.getenv('AZURE_ENDPOINT', 'https://jupiterstorage.blob.core.windows.net'),
-    'CONTAINER': os.getenv('AZURE_CONTAINER', 'media'),
-    'URL': 'DefaultEndpointsProtocol=https;AccountName=fudeawebapps;AccountKey=bJGvVIwdRT6MiZUqJ/ajRfE5J2Vtd0RGyzubjgxKcNR5rPNtDnkDDnZmi+SWbYeqauMtGhHQI1bu+AStmBidRA==;EndpointSuffix=core.windows.net'
-}
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Celery confs
-# CELERY_BROKER_URL = 'redis://localhost:6379'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get(
-    "CELERY_BACKEND", "redis://127.0.0.1:6379/0")
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'America/Bogota'
 
 ROOT_URLCONF = 'firma.urls'

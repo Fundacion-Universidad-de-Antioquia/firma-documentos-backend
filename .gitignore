@@ -2,6 +2,17 @@
 Taskfile.yml
 db.sqlite3
 fdvenv/
+venv/
 media/
+media/docs/ 
 docs/
 venv/
+migrations/
+__pycache__/
+__blobstorage__/
+__azurite_db_blob__.json
+__azurite_db_blob_exent__.json
+firma.toml
+celerybeat-schedule
+requirements-azure.txt
+__azurite_db_blob_extent__.json

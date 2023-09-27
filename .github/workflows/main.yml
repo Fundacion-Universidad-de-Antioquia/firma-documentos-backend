@@ -12,3 +12,6 @@ jobs:
       - name: Install Dependencies
         run: |
           make install-azure
+      - name: Tests with Pytest
+        run: |
+          make test

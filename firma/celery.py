@@ -1,12 +1,12 @@
 from __future__ import absolute_import, unicode_literals
 import os
+from django.conf import settings
 from celery import Celery
 from django.conf import settings
 
 
 # Default Django settings for celery
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'firma.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'firma.settings.development')
 
 app = Celery('firma')
 
@@ -17,7 +17,8 @@ app = Celery('firma')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django app configs
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+# app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+app.autodiscover_tasks()
 
 
 @app.task(bind=True)

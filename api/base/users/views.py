@@ -1,11 +1,12 @@
 import json
-from datetime import timezone
+from django.utils import timezone
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from requests import Response
+from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, permissions
 from oauth2_provider.models import AccessToken, Application, RefreshToken
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
@@ -14,6 +15,8 @@ from api.base.users.serializers import UserSerializer
 from api.base.users.models import User
 
 # Implements user login view and logout view with oauth2 returning token and refresh token
+@api_view(http_method_names=['POST'])
+@permission_classes([permissions.AllowAny])
 def login_view(request):
     '''
     Login
@@ -21,6 +24,8 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+        print("Username: " + username)
+        print("Password: " + password)
         # Authenticate user
         user = authenticate(request, username=username, password=password)
         if user is not None:
@@ -65,7 +70,7 @@ def logout_view(request):
     return HttpResponseRedirect(reverse('login'))
 
 class UserList(generics.ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
+    permission_classes = [permissions.IsAuthenticated]    
     queryset = User.objects.all()
     serializer_class = UserSerializer
 

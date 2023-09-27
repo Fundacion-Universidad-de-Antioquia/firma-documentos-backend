@@ -1,0 +1,49 @@
+import sys
+from firma.settings.base import *
+
+DEBUG = True
+ALLOWED_HOSTS = ['*']
+
+# Create SECRET_KEY VARIABLE with the secret key value
+SECRET_KEY = '1c153c54d3b21a8ad94a766e4fb2427e816a5092990957923c27c4335f198cdb'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env('POSTGRES_DB'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD'),
+        'HOST': env('POSTGRES_HOST'),
+        'PORT': env('POSTGRES_PORT'),
+    },
+}
+
+if 'test' in sys.argv or 'test\_coverage' in sys.argv: #Covers regular testing and django-coverage
+ DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
+ DATABASES['default']['NAME'] = ':memory:'
+
+# Create azurite connetion for Django
+AZURE_ACCOUNT_NAME = env('AZURE_STORAGE_ACCOUNT_NAME_DEV')
+AZURE_STORAGE_KEY = env('AZURE_SECRET_KEY_DEV')
+AZURE_STORAGE_CONTAINER = env('AZURE_STORAGE_CONTAINER_NAME_DEV')
+AZURE_STORAGE_URL = env('AZURE_STORAGE_URL_DEV')
+AZURE_STORAGE_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=' + AZURE_ACCOUNT_NAME +';AccountKey=' + AZURE_STORAGE_KEY + ';BlobEndpoint=' + AZURE_STORAGE_URL
+
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# Media Files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+DOCUMENTS_URL = '/docs/'
+
+
+# Celery confs
+# CELERY_BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = env('CELERY_BROKER')
+CELERY_RESULT_BACKEND = env('CELERY_BACKEND')
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Bogota'

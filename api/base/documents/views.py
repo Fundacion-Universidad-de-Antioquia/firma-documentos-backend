@@ -64,6 +64,7 @@ class FilesAPIView(APIView):
 
 # Create a view to upload zip file and extract it
 class ZipFileView(APIView):
+
     parser_classes = (MultiPartParser, JSONParser)
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
     queryset = ZipFile.objects.all()
@@ -72,7 +73,7 @@ class ZipFileView(APIView):
         '''
         Must define what to response when get method is called
         '''
-        return Response ({"message": "Este es tu dato: CORRECTO"}, status=status.HTTP_200_OK)
+        return Response ({"message": "Lista de tareas"}, status=status.HTTP_200_OK)
 
     # create post method and return response "Hola Angie"
     def post(self, request, format=None):
@@ -82,22 +83,30 @@ class ZipFileView(APIView):
         Create new Celery Task
         '''
 
-        file_serializer = ZipFileSerializer(data=request.data or None)
+        file_serializer = ZipFileSerializer(data=request.data)
 
         if file_serializer.is_valid(raise_exception=True):
 
             # Get the data and save to database, define the model with fields
-            # new_file = file_serializer.save()
+            new_file = file_serializer.save()
 
             # Unzip the zip file
-            zip_file = request.FILES['zip_file']
-            xls_file = request.FILES['xlsx_file']
-            company_sign = request.data['company_sign']
+            # zip_file = request.FILES['zip_file']
+            # xlsx_file = request.FILES['xlsx_file']
+            # company_sign = request.data['signs_number']
 
-            # Create Task
-            send_zip_file_task.delay(zip_file, xls_file, company_sign)           
+            zip_file = file_serializer.validated_data['zip_file']
+            xlsx_file = file_serializer.validated_data['xlsx_file']
+            company_sign = file_serializer.validated_data['signs_number']
 
-            return Response ({"message": "Archivos recividos"}, status=status.HTTP_200_OK)
+            # Save in database
+            new_zip_task = file_serializer.save()
+            zip_id = new_zip_task.id
+            
+            # Create Task, pass the ID of the new_zip_file (model)
+            send_zip_file_task.delay(zip_id)
+
+            return Response ({"message": "Archivos recibidos"}, status=status.HTTP_200_OK)
         
         else:
             return Response ({"message": "No se ha seleccionado un archivo"}, status=status.HTTP_400_BAD_REQUEST)

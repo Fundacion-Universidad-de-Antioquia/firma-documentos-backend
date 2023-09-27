@@ -11,4 +11,4 @@ lint:
 	pylint --disable=R,C *.py
 
 test:
-	python manage.py test
+	python manage.py test api.base.documents.tests --settings=firma.settings.development

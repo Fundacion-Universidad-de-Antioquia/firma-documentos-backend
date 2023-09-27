@@ -1,12 +1,12 @@
 from django.db import models
+from django.conf import settings
 from api.base.employees.models import Employee
 
+
 # Path and name of uploaded files
-
-
 def upload_to(instance, filename):
-    return 'docs/{filename}'.format(filename=filename)
-
+    # Return the docs path from settings
+    return f'docs/{filename}'
 
 class Files(models.Model):
     contract_name = models.CharField(max_length=255, blank=True, null=False)
@@ -48,10 +48,10 @@ class ZipFile(models.Model):
     '''
     ZipFile Model to store the zip file with all the PDFs and xlsx file
     '''
-    name = models.CharField(max_length=255, blank=True, null=False)
+    name = models.CharField(max_length=255, blank=True, null=True)
     zip_file = models.FileField(upload_to=upload_to, blank=True, null=False)
     xlsx_file = models.FileField(upload_to=upload_to, blank=True, null=False)
-    sign_number = models.IntegerField(blank=True, null=True)
+    signs_number = models.IntegerField(blank=True, null=True)
 
     timestamp = models.DateTimeField(auto_now_add=True)
     created_by = models.IntegerField(blank=True, null=True)

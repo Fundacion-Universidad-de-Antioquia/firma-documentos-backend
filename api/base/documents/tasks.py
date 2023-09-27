@@ -3,15 +3,18 @@ from __future__ import absolute_import, unicode_literals
 import os
 import zipfile
 import datetime
-from firma.celery    import app
+from celery import shared_task
 from django.conf import settings
+from django.conf import settings
+from firma.celery import app
 from openpyxl import load_workbook
 from celery.utils.log import get_task_logger
+from azure.core.exceptions import ResourceExistsError
 
-from .models import Files, ContractDocument
-from ..employees.models import Employee
+from .models import Files, ContractDocument, ZipFile
 from utils import document
 from utils.odoo_client import OdooClient
+from utils.azure_services import connect_to_azure_storage
 
 logger = get_task_logger(__name__)
 
@@ -36,8 +39,8 @@ def send_contract_sign_task(files_id):
     pass
 
 
-@app.task(name="send_pdf_files_task")
-async  def send_zip_file_task(zip_file, xls_file, company_sign=True):
+@app.task(name="send_zip_file_task")
+def send_zip_file_task(zip_task_id):
     '''
     Create a folder with the date inside media
     Extract Zip file with all the pdf files
@@ -46,24 +49,61 @@ async  def send_zip_file_task(zip_file, xls_file, company_sign=True):
       Get the employee data from xls file: name, email, file name
       Get employee ID from Odoo, if not found, create new employee
       Send pdf file to Odoo
-      Update PDF with sign fields
+      Update PDF file with sign fields
       Tell Odoo to send the document via email to sign
 
     :param zip_file: Zip file with all the pdf files
     :param xls_file: XLS file with the data
     :param company_sign: True if the company sign is required
     '''
+    print("Entré ya")
     logger.info("Starting task to send pdf files")
 
+    # Get the files from database
+    # Update the upload path from this documents
+    zip_task = ZipFile.objects.filter(id=zip_task_id).first()
+    zip_file = f'media/{zip_task.zip_file}'
+    xls_file = f'media/{zip_task.xlsx_file}'
+    company_sign = zip_task.signs_number
+
+
     # Get system date and create a folder inside media folder with the date
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
-    os.mkdir(f'media/{date}')
+    folder_name = 'contracts_' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    blob_service_client = connect_to_azure_storage()
 
-    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
-        zip_ref.extractall(f'media/{date}')
+    try:
+        os.mkdir('docs/' + folder_name)
+    except FileExistsError as fError:
+        logger.info(fError)
 
+
+    with zipfile.ZipFile(zip_file, 'r') as zObject:
+        file_list = zObject.infolist()
+        zObject.extractall(path = 'docs/' + folder_name)
     
-    xls = load_workbook(filename=xls_file, read_only=True, keep_vba=True)
+    # Get the first file in the list to get the path
+    generated_dir = file_list[0].filename.split('/')[0]
+
+    for contract_file in file_list:        
+        file_path = 'docs/' + folder_name + '/' + contract_file.filename
+
+        # Enter if the file exists and is not a directory
+        if os.path.exists(file_path) and not os.path.isdir(file_path):
+            try:
+                blob_client = blob_service_client.get_blob_client(container=settings.AZURE_STORAGE_CONTAINER, blob=file_path)
+                with open(file_path, 'rb') as data:
+                    blob_client.upload_blob(data)
+                logger.info("File uploaded to Azure: " + contract_file.filename)
+            except ResourceExistsError as rError:
+                logger.info(rError)
+        else:
+            blob_service_client.close()
+            return {"error": "No se envió archivos"}
+    
+    # Close connection to Azure
+    blob_service_client.close()
+
+    xls = load_workbook(filename=xls_file, read_only=True, keep_vba=True, data_only=True)
 
     # get first sheet
     data_sheet = xls.worksheets[0]
@@ -73,7 +113,6 @@ async  def send_zip_file_task(zip_file, xls_file, company_sign=True):
 
     # Connect to Odoo
     odoo = OdooClient()
-    odoo.connect()
      
     # Iterate to get the data
     for row in data_sheet.iter_rows(min_row=2, values_only=True):
@@ -81,30 +120,41 @@ async  def send_zip_file_task(zip_file, xls_file, company_sign=True):
         employee_data = {column_names[i]: row[i] for i in range(len(column_names))}
 
         # Get employee ID from Odoo
-        employee_odoo_id = await odoo.search_employee(employee_email=employee_data['email'])
+        employee_email = employee_data['CORREO'].strip()
+        
+        print('Correo empleado: '+employee_email)
+
+        employee_odoo_id = odoo.search_employee(employee_email)
         if employee_odoo_id is None:
-            employee_odoo_id = await odoo.create_employee(employee_data['nombre'], employee_data['email'])
+            employee_odoo_id = odoo.create_employee(employee_data['NOMBRES Y APELLIDOS'].strip, employee_email)
 
         # Get company signer ID from Odoo
-        company_id = odoo.search_employee(employee_email=employee_data['email_fundacion']) if company_sign else None
+        # TOFIX: Get company email from Odoo and search by email, maybe get directly the ID
+        print(f'Firma Companía?: {company_sign}')
+        company_id = odoo.search_employee('gertic@fundacionudea.co') if company_sign == 2 else None
+        # Transform PDF to base64, get number of pages to add sign fields in the last page
+        nombre_archivo = employee_data['NOMBRE_ARCHIVO']
 
-        # Transform PDF to base64
-        document_64, numpages = document.convert_pdf_to_base64(f'media/{date}/{employee_data["nombre_archivo"]}')
+        # Full path to the file
+        full_contract_path = 'docs/' + folder_name + '/' +  generated_dir + '/'+ nombre_archivo + '.pdf'
+        document_64, numpages = document.convert_pdf_to_base64(full_contract_path)
 
         # Upload PDF file
-        pdf_id = odoo.upload_new_contract_sign(employee_data['nombre_archivo'], document_64)
+        pdf_id = odoo.upload_new_contract_sign(nombre_archivo, document_64)
 
         # Update PDF with sign fields
         sign_id = odoo.update_contract_sign(template_id=pdf_id, numpage=numpages, second_field=company_sign)
         
         # Send document to sign
-        odoo.send_sign_contract(pdf_id, employee_odoo_id, company_id)
+        odoo.send_sign_contract(pdf_id, nombre_archivo, employee_odoo_id, company_id)
+
+        print('Documento enviado a firmar '+nombre_archivo)
 
         # Create new ContractDocument database record
-        contract_document = ContractDocument.objects.create(
-                                    name=employee_data['nombre'],
-                                    path=str(date),
-                                    sign_id=sign_id,
-                                    employee_id=employee_odoo_id
-                                    )
-        contract_document.save()
+        # contract_document = ContractDocument.objects.create(
+        #                            name=employee_data['NOMBRES Y APELLIDOS'],
+        #                            path=str(nombre_archivo + ".pdf"),
+        #                            sign_id=sign_id,
+        #                            employee_id=employee_odoo_id)
+        # contract_document.save()
+    return {"message": "Archivos enviados"}
