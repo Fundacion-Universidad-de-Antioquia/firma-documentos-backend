@@ -1,6 +1,8 @@
 .env
 Taskfile.yml
 db.sqlite3
+*.py[cod]
+*$py.class
 fdvenv/
 venv/
 media/
@@ -14,6 +16,7 @@ __blobstorage__/
 tasks/__pycache__/
 __azurite_db_blob__.json
 __azurite_db_blob_exent__.json
+settings/development.py
 firma.toml
 celerybeat-schedule
 requirements-azure.txt
