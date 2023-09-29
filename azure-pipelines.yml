@@ -8,20 +8,11 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
-strategy:
-  matrix:
-    Python36:
-      PYTHON_VERSION: '3.6'
-    Python37:
-      PYTHON_VERSION: '3.7'
-    Python310:
-      PYTHON_VERSION: '3.10'
-  maxParallel: 3
 
 steps:
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '$(PYTHON_VERSION)'
+    versionSpec: '3.10'
     architecture: 'x64'
 
 - task: PythonScript@0
