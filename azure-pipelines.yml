@@ -7,7 +7,7 @@ trigger:
 - staging
 
 pool:
-  name: EdwinPool
+  name: Default
   #vmImage: ubuntu-latest
 
 steps:
