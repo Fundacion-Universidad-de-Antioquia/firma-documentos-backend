@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
 trigger:
-- development
+- staging
 
 pool:
   vmImage: ubuntu-latest
@@ -22,14 +22,14 @@ steps:
     script: |
       """Search all subdirectories for `manage.py`."""
       from glob import iglob
-      from os import path
-      # Python >= 3.5
-      manage_py = next(iglob(path.join('**', 'manage.py'), recursive=True), None)
-      if not manage_py:
-          raise SystemExit('Could not find a Django project')
-      project_location = path.dirname(path.abspath(manage_py))
-      print('Found Django project in', project_location)
-      print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
+      from os import path- task: AzureRmWebAppDeployment@4
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
+    appType: 'webAppLinux'
+    WebAppName: 'webapp-firma-backend'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/*/.zip'
+    RuntimeStack: 'PYTHON|3.10'
+    StartupCommand: 'sh start.sh'
 
 - script: |
     make install
