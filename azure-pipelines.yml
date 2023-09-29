@@ -7,7 +7,8 @@ trigger:
 - staging
 
 pool:
-  vmImage: ubuntu-latest
+  name: EdwinPool
+  #vmImage: ubuntu-latest
 
 steps:
 - task: UsePythonVersion@0
