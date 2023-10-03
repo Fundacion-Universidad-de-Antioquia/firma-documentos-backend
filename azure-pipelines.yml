@@ -23,7 +23,18 @@ steps:
     script: |
       """Search all subdirectories for `manage.py`."""
       from glob import iglob
-      from os import path- task: AzureRmWebAppDeployment@4
+      from os import path
+      manage_py = next(iglob(path.join('**', 'manage.py'), recursive=True), None)
+      if not manage_py:
+          raise SystemExit('Could not find a Django project')
+      project_location = path.dirname(path.abspath(manage_py))
+      print('Found Django project in', project_location)
+      print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
+
+# Azure App Service deploy v4
+# Deploy to Azure App Service a web, mobile, or API app using Docker, Java, .NET, .NET Core, Node.js, PHP, Python, or Ruby.
+- task: AzureRmWebAppDeployment@4
+  inputs:
     ConnectionType: 'AzureRM'
     azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
     appType: 'webAppLinux'
