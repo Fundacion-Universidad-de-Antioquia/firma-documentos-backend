@@ -32,14 +32,13 @@ steps:
       print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
 
 # Azure App Service deploy v4
-# Deploy to Azure App Service a web, mobile, or API app using Docker, Java, .NET, .NET Core, Node.js, PHP, Python, or Ruby.
+# Deploy to Azure App Service
 - task: AzureRmWebAppDeployment@4
   inputs:
     ConnectionType: 'AzureRM'
     azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
     appType: 'webAppLinux'
     WebAppName: 'webapp-firma-backend'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/*/.zip'
     RuntimeStack: 'PYTHON|3.10'
     StartupCommand: 'sh start.sh'
 
