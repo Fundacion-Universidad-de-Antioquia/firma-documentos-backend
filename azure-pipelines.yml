@@ -43,6 +43,7 @@ steps:
     RuntimeStack: 'PYTHON|3.10'
     StartupCommand: 'sh start.sh'
 
+
 - script: |
     make install
   displayName: 'Instalar dependencias'
