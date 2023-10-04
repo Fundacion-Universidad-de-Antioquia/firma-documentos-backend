@@ -62,6 +62,10 @@ jobs:
       RuntimeStack: 'PYTHON|3.10'
       # Add docker command to install redis
       commands: 'docker run redis -p 6379:6379 -d'
+  
+  task: DownloadSecureFile@1
+      inputs:
+        secureFile: '.env'
 
   - script: |
       make install
