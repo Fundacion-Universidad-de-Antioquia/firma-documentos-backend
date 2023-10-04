@@ -15,7 +15,7 @@ pool:
   name: EdwinPool
 
 jobs:
-- job: Deploy backend Firmas
+- job: build_and_deploy
   timeoutInMinutes: 0
 
   steps:
