@@ -64,8 +64,8 @@ jobs:
       commands: 'docker run redis -p 6379:6379 -d'
   
   - task: DownloadSecureFile@1
-      inputs:
-        secureFile: '.env'
+    inputs:
+      secureFile: '.env'
 
   - script: |
       make install
