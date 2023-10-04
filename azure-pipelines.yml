@@ -40,6 +40,16 @@ jobs:
         print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
     displayName: 'Export project path'
 
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: '.env'
+    
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: $(Agent.TempDirectory)
+      Contents: ‘**\.env’
+      TargetFolder: $(System.DefaultWorkingDirectory)
+
   # Archive Django project and save it as a build artifact
   - task: ArchiveFiles@2
     inputs:
@@ -49,7 +59,6 @@ jobs:
       archiveFile: '$(Build.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
       replaceExistingArchive: true
     displayName: 'Archive files'
-
 
   # Deploy to Azure App Service using zip deploy
   - task: AzureRmWebAppDeployment@4
@@ -62,16 +71,6 @@ jobs:
       RuntimeStack: 'PYTHON|3.10'
       # Add docker command to install redis
       commands: 'docker run redis -p 6379:6379 -d'
-  
-  - task: DownloadSecureFile@1
-    inputs:
-      secureFile: '.env'
-    
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: $(Agent.TempDirectory)
-      Contents: ‘**\.env’
-      TargetFolder: $(System.DefaultWorkingDirectory)
 
   - script: |
       make install
