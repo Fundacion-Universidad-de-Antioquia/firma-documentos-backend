@@ -3,21 +3,25 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
+# Define variables section with Azure subscription name and app name
+variables:
+  azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
+  appName: 'webapp-firma-backend'
+
 trigger:
 - staging
 
 pool:
   name: EdwinPool
-  #vmImage: ubuntu-latest
 
 steps:
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.10'
     architecture: 'x64'
+  displayName: 'Install Python3.10'
 
 - task: PythonScript@0
-  displayName: 'Export project path'
   inputs:
     scriptSource: 'inline'
     script: |
@@ -30,18 +34,38 @@ steps:
       project_location = path.dirname(path.abspath(manage_py))
       print('Found Django project in', project_location)
       print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
+  displayName: 'Export project path'
 
-# Azure App Service deploy v4
-# Deploy to Azure App Service
+# Archive Django project and save it as a build artifact
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
+    replaceExistingArchive: true
+  displayName: 'Archive files'
+
+# Add redis container
+- task: Docker@2
+  inputs:
+    containerRegistry: 'DockerHub'
+    repository: 'redis'
+    command: 'run'
+    arguments: '--name redis -p 6379:6379 -d redis'
+    detached: true
+  displayName: 'Run redis container'
+
+# Deploy to Azure App Service using zip deploy
 - task: AzureRmWebAppDeployment@4
   inputs:
     ConnectionType: 'AzureRM'
     azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
     appType: 'webAppLinux'
     WebAppName: 'webapp-firma-backend'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
     RuntimeStack: 'PYTHON|3.10'
     StartupCommand: 'sh start.sh'
-
 
 - script: |
     make install
