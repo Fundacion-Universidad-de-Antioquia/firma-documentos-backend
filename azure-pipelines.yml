@@ -66,6 +66,7 @@ jobs:
   - task: DownloadSecureFile@1
     inputs:
       secureFile: '.env'
+      secureFileDestination: '.'
 
   - script: |
       make install
