@@ -11,11 +11,11 @@ AZURE_STORAGE_CONTAINER = "docs"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('POSTGRES_DB_TEST', 'firma-test'),
-        'USER': os.getenv('POSTGRES_USER_TEST', 'dba_jupiter'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD_TEST', 'm4s%24lfRa80OPhlpHlsTi'),
-        'HOST': os.getenv('POSTGRES_HOST_TEST', 'jupiter-pg-firm4.postgres.database.azure.com'),
-        'PORT': os.getenv('POSTGRES_PORT_TEST', '5432'),
+        'NAME': os.getenv('POSTGRES_DB', 'firmaspruebas-db'),
+        'USER': os.getenv('POSTGRES_USER', 'adminTerraform'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST', 'firmaprueba-server.postgres.database.azure.com'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
     },
 }
 
