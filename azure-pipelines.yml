@@ -66,7 +66,12 @@ jobs:
   - task: DownloadSecureFile@1
     inputs:
       secureFile: '.env'
-      secureFileDestination: '.'
+    
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: $(Agent.TempDirectory)
+      Contents: ‘**\.env’
+      TargetFolder: $(System.DefaultWorkingDirectory)
 
   - script: |
       make install
