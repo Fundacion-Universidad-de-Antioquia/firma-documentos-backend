@@ -8,7 +8,7 @@ venv/
 media/
 media/docs/ 
 docs/
-venv/
+firma/settings/development.py
 .environ/
 migrations/
 __pycache__/

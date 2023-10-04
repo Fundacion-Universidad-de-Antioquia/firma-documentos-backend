@@ -11,5 +11,5 @@ set -o nounset
 # python manage.py migrate --settings=firma.settings.development
 
 # Start with runserver
-python manage.py runserver --settings=firma.settings.development &&
+python manage.py runserver --settings=firma.settings.staging &&
 python -m celery -A firma worker
