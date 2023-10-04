@@ -3,6 +3,11 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
+# set up timeout 0 for this job
+jobs:
+- job: Deploy backend Firmas
+  timeoutInMinutes: 0
+
 # Define variables section with Azure subscription name and app name
 variables:
   azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
@@ -58,16 +63,15 @@ steps:
     RuntimeStack: 'PYTHON|3.10'
     # Add docker command to install redis
     commands: 'docker run redis -p 6379:6379 -d'
-    StartupCommand: 'sh start.sh'
 
 - script: |
     make install
-  displayName: 'Instalar dependencias'
+  displayName: 'Install dependencies'
 
 - script: |
     make lint
     make test
-  displayName: 'Ejecutar pruebas'
+  displayName: 'Run Linter and Tests'
 
 - script:
     sh start.sh
