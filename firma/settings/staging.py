@@ -14,7 +14,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB', 'firmaspruebas-db'),
         'USER': os.getenv('POSTGRES_USER', 'adminTerraform'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST', 'firmaprueba-server.postgres.database.azure.com'),
+        'HOST': os.getenv('POSTGRES_HOST1', '10.0.0.4'),
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
     },
 }
