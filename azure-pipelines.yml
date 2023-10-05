@@ -80,6 +80,10 @@ jobs:
       make lint
       make test
     displayName: 'Run Linter and Tests'
+  
+  - script: |
+      make database
+    displayName: 'Create database'
 
   - script:
       sh start.sh

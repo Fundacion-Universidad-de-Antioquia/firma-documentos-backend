@@ -1,14 +1,14 @@
 install:
-	# Instala dependencias
+	# Dependencies installation
 	pip install --upgrade pip &&\
 		pip install -r requirements.txt
-
-install-azure:
-	pip install --upgrade pip &&\
-		pip install -r requirements-azure.txt
 
 lint:
 	pylint --disable=R,C *.py
 
 test:
-	python manage.py test api.base.documents.tests --settings=firma.settings.staging
+	python3 manage.py test api.tests --settings=myproject.settings.staging
+
+database:
+	python3 manage.py migrate --settings=firma.settings.staging
+	python manage.py makemigrations --settings=firma.settings.development
