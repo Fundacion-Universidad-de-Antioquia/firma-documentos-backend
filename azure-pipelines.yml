@@ -21,9 +21,10 @@ jobs:
   steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.9'
+      versionSpec: '3.x'
+      addToPath: true
       architecture: 'x64'
-    displayName: 'Install Python3.10'
+    displayName: 'Install Python3'
 
   - task: PythonScript@0
     inputs:
