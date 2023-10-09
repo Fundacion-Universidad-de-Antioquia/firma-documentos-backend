@@ -11,11 +11,11 @@ AZURE_STORAGE_CONTAINER = "docs"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('POSTGRES_DB1', 'db_firmas_staging'),
-        'USER': os.getenv('POSTGRES_USER1', 'prueba_dbf'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD1', '42HOxdl.2W`i:G~@,|VM'),
-        'HOST': os.getenv('POSTGRES_HOST1', 'db-firmas-pg.postgres.database.azure.com'),
-        'PORT': os.getenv('POSTGRES_PORT1', '5432'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
     },
 }
 
@@ -43,7 +43,7 @@ AZURE_STORAGE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRIN
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get(
-    "CELERY_BACKEND", "redis://127.0.0.1:6379/0")
+    "CELERY_BACKEND", "redis://10.0.0.6:6379/0")
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
