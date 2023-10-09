@@ -41,7 +41,7 @@ AZURE_STORAGE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRIN
 # Celery confs
 # CELERY_BROKER_URL = 'redis://localhost:6379'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://10.0.0.6:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get(
     "CELERY_BACKEND", "redis://10.0.0.6:6379/0")
 CELERY_ACCEPT_CONTENT = ['application/json']
