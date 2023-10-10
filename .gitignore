@@ -4,7 +4,9 @@ db.sqlite3
 *.py[cod]
 *$py.class
 fdvenv/
+.python_packages/
 venv/
+antenv/
 media/
 media/docs/ 
 docs/

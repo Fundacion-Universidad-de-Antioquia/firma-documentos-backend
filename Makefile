@@ -1,9 +1,9 @@
 install:
 	# Instala dependencias
-	python3 -m venv antenv &&\
-		source antenv/bin/activate &&\
-		pip install --upgrade pip &&\
-		pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
+	python3 -m venv antenv
+	. antenv/bin/activate
+	pip install --upgrade pip
+	pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
 
 lint:
 	pylint --disable=R,C *.py
