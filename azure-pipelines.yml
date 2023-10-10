@@ -65,8 +65,8 @@ jobs:
       archiveFile: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
       replaceExistingArchive: true
   - publish: $(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip
-     displayName: 'Upload package'
-     artifact: drop
+    displayName: 'Upload package'
+    artifact: drop
 
   # Deploy to Azure App Service using zip deploy
   - task: AzureRmWebAppDeployment@4
