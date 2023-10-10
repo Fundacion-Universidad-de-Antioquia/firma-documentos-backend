@@ -52,8 +52,9 @@ jobs:
       TargetFolder: $(System.DefaultWorkingDirectory)
 
   - script: |
-    make install
-  displayName: 'Install dependencies'
+      make install
+    workingDirectory: $(projectRoot)
+    displayName: 'Install dependencies'
 
   # Archive Django project and save it as a build artifact
   - task: ArchiveFiles@2
