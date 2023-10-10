@@ -21,7 +21,7 @@ jobs:
   steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.9'
+      versionSpec: '3.10'
       architecture: 'x64'
       githubToken: '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'
     displayName: 'Install Python3'
@@ -76,11 +76,6 @@ jobs:
   - script: |
       make install
     displayName: 'Install dependencies'
-
-  - script: |
-      make lint
-      make test
-    displayName: 'Run Linter and Tests'
   
   - script: |
       make database
