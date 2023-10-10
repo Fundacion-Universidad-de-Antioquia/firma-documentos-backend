@@ -53,7 +53,7 @@ jobs:
 
   - script: |
     make install
-    workingDirectory: $(projectRoot)
+  workingDirectory: $(projectRoot)
   displayName: 'Install dependencies'
 
   # Archive Django project and save it as a build artifact
