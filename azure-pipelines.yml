@@ -51,15 +51,22 @@ jobs:
       Contents: '**\.env'
       TargetFolder: $(System.DefaultWorkingDirectory)
 
+  - script: |
+    make install
+    workingDirectory: $(projectRoot)
+  displayName: 'Install dependencies'
+
   # Archive Django project and save it as a build artifact
   - task: ArchiveFiles@2
     inputs:
       rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
       includeRootFolder: false
       archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
       replaceExistingArchive: true
-    displayName: 'Archive files'
+  - publish: $(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip
+     displayName: 'Upload package'
+     artifact: drop
 
   # Deploy to Azure App Service using zip deploy
   - task: AzureRmWebAppDeployment@4
@@ -68,14 +75,10 @@ jobs:
       azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
       appType: 'webAppLinux'
       WebAppName: 'webapp-firma-backend'
-      packageForLinux: '$(Build.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
+      packageForLinux: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
       RuntimeStack: 'PYTHON|3.10'
       # Add docker command to install redis
       commands: 'docker run redis -p 6379:6379 -d'
-
-  - script: |
-      make install
-    displayName: 'Install dependencies'
   
   - script: |
       make database
