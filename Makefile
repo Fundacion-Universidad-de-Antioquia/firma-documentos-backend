@@ -10,5 +10,4 @@ test:
 	python manage.py test api.base.documents.tests --settings=firma.settings.staging
 
 database:
-	python3 manage.py makemigrations --settings=firma.settings.staging
 	python3 manage.py migrate --settings=firma.settings.staging
