@@ -12,4 +12,5 @@ set -o nounset
 
 # Start with runserver
 python3 manage.py runserver --settings=firma.settings.staging &&
-python3 -m celery -A firma worker
+python3 -m celery -A firma worker &
+echo "Firmas app is running"
