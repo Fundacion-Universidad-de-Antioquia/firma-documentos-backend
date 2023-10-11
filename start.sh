@@ -14,6 +14,6 @@ set -o nounset
 # python manage.py migrate --settings=firma.settings.development
 
 # Start with runserver
-python3 manage.py runserver 0.0.0.0:8000 --settings=firma.settings.staging &&
-python3 -m celery -A firma worker &
+python3 -m celery -A firma worker &&
+python3 manage.py runserver 0.0.0.0:8000 --settings=firma.settings.staging &
 echo "Firmas app is running"
