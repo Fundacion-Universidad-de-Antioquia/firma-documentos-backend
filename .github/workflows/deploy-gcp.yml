@@ -77,8 +77,7 @@ jobs:
 
       - name: Run Migrations
         run: |
-          python3 manage.py makemigrations
-          python3 manage.py migrate
+          make database
 
       - name: Deploy to App Engine
         id: deploy
