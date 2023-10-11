@@ -51,10 +51,10 @@ jobs:
       Contents: '**\.env'
       TargetFolder: $(System.DefaultWorkingDirectory)
 
-  - script: |
-      make install
-    workingDirectory: $(projectRoot)
-    displayName: 'Install dependencies'
+  # - script: |
+  #    make install
+  #  workingDirectory: $(projectRoot)
+  #  displayName: 'Install dependencies'
 
   # Archive Django project and save it as a build artifact
   - task: ArchiveFiles@2
@@ -77,12 +77,8 @@ jobs:
       WebAppName: 'webapp-firma-backend'
       packageForLinux: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
       RuntimeStack: 'PYTHON|3.10'
-      # Add docker command to install redis
-      commands: 'docker run redis -p 6379:6379 -d'
+      StartupCommand: 'sh start.sh'
   
-  - script: |
-      make database
-    displayName: 'Create database'
-
-  - script:
-      sh start.sh
+  # - script: |
+  #    make database
+  #  displayName: 'Create database'
