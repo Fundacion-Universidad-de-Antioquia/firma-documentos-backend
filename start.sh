@@ -4,7 +4,7 @@
 # export SECRET_KEY=$(python -c 'import secrets; print(secrets.token_hex())')
 
 # Install dependencies
-sudo apt libpq-dev python-dev libpq-dev python3-dev -y
+apt-get libpq-dev python-dev libpq-dev python3-dev -y
 
 # Start Celery worker
 set -o errexit
