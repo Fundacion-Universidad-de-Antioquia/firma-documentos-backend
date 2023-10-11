@@ -14,5 +14,8 @@
 # python manage.py migrate --settings=firma.settings.development
 
 # Start with runserver
+echo "---------------------> Starting Firmas app"
+python3 -m celery -A firma worker &
+echo "---------------------> Celery is running"
 python3 manage.py runserver 127.0.0.1:8000 --settings=firma.settings.staging &
-echo "Firmas app is running"
+echo "---------------------> Firmas app is running"
