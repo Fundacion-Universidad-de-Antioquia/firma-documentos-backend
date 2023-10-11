@@ -30,6 +30,46 @@ jobs:
           project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
           service_account_key: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_ID }}
           export_default_credentials: true
+          
+      - name: Create env file
+        run: |
+          touch .env
+          echo ODOO_URL=${ODOO_URL} >> .env
+          echo ODOO_API_KEY=${ODOO_API_KEY} >> .env
+          echo ODOO_USERNAME=${ODOO_USERNAME} >> .env
+          echo ODOO_PASSWORD=${ODOO_PASSWORD} >> .env
+          echo ODOO_DATABASE=${ODOO_DATABASE} >> .env
+          echo SECRET_KEY=${SECRET_KEY} >> .env
+          echo POSTGRES_DB=${POSTGRES_DB} >> .env
+          echo POSTGRES_USER=${POSTGRES_USER} >> .env
+          echo POSTGRES_PASSWORD=${POSTGRES_PASSWORD} >> .env
+          echo POSTGRES_HOST=${POSTGRES_HOST} >> .env
+          echo POSTGRES_PORT=${POSTGRES_PORT} >> .env
+          echo AZURE_STORAGE_ACCOUNT_NAME=${AZURE_STORAGE_ACCOUNT_NAME} >> .env
+          echo AZURE_STORAGE_CONTAINER_NAME=${AZURE_STORAGE_CONTAINER_NAME} >> .env
+          echo AZURE_SECRET_KEY=${AZURE_SECRET_KEY} >> .env
+          echo AZURE_STORAGE_URL=${AZURE_STORAGE_URL} >> .env
+          echo CELERY_BROKER=$CELERY_BROKER} >> .env
+          echo CELERY_BACKEND=${CELERY_BACKEND} >> .env
+          cat .env
+        env:
+          ODOO_URL: ${{ secrets.ODOO_URL }}
+          ODOO_API_KEY: ${{ secrets.API_KEY }}
+          ODOO_USERNAME: ${{ secrets.ODOO_USERNAME }}
+          ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
+          ODOO_DATABASE: ${{ secrets.ODOO_DATABASE }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+          AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
+          AZURE_SECRET_KEY: ${{ secrets.AZURE_SECRET_KEY }}
+          AZURE_STORAGE_URL: ${{ secrets.AZURE_STORAGE_URL }}
+          CELERY_BROKER: ${{ secrets.CELERY_BROKER }}
+          CELERY_BACKEND: ${{ secrets.CELERY_BACKEND }}
 
       - name: Gather Static Files
         run: |
