@@ -3,6 +3,9 @@ from pathlib import Path
 
 from firma.settings.base import *
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
 AZURE_ACCOUNT_NAME = "storageaccountfirma"
 AZURE_STORAGE_KEY = "Rjl41EFt/rSmPdAmEtyyuX//KAf2TT3c1PkBjpF5f+KoBt/pdpc1QcI414swgOgwrV30L8YnRWb/+ASth4gG0A=="
 AZURE_STORAGE_CONTAINER = "docs"
