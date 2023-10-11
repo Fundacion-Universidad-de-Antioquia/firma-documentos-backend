@@ -3,7 +3,7 @@ install:
 	python3 -m venv antenv
 	. antenv/bin/activate
 	pip install --upgrade pip
-	pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
+	pip install -r requirements.txt
 
 lint:
 	pylint --disable=R,C *.py
