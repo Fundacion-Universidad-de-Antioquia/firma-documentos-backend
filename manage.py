@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "firma.settings.production")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "firma.settings.staging")
 
     # TODO Initialize envirion from settings development file
     # os.environ.setdefault("DJANGO_SETTINGS_MODULE", "firma.settings_new.development")
