@@ -10,6 +10,9 @@
 # set -o errexit
 # set -o nounset
 
+echo "Collect static"
+python manage.py collectstatic --noinput
+
 # Create database tables
 echo "------------------------->Start migratons"
 python3 manage.py makemigrations --settings=firma.settings.development --noinput
@@ -19,5 +22,5 @@ python3 manage.py migrate --settings=firma.settings.development
 echo "---------------------> Starting Firmas app"
 python3 -m celery -A firma worker &
 echo "---------------------> Celery is running"
+echo "---------------------> Starting Firmas app"
 python3 manage.py runserver 127.0.0.1:8000 --settings=firma.settings.staging &
-echo "---------------------> Firmas app is running"

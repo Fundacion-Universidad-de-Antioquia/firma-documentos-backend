@@ -3,16 +3,16 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
-# Define variables section with Azure subscription name and app name
-variables:
-  azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
-  appName: 'webapp-firma-backend'
-
 trigger:
 - staging
 
 pool:
   name: EdwinPool
+
+# Define variables section with Azure subscription name and app name
+variables:
+  azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
+  appName: 'webapp-firma-backend'
 
 jobs:
 - job: build_and_deploy
@@ -23,23 +23,7 @@ jobs:
     inputs:
       versionSpec: '3.10'
       architecture: 'x64'
-      githubToken: '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'
     displayName: 'Install Python3'
-
-  - task: PythonScript@0
-    inputs:
-      scriptSource: 'inline'
-      script: |
-        """Search all subdirectories for `manage.py`."""
-        from glob import iglob
-        from os import path
-        manage_py = next(iglob(path.join('**', 'manage.py'), recursive=True), None)
-        if not manage_py:
-            raise SystemExit('Could not find a Django project')
-        project_location = path.dirname(path.abspath(manage_py))
-        print('Found Django project in', project_location)
-        print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
-    displayName: 'Export project path'
 
   - task: DownloadSecureFile@1
     inputs:
@@ -51,11 +35,6 @@ jobs:
       Contents: '**\.env'
       TargetFolder: $(System.DefaultWorkingDirectory)
 
-  # - script: |
-  #    make install
-  #  workingDirectory: $(projectRoot)
-  #  displayName: 'Install dependencies'
-
   # Archive Django project and save it as a build artifact
   - task: ArchiveFiles@2
     inputs:
@@ -64,6 +43,8 @@ jobs:
       archiveType: 'zip'
       archiveFile: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
       replaceExistingArchive: true
+    displayName: 'Archive Files'
+  
   - publish: $(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip
     displayName: 'Upload package'
     artifact: drop
@@ -75,10 +56,9 @@ jobs:
       azureSubscription: 'Azure Subscription 1383952(4b4cbe41-83a3-4832-9a89-e459c7fbfe0c)'
       appType: 'webAppLinux'
       WebAppName: 'webapp-firma-backend'
-      packageForLinux: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
+      ResourceGroupName: 'web-apps-rg'
+      packageForLinux: '$(System.DefaultWorkingDirectory)/drop/Application$(Build.BuildId).zip'
+      # packageForLinux: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
       RuntimeStack: 'PYTHON|3.10'
       StartupCommand: 'sh start.sh'
-  
-  # - script: |
-  #    make database
-  #  displayName: 'Create database'
+    displayName: 'Deploy to Azure Web App'

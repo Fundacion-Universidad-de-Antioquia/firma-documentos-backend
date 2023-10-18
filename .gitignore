@@ -12,6 +12,7 @@ antenv/
 media/
 media/docs/ 
 docs/
+migrations/
 firma/settings/development.py
 .environ/
 migrations/
