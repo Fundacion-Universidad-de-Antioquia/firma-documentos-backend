@@ -12,7 +12,7 @@
 
 # Create database tables
 echo "------------------------->Start migratons"
-python3 manage.py makemigrations --settings=firma.settings.development
+python3 manage.py makemigrations --settings=firma.settings.development --noinput
 python3 manage.py migrate --settings=firma.settings.development
 
 # Start with runserver
