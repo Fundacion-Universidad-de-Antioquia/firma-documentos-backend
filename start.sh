@@ -11,7 +11,8 @@
 # set -o nounset
 
 # Create database tables
-# python manage.py migrate --settings=firma.settings.development
+python3 manage.py makemigrations --settings=firma.settings.development
+python3 manage.py migrate --settings=firma.settings.development
 
 # Start with runserver
 echo "---------------------> Starting Firmas app"
