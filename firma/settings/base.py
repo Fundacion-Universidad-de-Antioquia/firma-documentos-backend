@@ -94,11 +94,11 @@ WSGI_APPLICATION = 'firma.wsgi.application'
 
 # Odoo API
 ODOO_API = {
-    'ODOO_URL': env('ODOO_URL'),
-    'ODOO_USERNAME': env('ODOO_USERNAME'),
-    'API_KEY': env('ODOO_API_KEY'),
-    'DATABASE': env('ODOO_DATABASE'),
-    'PASSWORD': env('ODOO_PASSWORD'),
+    'ODOO_URL': env('ODOO_URL', 'fundacionudea.net'),
+    'ODOO_USERNAME': env('ODOO_USERNAME', 'gertic@fundacionudea.co'),
+    'API_KEY': env('ODOO_API_KEY', '116f36698eee0860aa76154e8040184175cb303d'),
+    'DATABASE': env('ODOO_DATABASE', 'odoo_data'),
+    'PASSWORD': env('ODOO_PASSWORD', 'Cesar.1990'),
 }
 
 # Password validation
