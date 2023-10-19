@@ -1,6 +1,6 @@
 #!/bin/bash -v 
-. antenv/bin/activate
-pip install -r requirements.txt
+# . antenv/bin/activate
+# pip install -r requirements.txt
 
 # export SECRET_KEY=$(python -c 'import secrets; print(secrets.token_hex())')
 
@@ -24,4 +24,4 @@ echo "---------------------> Starting Firmas app"
 python3 -m celery -A firma worker &
 echo "---------------------> Celery is running"
 echo "---------------------> Starting Firmas app"
-python3 manage.py runserver 127.0.0.1:8000 --settings=firma.settings.staging &
+python3 manage.py runserver 127.0.0.1:8000 --settings=firma.settings.staging
