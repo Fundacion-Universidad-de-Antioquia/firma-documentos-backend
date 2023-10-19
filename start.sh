@@ -16,12 +16,12 @@ python manage.py collectstatic --noinput
 
 # Create database tables
 echo "------------------------->Start migratons"
-python3 manage.py makemigrations --settings=firma.settings.staging --noinput
-python3 manage.py migrate --settings=firma.settings.staging
+python3 manage.py makemigrations --settings=firma.settings.staging --noinput 1>&2
+python3 manage.py migrate --settings=firma.settings.staging 1>&2
 
 # Start with runserver
 echo "---------------------> Starting Firmas app"
-python3 -m celery -A firma worker &
+python3 -m celery -A firma worker 1>&2 &
 echo "---------------------> Celery is running"
 echo "---------------------> Starting Firmas app"
-python3 manage.py runserver 127.0.0.1:8000 --settings=firma.settings.staging
+python3 manage.py runserver 127.0.0.1:8000 --settings=firma.settings.staging 1>&2
