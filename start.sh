@@ -1,5 +1,6 @@
 #!/bin/bash -v 
-# pip install -r requirements.txt
+. antenv/bin/activate
+pip install -r requirements.txt
 
 # export SECRET_KEY=$(python -c 'import secrets; print(secrets.token_hex())')
 
@@ -15,8 +16,8 @@ python manage.py collectstatic --noinput
 
 # Create database tables
 echo "------------------------->Start migratons"
-python3 manage.py makemigrations --settings=firma.settings.development --noinput
-python3 manage.py migrate --settings=firma.settings.development
+python3 manage.py makemigrations --settings=firma.settings.staging --noinput
+python3 manage.py migrate --settings=firma.settings.staging
 
 # Start with runserver
 echo "---------------------> Starting Firmas app"
