@@ -6,10 +6,6 @@ from firma.settings.base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-AZURE_ACCOUNT_NAME = "storageaccountfirma"
-AZURE_STORAGE_KEY = "Rjl41EFt/rSmPdAmEtyyuX//KAf2TT3c1PkBjpF5f+KoBt/pdpc1QcI414swgOgwrV30L8YnRWb/+ASth4gG0A=="
-AZURE_STORAGE_CONTAINER = "docs"
-
 # Create azure-test database connection for tests
 DATABASES = {
     'default': {
@@ -33,10 +29,10 @@ AZURITE_DOCUMENTS_STORAGE = {
 
 # Create blob endpoint connection to azure storage for media files
 # Create azurite connetion for Django
-AZURE_ACCOUNT_NAME = os.environ.get('AZURE_STORAGE_ACCOUNT_NAME', 'storageaccountfirma')
-AZURE_STORAGE_KEY = os.environ.get('AZURE_SECRET_KEY', 'Rjl41EFt/rSmPdAmEtyyuX//KAf2TT3c1PkBjpF5f+KoBt/pdpc1QcI414swgOgwrV30L8YnRWb/+ASth4gG0A==')
-AZURE_STORAGE_CONTAINER = os.environ.get('AZURE_STORAGE_CONTAINER_NAME', 'docs')
-AZURE_STORAGE_URL = os.environ.get('AZURE_STORAGE_URL', 'https://storageaccountfirma.blob.core.windows.net/')
+AZURE_ACCOUNT_NAME = os.environ.get('AZURE_STORAGE_ACCOUNT_NAME')
+AZURE_STORAGE_KEY = os.environ.get('AZURE_SECRET_KEY')
+AZURE_STORAGE_CONTAINER = os.environ.get('AZURE_STORAGE_CONTAINER_NAME')
+AZURE_STORAGE_URL = os.environ.get('AZURE_STORAGE_URL')
 AZURE_STORAGE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRING', 'DefaultEndpointsProtocol=https;AccountName=' + AZURE_ACCOUNT_NAME +';AccountKey=' + AZURE_STORAGE_KEY + ';BlobEndpoint=' + AZURE_STORAGE_URL)
 
 
@@ -44,9 +40,8 @@ AZURE_STORAGE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRIN
 # Celery confs
 # CELERY_BROKER_URL = 'redis://localhost:6379'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://10.0.0.6:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get(
-    "CELERY_BACKEND", "redis://10.0.0.6:6379/0")
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND")
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
