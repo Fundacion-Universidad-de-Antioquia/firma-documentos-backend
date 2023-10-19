@@ -15,7 +15,7 @@ variables:
   appName: 'webapp-firma-backend'
 
 jobs:
-- job: BuildJob
+- job: Build_Deploy_Jobs
   timeoutInMinutes: 0
 
   steps:
@@ -48,10 +48,6 @@ jobs:
     artifact: drop
 
 # Deploy to Azure App Service using zip deploy
-- job: DeploymentJob
-  timeoutInMinutes: 0
-
-  steps:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '3.10'
