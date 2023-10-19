@@ -21,6 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # Load environment variables
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, '.env'))
+print(f'############### ENV FILE: {env}')
 
 
 # Quick-start development settings - unsuitable for production
