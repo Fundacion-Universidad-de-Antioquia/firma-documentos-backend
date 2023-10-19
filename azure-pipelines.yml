@@ -56,7 +56,8 @@ jobs:
   steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '$(pythonVersion)'
+      versionSpec: '3.10'
+      architecture: 'x64'
     displayName: 'Use Python version'
 
   - task: AzureWebApp@1
