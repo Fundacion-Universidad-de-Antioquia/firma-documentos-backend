@@ -67,7 +67,8 @@ jobs:
       AppName: 'webapp-firma-backend'
       ResourceGroupName: 'web-apps-rg'
       # packageForLinux: '$(System.DefaultWorkingDirectory)/drop/Application$(Build.BuildId).zip'
-      package: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
+      # package: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
+      package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
       deploymentMethod: 'zipDeploy'
       RuntimeStack: 'PYTHON|3.10'
       StartupCommand: 'sh start.sh'
