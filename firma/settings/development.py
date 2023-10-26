@@ -1,8 +1,8 @@
 import sys
 from firma.settings.base import *
 
-DEBUG = False
-ALLOWED_HOSTS = ['webapp-firma-backend.azurewebsites.net']
+DEBUG = True
+ALLOWED_HOSTS = ['*']
 
 # Create SECRET_KEY VARIABLE with the secret key value
 SECRET_KEY = '1c153c54d3b21a8ad94a766e4fb2427e816a5092990957923c27c4335f198cdb'
@@ -29,7 +29,7 @@ AZURE_STORAGE_CONTAINER = env('AZURE_STORAGE_CONTAINER_NAME')
 AZURE_STORAGE_URL = env('AZURE_STORAGE_URL')
 AZURE_STORAGE_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=' + AZURE_ACCOUNT_NAME +';AccountKey=' + AZURE_STORAGE_KEY + ';BlobEndpoint=' + AZURE_STORAGE_URL
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Media Files
