@@ -72,20 +72,20 @@ def send_zip_file_task(zip_task_id):
     blob_service_client = connect_to_azure_storage()
 
     try:
-        os.mkdir('docs/' + folder_name)
+        os.mkdir('media/docs/' + folder_name)
     except FileExistsError as fError:
         logger.info(fError)
 
 
     with zipfile.ZipFile(zip_file, 'r') as zObject:
         file_list = zObject.infolist()
-        zObject.extractall(path = 'docs/' + folder_name)
+        zObject.extractall(path = 'media/docs/' + folder_name)
     
     # Get the first file in the list to get the path
     generated_dir = file_list[0].filename.split('/')[0]
 
     for contract_file in file_list:        
-        file_path = 'docs/' + folder_name + '/' + contract_file.filename
+        file_path = 'media/docs/' + folder_name + '/' + contract_file.filename
 
         # Enter if the file exists and is not a directory
         if os.path.exists(file_path) and not os.path.isdir(file_path):
@@ -136,7 +136,7 @@ def send_zip_file_task(zip_task_id):
         nombre_archivo = employee_data['NOMBRE_ARCHIVO']
 
         # Full path to the file
-        full_contract_path = 'docs/' + folder_name + '/' +  generated_dir + '/'+ nombre_archivo + '.pdf'
+        full_contract_path = 'media/docs/' + folder_name + '/' +  generated_dir + '/'+ nombre_archivo + '.pdf'
         document_64, numpages = document.convert_pdf_to_base64(full_contract_path)
 
         # Upload PDF file
