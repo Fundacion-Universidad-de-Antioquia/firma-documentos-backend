@@ -61,6 +61,7 @@ def send_zip_file_task(zip_task_id):
 
     # Get the files from database
     # Update the upload path from this documents
+    # TOFIX: Add docs path as a variable, i.e, media/docs
     zip_task = ZipFile.objects.filter(id=zip_task_id).first()
     zip_file = f'media/{zip_task.zip_file}'
     xls_file = f'media/{zip_task.xlsx_file}'
@@ -84,12 +85,14 @@ def send_zip_file_task(zip_task_id):
     # Get the first file in the list to get the path
     generated_dir = file_list[0].filename.split('/')[0]
 
-    for contract_file in file_list:        
+    for contract_file in file_list:
+        # TODO: Quita acentos en nombre del archivo: i.e. 'Álvaro' -> 'Alvaro', eso genera problema con Azure Storage
         file_path = 'media/docs/' + folder_name + '/' + contract_file.filename
 
         # Enter if the file exists and is not a directory
         if os.path.exists(file_path) and not os.path.isdir(file_path):
             try:
+                print(f'')
                 blob_client = blob_service_client.get_blob_client(container=settings.AZURE_STORAGE_CONTAINER, blob=file_path)
                 with open(file_path, 'rb') as data:
                     blob_client.upload_blob(data)
@@ -126,11 +129,14 @@ def send_zip_file_task(zip_task_id):
 
         employee_odoo_id = odoo.search_employee(employee_email)
         if employee_odoo_id is None:
-            employee_odoo_id = odoo.create_employee(employee_data['NOMBRES Y APELLIDOS'].strip, employee_email)
+            employee_name = employee_data['NOMBRES Y APELLIDOS'].strip()
+            print ('Creando empleado: ' + employee_name)
+            employee_odoo_id = odoo.create_employee(employee_name, employee_email)
 
         # Get company signer ID from Odoo
         # TOFIX: Get company email from Odoo and search by email, maybe get directly the ID
         print(f'Firma Companía?: {company_sign}')
+        # directorejectivo@fundacionudea.co
         company_id = odoo.search_employee('gertic@fundacionudea.co') if company_sign == 2 else None
         # Transform PDF to base64, get number of pages to add sign fields in the last page
         nombre_archivo = employee_data['NOMBRE_ARCHIVO']
