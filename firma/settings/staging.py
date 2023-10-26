@@ -6,6 +6,7 @@ from firma.settings.base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+CSRF_COOKIE_DOMAIN = '.azurewebsites.net'
 CSRF_COOKIE_SECURE = True
 
 # Create azure-test database connection for tests
