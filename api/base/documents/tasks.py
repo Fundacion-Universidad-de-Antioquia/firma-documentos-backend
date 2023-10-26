@@ -128,6 +128,7 @@ def send_zip_file_task(zip_task_id):
         print('Correo empleado: '+employee_email)
 
         employee_odoo_id = odoo.search_employee(employee_email)
+        # TODO: Pasar correo a minúsculas para evitar duplicados en Odoo
         if employee_odoo_id is None:
             employee_name = employee_data['NOMBRES Y APELLIDOS'].strip()
             print ('Creando empleado: ' + employee_name)
@@ -137,7 +138,8 @@ def send_zip_file_task(zip_task_id):
         # TOFIX: Get company email from Odoo and search by email, maybe get directly the ID
         print(f'Firma Companía?: {company_sign}')
         # directorejectivo@fundacionudea.co
-        company_id = odoo.search_employee('gertic@fundacionudea.co') if company_sign == 2 else None
+        # TODO: Cambiar el correo de la firma de la Fundación UdeA por una variable que llegue desde el form del frontend
+        company_id = odoo.search_employee('directorejecutivo@fundacionudea.co') if company_sign == 2 else None
         # Transform PDF to base64, get number of pages to add sign fields in the last page
         nombre_archivo = employee_data['NOMBRE_ARCHIVO']
 
