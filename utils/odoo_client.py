@@ -8,21 +8,11 @@ class OdooClient():
 
     def __init__(self):
         # import odoo data connection from django config
-        '''
         self.url = settings.ODOO_API['URL']
         self.username = settings.ODOO_API['USERNAME']
         self.api_key = settings.ODOO_API['API_KEY']
         self.database = settings.ODOO_API['DATABASE']
-        self.password = settings.ODOO_API['PASSWORD']
-        '''
-
-        # TODO: Remove this test data
-        
-        self.url = 'fundacionudea.net'
-        self.username = 'gertic@fundacionudea.co'
-        self.api_key = '116f36698eee0860aa76154e8040184175cb303d'
-        self.password = 'Cesar.1990'
-        self.database = 'odoo_data'     
+        self.password = settings.ODOO_API['PASSWORD']     
         
         # Create exeception to manage the connection via internet to Odoo
         try:

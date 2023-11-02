@@ -87,6 +87,7 @@ def send_zip_file_task(zip_task_id):
 
     for contract_file in file_list:
         # TODO: Quita acentos en nombre del archivo: i.e. 'Álvaro' -> 'Alvaro', eso genera problema con Azure Storage
+        # TODO: Maneja esto con exceptions para que no se caiga el proceso
         file_path = 'media/docs/' + folder_name + '/' + contract_file.filename
 
         # Enter if the file exists and is not a directory
@@ -119,6 +120,7 @@ def send_zip_file_task(zip_task_id):
      
     # Iterate to get the data
     for row in data_sheet.iter_rows(min_row=2, values_only=True):
+        # TODO: Maneja esto con exceptions para que no caiga el proceso
         # Get employee data from XLSX File
         employee_data = {column_names[i]: row[i] for i in range(len(column_names))}
 
@@ -145,7 +147,12 @@ def send_zip_file_task(zip_task_id):
 
         # Full path to the file
         full_contract_path = 'media/docs/' + folder_name + '/' +  generated_dir + '/'+ nombre_archivo + '.pdf'
-        document_64, numpages = document.convert_pdf_to_base64(full_contract_path)
+        try:
+            document_64, numpages = document.convert_pdf_to_base64(full_contract_path)
+        except FileNotFoundError as fError:
+            # Continua al siguiente archivo
+            logger.info(fError)
+            continue
 
         # Upload PDF file
         pdf_id = odoo.upload_new_contract_sign(nombre_archivo, document_64)
