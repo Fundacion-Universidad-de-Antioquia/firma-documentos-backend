@@ -93,7 +93,6 @@ def send_zip_file_task(zip_task_id):
         # Enter if the file exists and is not a directory
         if os.path.exists(file_path) and not os.path.isdir(file_path):
             try:
-                print(f'')
                 blob_client = blob_service_client.get_blob_client(container=settings.AZURE_STORAGE_CONTAINER, blob=file_path)
                 with open(file_path, 'rb') as data:
                     blob_client.upload_blob(data)
@@ -142,6 +141,7 @@ def send_zip_file_task(zip_task_id):
         # directorejectivo@fundacionudea.co
         # TODO: Cambiar el correo de la firma de la Fundación UdeA por una variable que llegue desde el form del frontend
         company_id = odoo.search_employee('directorejecutivo@fundacionudea.co') if company_sign == 2 else None
+        
         # Transform PDF to base64, get number of pages to add sign fields in the last page
         nombre_archivo = employee_data['NOMBRE_ARCHIVO']
 

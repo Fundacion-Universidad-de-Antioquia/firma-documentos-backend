@@ -12,7 +12,7 @@ class OdooClient():
         self.username = settings.ODOO_API['USERNAME']
         self.api_key = settings.ODOO_API['API_KEY']
         self.database = settings.ODOO_API['DATABASE']
-        self.password = settings.ODOO_API['PASSWORD']     
+        self.password = settings.ODOO_API['PASSWORD']
         
         # Create exeception to manage the connection via internet to Odoo
         try:
@@ -152,13 +152,21 @@ class OdooClient():
 
         print(f"ID Del empleado: {company_id}")
 
+        # Agrega la firma de la fundación si es necesario
+        signers = [0, 'virtual_37', {'role_id': 2, 'partner_id': employee_id}]
+        signers_count = 1
+        if company_id != None:
+            signers.append[0, 'virtual_25', {'role_id': 3, 'partner_id': company_id}]
+            signers_count = 2
+
         # FIXME: Agregar company_id como firmante cuando sea necesario
         request_fields = {
             'template_id': template_id,
-            'signer_ids': [[0, 'virtual_25', {'role_id': 2, 'partner_id': company_id}],  # 13444 es el ID en Odoo del Director de la fundación
-                           [0, 'virtual_37', {'role_id': 3, 'partner_id': employee_id}]],
+            #'signer_ids': [[0, 'virtual_25', {'role_id': 2, 'partner_id': company_id}],  # 13444 es el ID en Odoo del Director de la fundación
+            #               [0, 'virtual_37', {'role_id': 3, 'partner_id': employee_id}]],
+            'signers_ids': signers,
             'signer_id': False,
-            'signers_count': 2,
+            'signers_count': signers_count,
             'has_default_template': True,
             'follower_ids': [[6, False, []]],
             'subject': f'Solicitud de firma {document_name}',
