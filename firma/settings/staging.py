@@ -34,9 +34,6 @@ AZURITE_DOCUMENTS_STORAGE = {
     'URL': 'http://127.0.0.1:10000/devstoreaccount1/media-test/docs',
 }
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 314572800
-FILE_UPLOAD_MAX_MEMORY_SIZE = 314572800
-
 # Create blob endpoint connection to azure storage for media files
 # Create azurite connetion for Django
 AZURE_ACCOUNT_NAME = os.environ.get('AZURE_STORAGE_ACCOUNT_NAME')
