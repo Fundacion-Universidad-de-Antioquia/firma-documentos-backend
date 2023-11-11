@@ -4,7 +4,7 @@ from pathlib import Path
 from firma.settings.base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Seems to be a bug, the app starts when debug is tru
+# Seems to be a bug, the app starts when debug is true
 DEBUG = True
 
 ALLOWED_HOSTS = ["webapp-firma-backend.azurewebsites.net"]

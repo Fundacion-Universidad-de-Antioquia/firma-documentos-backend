@@ -7,7 +7,7 @@ trigger:
 - staging
 
 pool:
-  name: EdwinPool
+  vmImage: 'ubuntu-latest'
 
 jobs:
 - job: Build_Deploy_Jobs
