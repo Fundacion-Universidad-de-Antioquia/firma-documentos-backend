@@ -11,11 +11,11 @@
 # set -o errexit
 # set -o nounset
 
-echo "Collect static"
-python manage.py collectstatic --noinput
+echo "------------------------> Collect static"
+python3 manage.py collectstatic --noinput
 
 # Create database tables
-echo "------------------------->Start migratons"
+echo "------------------------- >Start migratons"
 python3 manage.py makemigrations --settings=firma.settings.staging --noinput 1>&2
 python3 manage.py migrate --settings=firma.settings.staging 1>&2
 
