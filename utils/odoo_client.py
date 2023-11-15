@@ -131,7 +131,6 @@ class OdooClient():
         # Create sign items
         # update_from_pdfviewer(self, template_id=None, duplicate=None, sign_items=None, name=None):
 
-        sign_template = self.odoo.env['sign.template']
         sign_item = self.odoo.env['sign.item']
 
         item_id_company = sign_item.create(sign_field_company) if second_field else None
@@ -154,10 +153,10 @@ class OdooClient():
 
         # Agrega la firma de la fundación si es necesario
         signers = []
-        signers.append([0, 'virtual_37', {'role_id': 2, 'partner_id': employee_id}])
+        signers.append([0, 'virtual_37', {'role_id': 3, 'partner_id': employee_id}])
         signers_count = 1
         if company_id != None:
-            signers.append([0, 'virtual_25', {'role_id': 3, 'partner_id': company_id}])
+            signers.append([0, 'virtual_25', {'role_id': 2, 'partner_id': company_id}])
             signers_count = 2
 
         request_fields = {
@@ -176,7 +175,7 @@ class OdooClient():
             'message': '<p>Hola.</p><p>Mensaje generado automáticamente, no responder</p>'
         }
 
-        print("Preparar correo con firmantes: {signers}")
+        print(f"Preparar correo con firmantes: {signers}")
 
         # Prepare email request
         sign_email = self.odoo.env['sign.send.request']
