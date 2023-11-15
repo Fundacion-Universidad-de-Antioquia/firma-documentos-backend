@@ -158,7 +158,8 @@ def send_zip_file_task(zip_task_id):
         pdf_id = odoo.upload_new_contract_sign(nombre_archivo, document_64)
 
         # Update PDF with sign fields
-        sign_id = odoo.update_contract_sign(template_id=pdf_id, numpage=numpages, second_field=company_sign)
+        second_field = True if company_sign == 2 else False
+        sign_id = odoo.update_contract_sign(template_id=pdf_id, numpage=numpages, second_field=second_field)
         
         # Send document to sign
         odoo.send_sign_contract(pdf_id, nombre_archivo, employee_odoo_id, company_id)

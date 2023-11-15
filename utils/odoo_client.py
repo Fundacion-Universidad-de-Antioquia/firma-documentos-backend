@@ -134,7 +134,8 @@ class OdooClient():
         sign_template = self.odoo.env['sign.template']
         sign_item = self.odoo.env['sign.item']
 
-        if second_field:  
+        if second_field: 
+            print("Envia firma de la fundación") 
             item_id_company = sign_item.create(sign_field_company)
             
         item_id_employee = sign_item.create(sign_field_employee)
@@ -150,7 +151,8 @@ class OdooClient():
         :param str company_id: Id del firmante de la fundación
         '''
 
-        print(f"ID Del empleado: {company_id}")
+        print(f"ID Del companía: {company_id}")
+        print(f"ID De empleado: {employee_id}")
 
         # Agrega la firma de la fundación si es necesario
         signers = []
@@ -160,7 +162,6 @@ class OdooClient():
             signers.append([0, 'virtual_25', {'role_id': 3, 'partner_id': company_id}])
             signers_count = 2
 
-        print(f"Signers: {signers}")
         request_fields = {
             'template_id': template_id,
             #'signer_ids': [[0, 'virtual_25', {'role_id': 2, 'partner_id': company_id}],  # 13444 es el ID en Odoo del Director de la fundación
@@ -177,7 +178,7 @@ class OdooClient():
             'message': '<p>Hola.</p><p>Mensaje generado automáticamente, no responder</p>'
         }
 
-        print("Preparar correo")
+        print("Preparar correo con firmantes: {signers}")
 
         # Prepare email request
         sign_email = self.odoo.env['sign.send.request']
