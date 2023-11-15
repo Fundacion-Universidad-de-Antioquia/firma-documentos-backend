@@ -165,7 +165,7 @@ class OdooClient():
             'template_id': template_id,
             #'signer_ids': [[0, 'virtual_25', {'role_id': 2, 'partner_id': company_id}],  # 13444 es el ID en Odoo del Director de la fundación
             #               [0, 'virtual_37', {'role_id': 3, 'partner_id': employee_id}]],
-            'signers_ids': signers,
+            'signer_ids': signers,
             'signer_id': False,
             'signers_count': signers_count,
             'has_default_template': True,
