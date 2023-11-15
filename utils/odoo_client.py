@@ -153,10 +153,11 @@ class OdooClient():
         print(f"ID Del empleado: {company_id}")
 
         # Agrega la firma de la fundación si es necesario
-        signers = [0, 'virtual_37', {'role_id': 2, 'partner_id': employee_id}]
+        signers = []
+        signers.append([0, 'virtual_37', {'role_id': 2, 'partner_id': employee_id}])
         signers_count = 1
         if company_id != None:
-            signers.append[0, 'virtual_25', {'role_id': 3, 'partner_id': company_id}]
+            signers.append([0, 'virtual_25', {'role_id': 3, 'partner_id': company_id}])
             signers_count = 2
 
         print(f"Signers: {signers}")
@@ -164,7 +165,7 @@ class OdooClient():
             'template_id': template_id,
             #'signer_ids': [[0, 'virtual_25', {'role_id': 2, 'partner_id': company_id}],  # 13444 es el ID en Odoo del Director de la fundación
             #               [0, 'virtual_37', {'role_id': 3, 'partner_id': employee_id}]],
-            'signers_ids': [signers],
+            'signers_ids': signers,
             'signer_id': False,
             'signers_count': signers_count,
             'has_default_template': True,
