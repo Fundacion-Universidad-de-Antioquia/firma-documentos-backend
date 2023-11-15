@@ -159,7 +159,7 @@ class OdooClient():
             signers.append[0, 'virtual_25', {'role_id': 3, 'partner_id': company_id}]
             signers_count = 2
 
-        # FIXME: Agregar company_id como firmante cuando sea necesario
+        print("Signers: ", signers)
         request_fields = {
             'template_id': template_id,
             #'signer_ids': [[0, 'virtual_25', {'role_id': 2, 'partner_id': company_id}],  # 13444 es el ID en Odoo del Director de la fundación
