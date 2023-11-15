@@ -134,9 +134,7 @@ class OdooClient():
         sign_template = self.odoo.env['sign.template']
         sign_item = self.odoo.env['sign.item']
 
-        if second_field: 
-            print("Envia firma de la fundación") 
-            item_id_company = sign_item.create(sign_field_company)
+        item_id_company = sign_item.create(sign_field_company) if second_field else None
             
         item_id_employee = sign_item.create(sign_field_employee)
 
