@@ -94,9 +94,9 @@ WSGI_APPLICATION = 'firma.wsgi.application'
 ODOO_API = {
     'ODOO_URL': env('ODOO_URL'),
     'ODOO_USERNAME': env('ODOO_USERNAME'),
-    'API_KEY': env('ODOO_API_KEY'),
-    'DATABASE': env('ODOO_DATABASE'),
-    'PASSWORD': env('ODOO_PASSWORD'),
+    'ODOO_API_KEY': env('ODOO_API_KEY'),
+    'ODOO_DATABASE': env('ODOO_DATABASE'),
+    'ODOO_PASSWORD': env('ODOO_PASSWORD'),
 }
 
 # Password validation
