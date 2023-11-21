@@ -11,7 +11,7 @@ from openpyxl import load_workbook
 from celery.utils.log import get_task_logger
 from azure.core.exceptions import ResourceExistsError
 
-from .models import Files, ContractDocument, ZipFile
+from .models import Files, ContractDocument, ZipFile, SignTask
 from utils import document
 from utils.odoo_client import OdooClient
 from utils.azure_services import connect_to_azure_storage
@@ -67,6 +67,8 @@ def send_zip_file_task(zip_task_id):
     xls_file = f'media/{zip_task.xlsx_file}'
     company_sign = zip_task.signs_number
 
+    # Create a new sign_task  and the relation with the zip file
+    sign_task = SignTask(zip_file=zip_task_id)
 
     # Get system date and create a folder inside media folder with the date
     folder_name = 'contracts_' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -162,7 +164,10 @@ def send_zip_file_task(zip_task_id):
         
         # Send document to sign
         odoo.send_sign_contract(pdf_id, nombre_archivo, employee_odoo_id, company_id)
-
+        
+        sign_task.last_contract_sent = nombre_archivo
+        sign_task.save()
+        
         print('Documento enviado a firmar '+nombre_archivo)
 
         # Create new ContractDocument database record
