@@ -41,7 +41,6 @@ class ContractDocument(models.Model):
 
 
     class Meta:
-        managed = True
         db_table = 'contract_document'
 
 class ZipFile(models.Model):
@@ -57,7 +56,6 @@ class ZipFile(models.Model):
     created_by = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = True
         db_table = 'zip_file'
 
 

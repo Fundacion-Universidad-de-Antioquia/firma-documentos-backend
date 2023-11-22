@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 
-from .models import Files, ZipFile
+from .models import Files, ZipFile, SignTask
 from .serializers import FilesSerializer, ZipFileSerializer
 from .tasks import send_contract_sign_task, send_zip_file_task
 
@@ -71,11 +71,14 @@ class ZipFileView(APIView):
 
     def get(self, request):
         '''
-        Must define what to response when get method is called
+        Get the list of tasks:
+        N° | Date | Number of sent | Status
         '''
+        # Query to get the list of SignTasks: just 10
+        tasks = SignTask.objects.all()
+
         return Response ({"message": "Lista de tareas"}, status=status.HTTP_200_OK)
 
-    # create post method and return response "Hola Angie"
     def post(self, request, format=None):
         '''
         Get the zip file and unzip it in media folder
@@ -109,4 +112,4 @@ class ZipFileView(APIView):
             return Response ({"message": "Archivos recibidos"}, status=status.HTTP_200_OK)
         
         else:
-            return Response ({"message": "No se ha seleccionado un archivo"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response ({"message": "Archivos no enviados"}, status=status.HTTP_400_BAD_REQUEST)
