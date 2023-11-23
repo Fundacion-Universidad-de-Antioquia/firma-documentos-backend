@@ -107,7 +107,7 @@ def send_zip_file_task(zip_task_id):
         else:
             print("No se envió archivos")
             blob_service_client.close()
-            return {"error": "No se envió archivos"}
+            # return {"error": "No se envió archivos"}
     
     # Close connection to Azure
     blob_service_client.close()
