@@ -71,6 +71,7 @@ def send_zip_file_task(zip_task_id):
     # Get system date and create a folder inside media folder with the date
     folder_name = 'contracts_' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     blob_service_client = connect_to_azure_storage()
+    print("Conectado a Azure Storage: ",blob_service_client)
 
     try:
         os.mkdir('media/docs/' + folder_name)
@@ -93,8 +94,10 @@ def send_zip_file_task(zip_task_id):
 
         # Enter if the file exists and is not a directory
         if os.path.exists(file_path) and not os.path.isdir(file_path):
+            print("Archivo: " + file_path)
             try:
                 blob_client = blob_service_client.get_blob_client(container=settings.AZURE_STORAGE_CONTAINER, blob=file_path)
+                print("Creó cliente de blob: " + blob_client.blob_name)
                 with open(file_path, 'rb') as data:
                     blob_client.upload_blob(data)
                     print("Archivo uploaded " + file_path)
@@ -102,6 +105,7 @@ def send_zip_file_task(zip_task_id):
             except ResourceExistsError as rError:
                 logger.info(rError)
         else:
+            print("No se envió archivos")
             blob_service_client.close()
             return {"error": "No se envió archivos"}
     
