@@ -84,6 +84,7 @@ def send_zip_file_task(zip_task_id):
     
     # Get the first file in the list to get the path
     generated_dir = file_list[0].filename.split('/')[0]
+    print("Generated dir: " + generated_dir)
 
     for contract_file in file_list:
         # TODO: Quita acentos en nombre del archivo: i.e. 'Álvaro' -> 'Alvaro', eso genera problema con Azure Storage
@@ -96,6 +97,7 @@ def send_zip_file_task(zip_task_id):
                 blob_client = blob_service_client.get_blob_client(container=settings.AZURE_STORAGE_CONTAINER, blob=file_path)
                 with open(file_path, 'rb') as data:
                     blob_client.upload_blob(data)
+                    print("Archivo uploaded " + file_path)
                 logger.info("File uploaded to Azure: " + contract_file.filename)
             except ResourceExistsError as rError:
                 logger.info(rError)
@@ -116,6 +118,7 @@ def send_zip_file_task(zip_task_id):
 
     # Connect to Odoo
     odoo = OdooClient()
+    print("Inicia proceso de Odoo")
      
     # Iterate to get the data
     for row in data_sheet.iter_rows(min_row=2, values_only=True):
