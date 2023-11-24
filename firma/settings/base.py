@@ -92,11 +92,11 @@ WSGI_APPLICATION = 'firma.wsgi.application'
 
 # Odoo API
 ODOO_API = {
-    'ODOO_URL': env('ODOO_URL'),
-    'ODOO_USERNAME': env('ODOO_USERNAME'),
-    'API_KEY': env('ODOO_API_KEY'),
-    'DATABASE': env('ODOO_DATABASE'),
-    'PASSWORD': env('ODOO_PASSWORD'),
+    'ODOO_URL': os.getenv('ODOO_URL'),
+    'ODOO_USERNAME': os.getenv('ODOO_USERNAME'),
+    'API_KEY': os.getenv('ODOO_API_KEY'),
+    'DATABASE': os.getenv('ODOO_DATABASE'),
+    'PASSWORD': os.getenv('ODOO_PASSWORD'),
 }
 
 # Password validation
