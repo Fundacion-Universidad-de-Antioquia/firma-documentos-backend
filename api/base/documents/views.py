@@ -6,7 +6,7 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 
 from .models import Files, ZipFile, SignTask
-from .serializers import FilesSerializer, ZipFileSerializer
+from .serializers import FilesSerializer, ZipFileSerializer, SignTaskSerializer
 from .tasks import send_contract_sign_task, send_zip_file_task
 
 class FilesAPIView(APIView):
@@ -75,9 +75,15 @@ class ZipFileView(APIView):
         N° | Date | Number of sent | Status
         '''
         # Query to get the list of SignTasks: just 10
-        tasks = SignTask.objects.all()
+        # Get the last 10 tasks from database
+        tasks = SignTask.objects.all().last(10)
 
-        return Response ({"message": "Lista de tareas"}, status=status.HTTP_200_OK)
+        
+        # Serialize the data
+        serializer = SignTaskSerializer(tasks, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+        #return Response ({"message": "Lista de tareas"}, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         '''
@@ -89,18 +95,6 @@ class ZipFileView(APIView):
         file_serializer = ZipFileSerializer(data=request.data)
 
         if file_serializer.is_valid(raise_exception=True):
-
-            # Get the data and save to database, define the model with fields
-            new_file = file_serializer.save()
-
-            # Unzip the zip file
-            # zip_file = request.FILES['zip_file']
-            # xlsx_file = request.FILES['xlsx_file']
-            # company_sign = request.data['signs_number']
-
-            zip_file = file_serializer.validated_data['zip_file']
-            xlsx_file = file_serializer.validated_data['xlsx_file']
-            company_sign = file_serializer.validated_data['signs_number']
 
             # Save in database
             new_zip_task = file_serializer.save()

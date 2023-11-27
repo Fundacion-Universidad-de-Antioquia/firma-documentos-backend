@@ -68,7 +68,8 @@ def send_zip_file_task(zip_task_id):
     company_sign = zip_task.signs_number
 
     # Create a new sign_task  and the relation with the zip file
-    sign_task = SignTask(zip_file=zip_task_id)
+    sign_task = SignTask(zip_file=zip_task)
+    sign_task.status = sign_task.STATUS_PENDING
 
     # Get system date and create a folder inside media folder with the date
     folder_name = 'contracts_' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -76,17 +77,25 @@ def send_zip_file_task(zip_task_id):
 
     try:
         os.mkdir('media/docs/' + folder_name)
+        sign_task.message = f"Carpeta creada: {folder_name}"
+        sign_task.save()
     except FileExistsError as fError:
         logger.info(fError)
-
+        sign_task.message = f"Error Creando carpeta: {fError}"
+        sign_task.save()
+    
 
     with zipfile.ZipFile(zip_file, 'r') as zObject:
         file_list = zObject.infolist()
         zObject.extractall(path = 'media/docs/' + folder_name)
+        sign_task.message = "Archivos extraidos"
+        sign_task.save()
     
     # Get the first file in the list to get the path
+    
     generated_dir = file_list[0].filename.split('/')[0]
 
+    '''
     for contract_file in file_list:
         # TODO: Quita acentos en nombre del archivo: i.e. 'Álvaro' -> 'Alvaro', eso genera problema con Azure Storage
         # TODO: Maneja esto con exceptions para que no se caiga el proceso
@@ -99,15 +108,20 @@ def send_zip_file_task(zip_task_id):
                 with open(file_path, 'rb') as data:
                     blob_client.upload_blob(data)
                 logger.info("File uploaded to Azure: " + contract_file.filename)
+                message = f"Archivo subido a Azure: {contract_file.filename}"
             except ResourceExistsError as rError:
                 logger.info(rError)
+                message = f"Error subiendo archivo a Azure: {contract_file.filename}"
         else:
             blob_service_client.close()
-            return {"error": "No se envió archivos"}
+            message = "No subió archivos a Azure"
+            # return {"error": "No se envió archivos"}
+    '''
     
     # Close connection to Azure
     blob_service_client.close()
 
+    print("Inicia lectura de archivo Excel")
     xls = load_workbook(filename=xls_file, read_only=True, keep_vba=True, data_only=True)
 
     # get first sheet
@@ -116,9 +130,10 @@ def send_zip_file_task(zip_task_id):
     # Get column names
     column_names = [c.value for c in data_sheet[1] if c.value is not None]
 
-    # Connect to Odoo
     odoo = OdooClient()
-     
+    print("Conectado a Odoo")
+    
+    files_sent = 0
     # Iterate to get the data
     for row in data_sheet.iter_rows(min_row=2, values_only=True):
         # TODO: Maneja esto con exceptions para que no caiga el proceso
@@ -136,13 +151,14 @@ def send_zip_file_task(zip_task_id):
             employee_name = employee_data['NOMBRES Y APELLIDOS'].strip()
             print ('Creando empleado: ' + employee_name)
             employee_odoo_id = odoo.create_employee(employee_name, employee_email)
+            sign_task.message = f"Se crea nuevo registro empleado en Odoo {employee_email}"
 
         # Get company signer ID from Odoo
         # TOFIX: Get company email from Odoo and search by email, maybe get directly the ID
-        print(f'Firma Companía?: {company_sign}')
+        print(f'Cantidad de firmas: {company_sign}')
         # directorejectivo@fundacionudea.co
         # TODO: Cambiar el correo de la firma de la Fundación UdeA por una variable que llegue desde el form del frontend
-        company_id = odoo.search_employee('directorejecutivo@fundacionudea.co') if company_sign == 2 else None
+        company_id = odoo.search_employee('gestoratic@fundacionudea.co') if company_sign == 2 else None
         
         # Transform PDF to base64, get number of pages to add sign fields in the last page
         nombre_archivo = employee_data['NOMBRE_ARCHIVO']
@@ -158,6 +174,7 @@ def send_zip_file_task(zip_task_id):
 
         # Upload PDF file
         pdf_id = odoo.upload_new_contract_sign(nombre_archivo, document_64)
+        sign_task.message = f"Sube a Odoo documento {nombre_archivo}"
 
         # Update PDF with sign fields
         sign_id = odoo.update_contract_sign(template_id=pdf_id, numpage=numpages, second_field=company_sign)
@@ -166,15 +183,14 @@ def send_zip_file_task(zip_task_id):
         odoo.send_sign_contract(pdf_id, nombre_archivo, employee_odoo_id, company_id)
         
         sign_task.last_contract_sent = nombre_archivo
-        sign_task.save()
+        sign_task.message = f"Archivo envíado: {nombre_archivo}"
         
         print('Documento enviado a firmar '+nombre_archivo)
+        files_sent += 1
 
-        # Create new ContractDocument database record
-        # contract_document = ContractDocument.objects.create(
-        #                            name=employee_data['NOMBRES Y APELLIDOS'],
-        #                            path=str(nombre_archivo + ".pdf"),
-        #                            sign_id=sign_id,
-        #                            employee_id=employee_odoo_id)
-        # contract_document.save()
+        sign_task.files_sent = files_sent
+        sign_task.save()
+
+    sign_task.status = sign_task.STATUS_SUCCESS
+    sign_task.save()
     return {"message": "Archivos enviados"}

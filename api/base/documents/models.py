@@ -72,10 +72,10 @@ class SignTask(models.Model):
     EQUATIONS = ((DIGITAL_SIGNATURE, 'Signature'),)
 
     # Statuses
-    STATUS_START = 'START'
-    STATUS_PENDING = 'PENDING'
+    STATUS_START = 'INICIADO'
+    STATUS_PENDING = 'INCOMPLETO'
     STATUS_ERROR = 'ERROR'
-    STATUS_SUCCESS = 'SUCCESS'
+    STATUS_SUCCESS = 'EXITOSO'
     STATUSES = (
         (STATUS_START, 'Iniciado'),
         (STATUS_PENDING, 'Incompleto'),
@@ -83,12 +83,16 @@ class SignTask(models.Model):
         (STATUS_SUCCESS, 'Éxitoso'),
     )
 
-    zipfile = models.OneToOneField(
+    zip_file = models.OneToOneField(
         ZipFile, on_delete=models.CASCADE,
         primary_key=True
     )
 
-    status = models.CharField(max_length=8, choices=STATUSES, default=STATUS_START)
-    message = models.CharField(max_length=110, blank=True)
-    last_contract_sent = models.CharField(max_length=255, blank=True)
+    status = models.CharField(max_length=20, choices=STATUSES, default=STATUS_START)
+    files_sent = models.IntegerField(default=0)
+    message = models.CharField(max_length=255, blank=True, default=STATUS_START)
+    last_contract_sent = models.CharField(max_length=255, blank=True, default='Ninguno')
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'sign_task'

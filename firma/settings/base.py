@@ -92,7 +92,7 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 ODOO_API = {
     'ODOO_URL': os.getenv('ODOO_URL'),
     'ODOO_USERNAME': os.getenv('ODOO_USERNAME'),
-    'API_KEY': os.getenv('ODOO_API_KEY'),
+    'ODOO_API_KEY': os.getenv('ODOO_API_KEY'),
     'DATABASE': os.getenv('ODOO_DATABASE'),
     'PASSWORD': os.getenv('ODOO_PASSWORD'),
 }
@@ -181,6 +181,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 DOCUMENTS_URL = '/docs/'
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 314572800
+FILE_UPLOAD_MAX_MEMORY_SIZE = 314572800
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

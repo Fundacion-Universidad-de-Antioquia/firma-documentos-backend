@@ -1,6 +1,6 @@
 import zipfile
 from rest_framework import serializers
-from api.base.documents.models import Files, ZipFile
+from api.base.documents.models import Files, ZipFile, SignTask
 
 class FilesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,3 +60,9 @@ class ZipFileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('El número de firmas debe ser 1 o 2')        
 
         return data
+
+
+class SignTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SignTask
+        fields = ['message', 'sent', 'timestamp']
