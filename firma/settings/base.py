@@ -10,16 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-
 import os
-import environ
+from dotenv import load_dotenv
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Load environment variables
-env = environ.Env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -89,7 +87,7 @@ DRF_TYPED_VIEWS = {
 
 WSGI_APPLICATION = 'firma.wsgi.application'
 
-
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 # Odoo API
 ODOO_API = {
     'ODOO_URL': os.getenv('ODOO_URL'),
