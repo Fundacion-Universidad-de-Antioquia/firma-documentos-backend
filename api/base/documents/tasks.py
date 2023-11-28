@@ -170,11 +170,14 @@ def send_zip_file_task(zip_task_id):
         except FileNotFoundError as fError:
             # Continua al siguiente archivo
             logger.info(fError)
+            sign_task.message = f"Error convirtiendo archivo a base64: {fError}"
+            sign_task.save()
             continue
 
         # Upload PDF file
         pdf_id = odoo.upload_new_contract_sign(nombre_archivo, document_64)
         sign_task.message = f"Sube a Odoo documento {nombre_archivo}"
+        sign_task.save()
 
         # Update PDF with sign fields
         sign_id = odoo.update_contract_sign(template_id=pdf_id, numpage=numpages, second_field=company_sign)
