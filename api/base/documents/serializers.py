@@ -65,4 +65,4 @@ class ZipFileSerializer(serializers.ModelSerializer):
 class SignTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = SignTask
-        fields = ['message', 'sent', 'timestamp']
+        fields = ['message', 'files_sent', 'timestamp', 'last_contract_sent']

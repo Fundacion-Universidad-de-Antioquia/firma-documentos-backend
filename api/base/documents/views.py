@@ -76,7 +76,8 @@ class ZipFileView(APIView):
         '''
         # Query to get the list of SignTasks: just 10
         # Get the last 10 tasks from database
-        tasks = SignTask.objects.all().last(10)
+        #tasks = SignTask.objects.all().last(10)
+        tasks = SignTask.objects.all().order_by('zip_file_id')[:10]
 
         
         # Serialize the data

@@ -1,4 +1,5 @@
 .env
+myenv/
 Taskfile.yml
 db.sqlite3
 *.py[cod]
