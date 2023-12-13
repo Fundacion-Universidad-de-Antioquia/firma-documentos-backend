@@ -87,7 +87,7 @@ class OdooClient():
 
         return template_id
 
-    def update_contract_sign(self, template_id=0, numpage=1, second_field=True):
+    def update_contract_sign(self, template_id=0, numpage=1, second_field=1):
         '''
         Actualiza el contrato previamente creado con el campo de firma
         model = sign.template
@@ -96,8 +96,8 @@ class OdooClient():
         :param str document_id: xxxx
             document_id: positivo: sign.template id en base de datos (ya debe estar en la BD)
         :param numpage
-        :param second_field: True si se agrega el campo de firma de la Fundación
-        :return: Booleano True si agregó la firma
+        :param second_field: 2 si se agrega el campo de firma de la Fundación
+        :return: item_id_company, item_id_employee (tuple)
         '''
 
         # Campo de firma del Gerente es tipo Compañia
@@ -133,11 +133,9 @@ class OdooClient():
 
         sign_template = self.odoo.env['sign.template']
         sign_item = self.odoo.env['sign.item']
-
-        if second_field:  
-            item_id_company = sign_item.create(sign_field_company)
             
         item_id_employee = sign_item.create(sign_field_employee)
+        item_id_company = sign_item.create(sign_field_company) if second_field == 2 else None
 
         return (item_id_company, item_id_employee)
 
@@ -150,13 +148,17 @@ class OdooClient():
         :param str company_id: Id del firmante de la fundación
         '''
 
-        print(f"ID Del empleado: {company_id}")
+        print(f"ID De la compañía: {company_id}")
 
-        # Agrega la firma de la fundación si es necesario
-        signers = [[0, 'virtual_37', {'role_id': 2, 'partner_id': employee_id}]]
+        # role_id para empleado es 3
+        signers = [[0, 'virtual_37', {'role_id': 3, 'partner_id': employee_id}]]
         signers_count = 1
-        if company_id != None:
-            signers.append([0, 'virtual_25', {'role_id': 3, 'partner_id': company_id}])
+
+        # Agrega la firma de la fundación si es solicitado
+        if company_id is not None and company_id != "":
+            # role_id para compañía es 2
+            print("Agrega firma de la fundación")
+            signers.append([0, 'virtual_25', {'role_id': 2, 'partner_id': company_id}])
             signers_count = 2
 
         # FIXME: Agregar company_id como firmante cuando sea necesario
@@ -176,17 +178,11 @@ class OdooClient():
             'message': '<p>Hola.</p><p>Mensaje generado automáticamente, no responder</p>'
         }
 
-        print("Preparar correo")
-
         # Prepare email request
         sign_email = self.odoo.env['sign.send.request']
         email_id = sign_email.create(request_fields)
 
-        print(f'ID de plantilla de email {email_id}')
-
         request_sign = sign_email.send_request(email_id)
-
-        print(f'Correo enviado código {request_sign}')
 
         return request_sign
 

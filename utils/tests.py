@@ -19,7 +19,7 @@ class OdooClientTestCase(TestCase):
         Test connection with Odoo API
         '''
         self.assertIsNotNone(self.odoo.user)
-        self.assertEquals(self.odoo.user.email, 'gertic@fundacionudea.co')
+        self.assertEquals(self.odoo.user.email, 'firmadocumentos@fundacionudea.co')
 
     def test_search_employee_exist(self):
         employee_email = 'asistentetic@fundacionudea.co'

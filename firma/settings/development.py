@@ -27,10 +27,10 @@ AZURE_ACCOUNT_NAME = os.getenv('AZURE_STORAGE_ACCOUNT_NAME')
 AZURE_SECRET_KEY = os.getenv('AZURE_SECRET_KEY')
 AZURE_STORAGE_CONTAINER = os.getenv('AZURE_STORAGE_CONTAINER_NAME')
 AZURE_STORAGE_URL = os.getenv('AZURE_STORAGE_URL')
-AZURE_STORAGE_CONNECTION_STRING = (f'DefaultEndpointsProtocol=https;AccountName='
-    '{AZURE_ACCOUNT_NAME};'+
-    'AccountKey={AZURE_SECRET_KEY};'
-    'BlobEndpoint={AZURE_STORAGE_URL}')
+AZURE_STORAGE_CONNECTION_STRING = ('DefaultEndpointsProtocol=https;AccountName='
+    f'{AZURE_ACCOUNT_NAME};'+
+    f'AccountKey={AZURE_SECRET_KEY};'
+    f'BlobEndpoint={AZURE_STORAGE_URL}')
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
