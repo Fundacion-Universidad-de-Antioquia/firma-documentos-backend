@@ -11,8 +11,8 @@ class OdooClient():
         self.url = settings.ODOO_API['ODOO_URL']
         self.username = settings.ODOO_API['ODOO_USERNAME']
         self.api_key = settings.ODOO_API['ODOO_API_KEY']
-        self.database = settings.ODOO_API['DATABASE']
-        self.password = settings.ODOO_API['PASSWORD']
+        self.database = settings.ODOO_API['ODOO_DATABASE']
+        self.password = settings.ODOO_API['ODOO_PASSWORD']
         
         # Create exeception to manage the connection via internet to Odoo
         try:

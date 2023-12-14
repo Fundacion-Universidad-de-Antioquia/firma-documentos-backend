@@ -93,8 +93,8 @@ ODOO_API = {
     'ODOO_URL': os.getenv('ODOO_URL'),
     'ODOO_USERNAME': os.getenv('ODOO_USERNAME'),
     'ODOO_API_KEY': os.getenv('ODOO_API_KEY'),
-    'DATABASE': os.getenv('ODOO_DATABASE'),
-    'PASSWORD': os.getenv('ODOO_PASSWORD'),
+    'ODOO_DATABASE': os.getenv('ODOO_DATABASE'),
+    'ODOO_PASSWORD': os.getenv('ODOO_PASSWORD'),
 }
 
 # Company signer of contracts
