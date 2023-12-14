@@ -56,6 +56,7 @@ class ZipFile(models.Model):
     created_by = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = True
         db_table = 'zip_file'
 
 
@@ -95,4 +96,5 @@ class SignTask(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        managed = True
         db_table = 'sign_task'
