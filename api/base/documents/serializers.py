@@ -60,3 +60,9 @@ class ZipFileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('El número de firmas debe ser 1 o 2')        
 
         return data
+
+
+class SignTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SignTask
+        fields = ['message', 'files_sent', 'timestamp', 'last_contract_sent']

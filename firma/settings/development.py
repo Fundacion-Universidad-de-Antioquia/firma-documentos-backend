@@ -23,11 +23,14 @@ if 'test' in sys.argv or 'test\_coverage' in sys.argv: #Covers regular testing a
  DATABASES['default']['NAME'] = ':memory:'
 
 # Create azurite connetion for Django
-AZURE_ACCOUNT_NAME = env('AZURE_STORAGE_ACCOUNT_NAME')
-AZURE_STORAGE_KEY = env('AZURE_SECRET_KEY')
-AZURE_STORAGE_CONTAINER = env('AZURE_STORAGE_CONTAINER_NAME')
-AZURE_STORAGE_URL = env('AZURE_STORAGE_URL')
-AZURE_STORAGE_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=' + AZURE_ACCOUNT_NAME +';AccountKey=' + AZURE_STORAGE_KEY + ';BlobEndpoint=' + AZURE_STORAGE_URL
+AZURE_ACCOUNT_NAME = os.getenv('AZURE_STORAGE_ACCOUNT_NAME')
+AZURE_SECRET_KEY = os.getenv('AZURE_SECRET_KEY')
+AZURE_STORAGE_CONTAINER = os.getenv('AZURE_STORAGE_CONTAINER_NAME')
+AZURE_STORAGE_URL = os.getenv('AZURE_STORAGE_URL')
+AZURE_STORAGE_CONNECTION_STRING = ('DefaultEndpointsProtocol=https;AccountName='
+    f'{AZURE_ACCOUNT_NAME};'+
+    f'AccountKey={AZURE_SECRET_KEY};'
+    f'BlobEndpoint={AZURE_STORAGE_URL}')
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')

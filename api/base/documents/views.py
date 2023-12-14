@@ -71,11 +71,21 @@ class ZipFileView(APIView):
 
     def get(self, request):
         '''
-        Must define what to response when get method is called
+        Get the list of tasks:
+        N° | Date | Number of sent | Status
         '''
-        return Response ({"message": "Lista de tareas"}, status=status.HTTP_200_OK)
+        # Query to get the list of SignTasks: just 10
+        # Get the last 10 tasks from database
+        #tasks = SignTask.objects.all().last(10)
+        tasks = SignTask.objects.all().order_by('zip_file_id')[:10]
 
-    # create post method and return response "Hola Angie"
+        
+        # Serialize the data
+        serializer = SignTaskSerializer(tasks, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+        #return Response ({"message": "Lista de tareas"}, status=status.HTTP_200_OK)
+
     def post(self, request, format=None):
         '''
         Get the zip file and unzip it in media folder
