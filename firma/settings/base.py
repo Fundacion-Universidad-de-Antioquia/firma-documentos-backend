@@ -10,24 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-
 import os
 from dotenv import load_dotenv
-import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Load environment variables
-load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Generate the Secret Key from start.sh script
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]', '0.0.0.0']
 
@@ -90,14 +87,14 @@ DRF_TYPED_VIEWS = {
 
 WSGI_APPLICATION = 'firma.wsgi.application'
 
-
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 # Odoo API
 ODOO_API = {
     'ODOO_URL': os.getenv('ODOO_URL'),
     'ODOO_USERNAME': os.getenv('ODOO_USERNAME'),
     'ODOO_API_KEY': os.getenv('ODOO_API_KEY'),
-    'ODOO_DATABASE': os.getenv('ODOO_DATABASE'),
-    'ODOO_PASSWORD': os.getenv('ODOO_PASSWORD'),
+    'DATABASE': os.getenv('ODOO_DATABASE'),
+    'PASSWORD': os.getenv('ODOO_PASSWORD'),
 }
 
 # Company signer of contracts
@@ -180,8 +177,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
 
 # Media Files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
