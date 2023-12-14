@@ -97,6 +97,9 @@ ODOO_API = {
     'PASSWORD': os.getenv('ODOO_PASSWORD'),
 }
 
+# Company signer of contracts
+COMPANY_SIGNER = os.getenv('ODOO_COMPANY_SIGNER')
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
