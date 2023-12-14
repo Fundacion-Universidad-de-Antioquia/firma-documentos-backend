@@ -10,11 +10,11 @@ SECRET_KEY = '1c153c54d3b21a8ad94a766e4fb2427e816a5092990957923c27c4335f198cdb'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env('POSTGRES_DB'),
-        'USER': env('POSTGRES_USER'),
-        'PASSWORD': env('POSTGRES_PASSWORD'),
-        'HOST': env('POSTGRES_HOST'),
-        'PORT': env('POSTGRES_PORT'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
     },
 }
 
@@ -32,20 +32,12 @@ AZURE_STORAGE_CONNECTION_STRING = ('DefaultEndpointsProtocol=https;AccountName='
     f'AccountKey={AZURE_SECRET_KEY};'
     f'BlobEndpoint={AZURE_STORAGE_URL}')
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-
-# Media Files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-DOCUMENTS_URL = '/docs/'
-
 
 # Celery confs
 # CELERY_BROKER_URL = 'redis://localhost:6379'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_BROKER_URL = env('CELERY_BROKER')
-CELERY_RESULT_BACKEND = env('CELERY_BACKEND')
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_BACKEND')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

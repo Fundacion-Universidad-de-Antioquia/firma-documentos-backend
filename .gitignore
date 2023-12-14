@@ -28,12 +28,3 @@ firma.toml
 celerybeat-schedule
 requirements-azure.txt
 __azurite_db_blob_extent__.json
-api/base/documents/__pycache__/models.cpython-310.pyc
-api/base/documents/__pycache__/serializers.cpython-310.pyc
-api/base/documents/__pycache__/tasks.cpython-310.pyc
-api/base/documents/__pycache__/urls.cpython-310.pyc
-api/base/documents/__pycache__/views.cpython-310.pyc
-api/base/users/__pycache__/urls.cpython-310.pyc
-api/base/users/__pycache__/views.cpython-310.pyc
-firma/__pycache__/celery.cpython-310.pyc
-firma/__pycache__/urls.cpython-310.pyc
