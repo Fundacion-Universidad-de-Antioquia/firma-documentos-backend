@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 
-from .models import Files, ZipFile
-from .serializers import FilesSerializer, ZipFileSerializer
+from .models import Files, ZipFile, SignTask
+from .serializers import FilesSerializer, ZipFileSerializer, SignTaskSerializer
 from .tasks import send_contract_sign_task, send_zip_file_task
 
 class FilesAPIView(APIView):
@@ -97,18 +97,6 @@ class ZipFileView(APIView):
 
         if file_serializer.is_valid(raise_exception=True):
 
-            # Get the data and save to database, define the model with fields
-            new_file = file_serializer.save()
-
-            # Unzip the zip file
-            # zip_file = request.FILES['zip_file']
-            # xlsx_file = request.FILES['xlsx_file']
-            # company_sign = request.data['signs_number']
-
-            zip_file = file_serializer.validated_data['zip_file']
-            xlsx_file = file_serializer.validated_data['xlsx_file']
-            company_sign = file_serializer.validated_data['signs_number']
-
             # Save in database
             new_zip_task = file_serializer.save()
             zip_id = new_zip_task.id
@@ -119,4 +107,4 @@ class ZipFileView(APIView):
             return Response ({"message": "Archivos recibidos"}, status=status.HTTP_200_OK)
         
         else:
-            return Response ({"message": "No se ha seleccionado un archivo"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response ({"message": "Archivos no enviados"}, status=status.HTTP_400_BAD_REQUEST)

@@ -41,7 +41,6 @@ class ContractDocument(models.Model):
 
 
     class Meta:
-        managed = True
         db_table = 'contract_document'
 
 class ZipFile(models.Model):
@@ -57,7 +56,6 @@ class ZipFile(models.Model):
     created_by = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = True
         db_table = 'zip_file'
 
 
@@ -74,24 +72,27 @@ class SignTask(models.Model):
     EQUATIONS = ((DIGITAL_SIGNATURE, 'Signature'),)
 
     # Statuses
-    STATUS_PENDING = 'PENDING'
+    STATUS_START = 'INICIADO'
+    STATUS_PENDING = 'INCOMPLETO'
     STATUS_ERROR = 'ERROR'
-    STATUS_SUCCESS = 'SUCCESS'
+    STATUS_SUCCESS = 'EXITOSO'
     STATUSES = (
-        (STATUS_PENDING, 'Pending'),
+        (STATUS_START, 'Iniciado'),
+        (STATUS_PENDING, 'Incompleto'),
         (STATUS_ERROR, 'Error'),
-        (STATUS_SUCCESS, 'Success'),
+        (STATUS_SUCCESS, 'Éxitoso'),
     )
 
-    input = models.IntegerField()
-    output = models.IntegerField(blank=True, null=True)
-
-    files = models.OneToOneField(
-        Files, on_delete=models.CASCADE,
+    zip_file = models.OneToOneField(
+        ZipFile, on_delete=models.CASCADE,
         primary_key=True
     )
 
+    status = models.CharField(max_length=20, choices=STATUSES, default=STATUS_START)
+    files_sent = models.IntegerField(default=0)
+    message = models.CharField(max_length=255, blank=True, default=STATUS_START)
+    last_contract_sent = models.CharField(max_length=255, blank=True, default='Ninguno')
     timestamp = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=8, choices=STATUSES)
-    message = models.CharField(max_length=110, blank=True)
+
+    class Meta:
+        db_table = 'sign_task'
