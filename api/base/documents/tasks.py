@@ -158,7 +158,7 @@ def send_zip_file_task(zip_task_id):
         # directorejectivo@fundacionudea.co
 
         # TODO: Cambiar el correo de la firma de la Fundación UdeA por una variable que llegue desde el form del frontend
-        company_id = odoo.search_employee('directorejecutivo@fundacionudea.co') if company_sign == 2 else None
+        company_id = odoo.search_employee(settings.COMPANY_SIGNER) if company_sign == 2 else None
         
         # Transform PDF to base64, get number of pages to add sign fields in the last page
         nombre_archivo = employee_data['NOMBRE_ARCHIVO']

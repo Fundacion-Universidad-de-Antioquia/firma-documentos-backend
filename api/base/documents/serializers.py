@@ -1,6 +1,6 @@
 import zipfile
 from rest_framework import serializers
-from api.base.documents.models import Files, ZipFile
+from api.base.documents.models import Files, ZipFile, SignTask
 
 class FilesSerializer(serializers.ModelSerializer):
     class Meta:
