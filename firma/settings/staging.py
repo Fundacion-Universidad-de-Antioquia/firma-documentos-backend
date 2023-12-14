@@ -6,7 +6,7 @@ from firma.settings.base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["webapp-firma-backend.azurewebsites.net", "*"]
+ALLOWED_HOSTS = ["webapp-firma-backend.azurewebsites.net"]
 CSRF_TRUSTED_ORIGINS = ["https://webapp-firma-backend.azurewebsites.net"]
 CSRF_ALLOWED_ORIGINS = ["https://webapp-firma-backend.azurewebsites.net"]
 CORS_ORIGINS_WHITELIST = ["https://webapp-firma-backend.azurewebsites.net"]
