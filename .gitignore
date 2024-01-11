@@ -1,5 +1,7 @@
 .env
 myenv/
+.devcontainer/
+.vscode/
 Taskfile.yml
 db.sqlite3
 *.py[cod]
