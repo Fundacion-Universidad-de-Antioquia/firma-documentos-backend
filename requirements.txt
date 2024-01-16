@@ -8,7 +8,7 @@ azure-identity==1.14.0
 azure-storage-blob==12.17.0
 billiard==3.6.4.0
 black==23.7.0
-celery==5.2.7
+celery==5.3.6
 certifi==2022.12.7
 cffi==1.15.1
 charset-normalizer==3.1.0

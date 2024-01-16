@@ -218,6 +218,15 @@ class OdooClient():
         )
         
         return partner_id
+    
+
+    # Get states from Colombia
+    '''
+    def get_states(self):
+        states = self.odoo.env['res.country.state'].search_read(
+            [], ['id', 'name', 'code'])
+        return states
+    '''
 
 
 '''
