@@ -16,7 +16,17 @@ DATABASES = {
         'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': os.getenv('POSTGRES_PORT'),
     },
+    # Users database with mariadb
+    'auth_db': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'my_db',
+        'USER': 'my_user',
+        'PASSWORD': '123456',
+        'HOST': 'hopeful_jackson',
+        'PORT': '3306',
+    }
 }
+USERS_TABLE=os.getenv('USERS_TABLE')
 
 if 'test' in sys.argv or 'test\_coverage' in sys.argv: #Covers regular testing and django-coverage
  DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'

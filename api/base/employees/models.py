@@ -7,7 +7,7 @@ class Employee(models.Model):
     # TODO: Validar formato de fecha en Odoo: YYYY-MM-DD
     birth_date = models.DateField(blank=True, null=False)
 
-    birth_place = models.CharField(max_length=255, blank=True, null=False)
+    birth_place = models.CharField(max_length=255, blank=True, null=True)
 
     document_type= models.CharField(max_length=10, blank=True, null=False)
     id_document = models.CharField(max_length=50, blank=True, unique=True, null=False)

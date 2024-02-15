@@ -11,8 +11,8 @@ from rest_framework import generics, permissions
 from oauth2_provider.models import AccessToken, Application, RefreshToken
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 
-from api.base.users.serializers import UserSerializer
-from api.base.users.models import User
+from .serializers import UserSerializer
+from .models import User
 
 # Implements user login view and logout view with oauth2 returning token and refresh token
 @api_view(http_method_names=['POST'])

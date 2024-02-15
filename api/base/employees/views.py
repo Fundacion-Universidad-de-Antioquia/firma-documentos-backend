@@ -32,10 +32,10 @@ class EmployeesView(APIView):
         else:
             return Response({"message": "No tiene permisos para realizar esta acción"}, status=status.HTTP_403_FORBIDDEN)
         
-        employees_serializer = EmployeeSerializer(data=request.data)
+        employee_serializer = EmployeeSerializer(data=request.data)
         
-        if employees_serializer.is_valid():
-            new_employee = employees_serializer.save()
+        if employee_serializer.is_valid():
+            new_employee = employee_serializer.save()
 
             return Response({"message": "Empleado registrado"}, status=status.HTTP_200_OK)
         
