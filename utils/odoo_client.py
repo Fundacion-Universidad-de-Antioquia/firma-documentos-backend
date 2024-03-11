@@ -200,8 +200,24 @@ class OdooClient():
             partner_id = None
         
         return partner_id
+
+    def search_employee_by_identification(self, employee_identification):
+        '''
+        Search contact and return Identification number
+        In case the contact doesn't exist, return None
+        '''
+
+        odoo_context = self.odoo.env['hr.employee']
+        try:
+            # Partner identification is Interger
+            odoo_employee_id = odoo_context.search([('name', '=', employee_identification)])
+            odoo_employee = odoo_context.browse(odoo_employee_id)
+        except IndexError:
+            odoo_employee = None
+        
+        return odoo_employee
     
-    def create_employee(self, employee_name="", employee_email=""):
+    def create__or_update_employee(self, employee_name="", employee_email=""):
         '''
         Create employee in Odoo
         '''
@@ -227,6 +243,50 @@ class OdooClient():
             [], ['id', 'name', 'code'])
         return states
     '''
+
+    def get_employee_data(self, employee_odoo_id):
+        '''
+        También recibe un campo de empleado desde Odoo que indica que los campos generales están completos
+        '''
+
+    def update_employee_data(self, data):
+        '''
+        Update data from employee in Odoo
+        get employee_id (identification number) and data to update
+        '''
+        # Obtiene el empleado a partir del employee_id
+        employee_identification = data['id_document']
+        
+        employee = self.search_employee_by_identification(employee_identification)
+
+        # Crear datos para actualizar en Odoo a partir de parámetro data
+        employee_data = {}
+
+        employee_data['birthday'] = data['birth_date']
+        employee_data['x_studio_lugar_de_nacimiento'] = data['birth_place']
+        employee_data['name'] = data['id_document']
+        employee_data['x_studio_nmero_de_cuenta_bancaria'] = data['bank_account_number']
+        employee_data['x_studio_many2one_field_p7ucx'] = data['bank_name']
+        employee_data['gender'] = data['gender']
+
+        employee_data['address_home_id'] = data['home_address']
+        employee_data['x_studio_barrio'] = data['home_neighborhood']
+        employee_data['x_studio_municipio'] = data['home_city']
+        employee_data['work_home'] = data['telephone1']
+        employee_data['mobile_phone'] = data['cellphone']
+        employee_data['x_studio_correo_electrnico_personal'] = data['email']
+
+        # Campo para validar que los datos estén completos
+        employee_data['x_studio_requiere_actualiza_datos_generales'] = data['is_data_updated']
+        
+        # Campo de autorización de tratamiento de datos personales
+        data['is_data_treatment_accepted ']
+
+        # Actualiza los datos del empleado en Odoo
+        employee.write(employee_data)
+
+        # Actualiza los datos del empleado
+
 
 
 '''

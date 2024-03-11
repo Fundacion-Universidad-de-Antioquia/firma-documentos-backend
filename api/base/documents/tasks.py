@@ -145,10 +145,25 @@ def send_zip_file_task(zip_task_id):
         employee_email = employee_email.lower()
         print('Correo empleado: '+employee_email)
 
+        # TODO: Buscar empleado en Odoo sin importar mayúsculas o minúsculas
         employee_odoo_id = odoo.search_employee(employee_email)
 
         # TODO: Pasar correo a minúsculas para evitar duplicados en Odoo
         if employee_odoo_id is None:
+            '''
+            Error cuando no encuentra  columna de nombres y apellidos en el excel
+            2024-02-27T19:18:38.1581502Z Traceback (most recent call last):
+            2024-02-27T19:18:38.1591345Z   File "/tmp/8dbfcdf009a9bcd/antenv/lib/python3.10/site-packages/celery/app/trace.py", line 451, in trace_task
+            2024-02-27T19:18:38.1600155Z     R = retval = fun(*args, **kwargs)
+            2024-02-27T19:18:38.1695347Z   File "/tmp/8dbfcdf009a9bcd/antenv/lib/python3.10/site-packages/celery/app/trace.py", line 734, in __protected_call__
+            2024-02-27T19:18:38.1776637Z     return self.run(*args, **kwargs)
+            2024-02-27T19:18:38.1797885Z   File "/tmp/8dbfcdf009a9bcd/api/base/documents/tasks.py", line 159, in send_zip_file_task
+            2024-02-27T19:18:38.1869660Z     employee_name = employee_data['NOMBRES Y APELLIDOS'].strip()
+            2024-02-27T19:18:38.1879749Z KeyError: 'NOMBRES Y APELLIDOS'
+            2024-02-27T19:23:19.6873228Z [2024-02-27 14:23:19,685: WARNING/ForkPoolWorker-1] Entré ya
+            2024-02-27T19:23:20.0294276Z [27/Feb/2024 14:23:19] "POST /api/documents/zipfiles/ HTTP/1.1" 200 32
+            2024-02-27T19:23:20.5578846Z [2024-02-27 14:23:20,549: WARNING/ForkPoolWorker-1] File path: media/docs/contracts_2024-02-27-14-23-19/Envio 27/1000099587_AUTORIZACION_VERIFICACION_ACADEMICA.pdf
+            '''
             employee_name = employee_data['NOMBRES Y APELLIDOS'].strip()
             print ('Creando empleado: ' + employee_name)
             employee_odoo_id = odoo.create_employee(employee_name, employee_email)
@@ -168,7 +183,7 @@ def send_zip_file_task(zip_task_id):
         # Full path to the file
         full_contract_path = 'media/docs/' + folder_name + '/' +  generated_dir + '/'+ nombre_archivo + '.pdf'
         try:
-            document_64, numpages = document.convert_pdf_to_base64(full_contract_path)
+            document_64, numpages = document.convert_pdf_to_basAdele_Lavende64(full_contract_path)
             # Upload PDF file
             pdf_id = odoo.upload_new_contract_sign(nombre_archivo, document_64)
         except FileNotFoundError as fError:

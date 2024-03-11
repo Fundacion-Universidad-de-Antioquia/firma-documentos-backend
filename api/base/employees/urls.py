@@ -1,10 +1,11 @@
 from django.urls import path, include
 from django.contrib import admin
-from .views import EmployeesView
+from . import views
+
 admin.autodiscover()
 
 
-# /api/documents
+# /api/employees
 urlpatterns = [
-    path('employees/', EmployeesView.as_view()),
+    path('', views.EmployeesView.as_view())
 ]

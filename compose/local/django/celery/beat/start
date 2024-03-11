@@ -1,8 +1,0 @@
-#!/bin/bash
-
-set -o errexit
-set -o nounset
-
-rm -f './celerybeat.pid'
-echo 'Starting Celery Beat'
-celery -A firma beat -l INFO

@@ -16,14 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-from . import views
+from .views import home
 
 urlpatterns = [
     
-    path('', views.home, name = 'home'),
+    path('', home, name = 'home'),
     path('admin/', admin.site.urls),
     #path('api/documents/', include('api.base.documents.urls')),
     path('api/documents/', include('api.base.documents.urls')),
+    path('api/employees', include('api.base.employees.urls')),
     path('api/users/', include('api.base.users.urls')),
     path('api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]

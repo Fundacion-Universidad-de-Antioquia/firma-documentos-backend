@@ -48,7 +48,8 @@ INSTALLED_APPS = [
 
     # Libs installed
     'rest_framework',
-    'oauth2_provider',
+    'rest_framework.authtoken',
+    # 'oauth2_provider',
     'corsheaders',
 
     # Apps

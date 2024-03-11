@@ -27,6 +27,8 @@ DATABASES = {
     }
 }
 USERS_TABLE=os.getenv('USERS_TABLE')
+DATABASE_ROUTERS = ['api.base.users.models.UserRouter']
+
 
 if 'test' in sys.argv or 'test\_coverage' in sys.argv: #Covers regular testing and django-coverage
  DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
