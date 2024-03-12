@@ -1,6 +1,8 @@
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.conf import settings
+from django.db import connections
 from rest_framework import permissions, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -27,11 +29,26 @@ class Login(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        identification_number = serializer.validated_data.get('identification_number')
-        password = serializer.validated_data.get('password')
+        identification_number = serializer.validated_data.get('login')
+        password = serializer.validated_data.get('contrasena')
 
-        user = User.objects.using('auth_db').get(identification_number=identification_number)
-        if user is None or not self.check_md5_password(password, user.password):
+        print(f'Serializer: {serializer.validated_data}')
+
+        with connections['auth_db'].cursor() as cursor:
+            cursor.execute("SELECT id, login, contrasena FROM INTRANET_EMPLEADOS_USUARIOS WHERE login = %s", [identification_number])
+            user = cursor.fetchone()
+            # The user is a list of values, id, login, contrasena, convert to a dict
+            user = dict(zip(['id', 'login', 'contrasena'], user))
+
+            # print the contrasena from user
+            print(f'Contrasena: {user["contrasena"]}')
+
+        # user = User.objects.using('auth_db').raw("SELECT id, login, contrasena FROM INTRANET_EMPLEADOS_USUARIOS WHERE login = %s", [identification_number])
+
+        # user = User.get_user_by_login(identification_number)
+        
+
+        if user is None or not self.check_md5_password(password, user["contrasena"]):
             return Response({'error': 'Nombre de usuario o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
         
          # Generate JWT Token

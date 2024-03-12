@@ -19,10 +19,10 @@ DATABASES = {
     # Users database with mariadb
     'auth_db': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'my_db',
-        'USER': 'my_user',
-        'PASSWORD': '123456',
-        'HOST': 'hopeful_jackson',
+        'NAME': 'sitio_web',
+        'USER': 'UserIntranet',
+        'PASSWORD': '631353051DBF13D759F78BBB1320E36A',
+        'HOST': '10.0.0.6',
         'PORT': '3306',
     }
 }

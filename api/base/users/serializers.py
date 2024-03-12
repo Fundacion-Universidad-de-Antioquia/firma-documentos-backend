@@ -3,13 +3,13 @@ from django.contrib.auth import get_user_model
 
 class UserSerializer(serializers.ModelSerializer):
 
-    identification_number = serializers.CharField()
-    password = serializers.CharField()
+    login = serializers.CharField()
+    contrasena = serializers.CharField()
 
     class Meta:
         model = get_user_model()
-        fields = ['identification_number', 'password']
+        fields = ['login', 'contrasena']
 
 class ObtainTokenSerializer(serializers.Serializer):
-    identification_number = serializers.CharField()
-    password = serializers.CharField()
+    login = serializers.CharField()
+    contrasena = serializers.CharField()

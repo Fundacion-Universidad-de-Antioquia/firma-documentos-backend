@@ -5,19 +5,35 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser): 
     
-    username = None
+    username = models.CharField(max_length=100, unique=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
+    contrasena = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
-    identification_number = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
+    login = models.CharField(max_length=100, unique=True)
+    last_login = models.DateTimeField()
+    is_superuser = models.BooleanField()
+
+    is_active = models.BooleanField()
+    is_staff =  models.BooleanField()
+    date_joined = models.DateTimeField()
+    is_admin = models.BooleanField()
+
 
     # Create an relation with employee model one by one
-    USERNAME_FIELD = "identification_number"
+    USERNAME_FIELD = "login"
     REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.name
+    
+    # define class method to get an user by login field
+    @classmethod
+    def get_user_by_login(cls, login):
+
+        return cls.objects.using('auth_db').get(login=login)
     
     class Meta:
         managed = False

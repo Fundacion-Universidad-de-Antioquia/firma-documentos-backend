@@ -44,12 +44,12 @@ class CustomUserModelBackend(authentication.BaseAuthentication):
             print(f"Error: {e}")
             raise ParseError('Token no válido')
         
-        # Get user from database, can be identification_number
+        # Get user from database, can be login
         username = payload.get('user_identifier')
         if username is None:
             raise AuthenticationFailed('Login no encontrado en el token')
         
-        user = User.objects.using('auth_db').get(identification_number=username)
+        user = User.objects.using('auth_db').get(login=username)
         if user is None:
             raise AuthenticationFailed('Usuario no encontrado en la base de datos')
                
@@ -63,7 +63,7 @@ class CustomUserModelBackend(authentication.BaseAuthentication):
     def generate_access_token(cls, user):
         # Create payload
         payload = {
-            'user_identifier': user.identification_number,
+            'user_identifier': user['login'],
             'exp': int((datetime.utcnow() + timedelta(hours=settings.JWT_CONF['TOKEN_LIFETIME_HOURS'])).timestamp()),
             'iat': datetime.utcnow().timestamp()
         }
@@ -78,7 +78,7 @@ class CustomUserModelBackend(authentication.BaseAuthentication):
         
         # Create payload
         payload = {
-            'user_identifier': user.identification_number,
+            'user_identifier': user['login'],
             'exp': int((datetime.utcnow() + timedelta(days=settings.JWT_CONF['REFRESH_TOKEN_LIFETIME_DAYS']))),
             'iat': datetime.utcnow()
         }
@@ -114,4 +114,4 @@ class IsStaff(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and request.user.is_staff
+        return request.user and request.user["is_authenticated"] and request.user["is_staff"]
