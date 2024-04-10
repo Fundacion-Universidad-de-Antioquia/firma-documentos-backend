@@ -32,21 +32,12 @@ class Login(APIView):
         identification_number = serializer.validated_data.get('login')
         password = serializer.validated_data.get('contrasena')
 
-        print(f'Serializer: {serializer.validated_data}')
-
         with connections['auth_db'].cursor() as cursor:
             cursor.execute("SELECT id, login, contrasena FROM INTRANET_EMPLEADOS_USUARIOS WHERE login = %s", [identification_number])
             user = cursor.fetchone()
-            # The user is a list of values, id, login, contrasena, convert to a dict
-            user = dict(zip(['id', 'login', 'contrasena'], user))
 
-            # print the contrasena from user
-            print(f'Contrasena: {user["contrasena"]}')
-
-        # user = User.objects.using('auth_db').raw("SELECT id, login, contrasena FROM INTRANET_EMPLEADOS_USUARIOS WHERE login = %s", [identification_number])
-
-        # user = User.get_user_by_login(identification_number)
-        
+            # Usuario es lista, se convierte a diccionario
+            user = dict(zip(['id', 'login', 'contrasena'], user))    
 
         if user is None or not self.check_md5_password(password, user["contrasena"]):
             return Response({'error': 'Nombre de usuario o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -77,7 +68,7 @@ def logout_view(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def venga_entre(request):
     print(f'Datos de request: {request.data}')
     return Response({'message': 'Venga entre'}, status=HTTP_200_OK)

@@ -7,5 +7,8 @@ admin.autodiscover()
 
 # /api/employees
 urlpatterns = [
-    path('', views.EmployeesView.as_view())
+    path('', views.EmployeesView.as_view()),
+
+    # Create path for getting employee data status from view
+    path('data_status/', views.employee_data_policies)
 ]

@@ -2,10 +2,12 @@ from datetime import datetime, timedelta
 
 import jwt
 from django.conf import settings
+from django.db import connections
 from django.contrib.auth import get_user_model
 from rest_framework import authentication
 from rest_framework import permissions
 from rest_framework.exceptions import AuthenticationFailed, ParseError
+from jwt.exceptions import ExpiredSignatureError
 
 from .serializers import UserSerializer
 
@@ -39,20 +41,28 @@ class CustomUserModelBackend(authentication.BaseAuthentication):
             payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=['HS256'], options={"verify_iat":False})
         except jwt.exceptions.InvalidSignatureError:
             raise AuthenticationFailed('Invalid signature')
+        except ExpiredSignatureError:
+            raise AuthenticationFailed("Tiempo de sesión ha expirado")
         except jwt.exceptions.DecodeError as e:
             # print the full error
             print(f"Error: {e}")
             raise ParseError('Token no válido')
         
         # Get user from database, can be login
-        username = payload.get('user_identifier')
-        if username is None:
-            raise AuthenticationFailed('Login no encontrado en el token')
+        login = payload.get('user_identifier')
+        if login is None:
+            raise AuthenticationFailed('Usuario no encontrado en el token')
         
-        user = User.objects.using('auth_db').get(login=username)
+        with connections['auth_db'].cursor() as cursor:
+            cursor.execute("SELECT id, login FROM INTRANET_EMPLEADOS_USUARIOS WHERE login = %s", [login])
+            user = cursor.fetchone()
+
+            # Usuario es lista, se convierte a diccionario
+            user = dict(zip(['id', 'login'], user))
+
         if user is None:
             raise AuthenticationFailed('Usuario no encontrado en la base de datos')
-               
+        user['is_authenticated'] = True
         return (user, payload)
     
     def authenticate_header(self, request):
@@ -107,11 +117,11 @@ class CustomUserModelBackend(authentication.BaseAuthentication):
         return True
 
 
-
-class IsStaff(permissions.BasePermission):
+class IsOwner(permissions.BasePermission):
     """
-    Custom permission to only allow access to staff users.
+    Custom permission to only allow owners of an object to view or edit it.
     """
 
-    def has_permission(self, request, view):
-        return request.user and request.user["is_authenticated"] and request.user["is_staff"]
+    def has_object_permission(self, request, view, obj):
+        # Permissions are only granted to the owner of the object.
+        return obj.owner == request.user

@@ -24,7 +24,8 @@ class OdooClient():
             self.odoo.login(self.database, self.username, self.password)
             self.user = self.odoo.env.user
         except Exception as e:
-            print(f"No se pudo conectar a Odoo {e}")
+            print(f"Conexión con Odoo => {e}")
+
 
     '''
         Obtener la lista de proyectos de Odoo
@@ -208,14 +209,88 @@ class OdooClient():
         '''
 
         odoo_context = self.odoo.env['hr.employee']
-        try:
-            # Partner identification is Interger
-            odoo_employee_id = odoo_context.search([('name', '=', employee_identification)])
-            odoo_employee = odoo_context.browse(odoo_employee_id)
-        except IndexError:
-            odoo_employee = None
+     
+        # Employee identification is Interger
+        odoo_employee_id = odoo_context.search([('name', '=', employee_identification)])
+        if not odoo_employee_id:
+            return None
         
-        return odoo_employee
+        odoo_employee = odoo_context.browse(odoo_employee_id)
+        employee = {
+            "name": odoo_employee.identification_id,
+            "genero": odoo_employee.gender,
+            "fecha_nacimiento": odoo_employee.birth_date,
+            "lugar_nacimiento": odoo_employee.x_studio_lugar_de_nacimiento,
+            "email": odoo_employee.x_studio_correo_electrnico_personal,
+            "work_email": odoo_employee.work_email,
+            "address_home_id": odoo_employee.address_home_id,
+            "home_neighborhood": odoo_employee.x_studio_barrio,
+            "home_city": odoo_employee.x_studio_municipio,
+            "telephone1": odoo_employee.work_home,
+            "cellphone": odoo_employee.mobile_phone,
+            "project": odoo_employee.company_id.name,
+            "job_title": odoo_employee.job_title,
+            "identification_id": odoo_employee.name,
+            "work_phone": odoo_employee.work_phone,
+            "centro_costos": odoo_employee.x_studio_centro_de_costos,
+            "numero_cuenta_bancaria": odoo_employee.x_studio_nmero_de_cuenta_bancaria,
+            "banco": odoo_employee.x_studio_many2one_field_p7ucx,
+            "codigo_banco": odoo_employee.x_studio_cdigo_banco,
+            "blood_type": odoo_employee.x_studio_rh,
+            "zona": odoo_employee.x_studio_zona_proyecto_aseo,
+            "eps": odoo_employee.x_studio_many2one_field_qIGM2,
+            "pension": odoo_employee.x_studio_many2one_field_GtifE,
+            "severance": odoo_employee.x_studio_many2one_field_arquY,
+            "pant_size": odoo_employee.x_studio_many2one_field_ZfzC2,
+            "shirt_size": odoo_employee.x_studio_many2one_field_WqjQH,
+            "shoes_size": odoo_employee.x_studio_many2one_field_rv1KK,
+            "dress_style": odoo_employee.x_studio_estilo,
+            "nivel_riesgo": odoo_employee.x_studio_nivel_de_riesgo_1,
+            "salario": odoo_employee.x_studio_salario_empleado_actual,
+            "fecha_de_ingreso": odoo_employee.x_studio_fecha_de_ingreso_1,
+            "actualiza_datos_generales": odoo_employee.x_studio_requiere_actualiza_datos_generales,
+            "politica_datos_generales": odoo_employee.x_studio_poltica_tratamiento_datos
+        }
+
+        return employee
+    
+    '''
+    Function that search in Odoo by ID number and return odoo_employee.x_studio_requiere_actualiza_datos_generales and odoo_employee.x_studio_poltica_tratamiento_datos
+    '''
+    def get_employee_data_status(self, employee_identification):
+        odoo_context = self.odoo.env['hr.employee']
+     
+        # Employee identification is Interger
+        odoo_employee_id = odoo_context.search([('name', '=', employee_identification)])
+        if not odoo_employee_id:
+            return None
+        
+        odoo_employee = odoo_context.browse(odoo_employee_id)
+        employee_data = {
+            "is_data_updated": odoo_employee.x_studio_requiere_actualiza_datos_generales,
+            "is_data_treatment_accepted": odoo_employee.x_studio_poltica_tratamiento_datos
+        }
+
+        return employee_data
+    
+    def update_employee_data_policies(self, employee_identification, data_policy, data_treatment):
+        odoo_context = self.odoo.env['hr.employee']
+     
+        # Employee identification is Interger
+        odoo_employee_id = odoo_context.search([('name', '=', employee_identification)])
+        if not odoo_employee_id:
+            return None
+        
+        odoo_employee = odoo_context.browse(odoo_employee_id)
+        employee_data = {
+            "x_studio_requiere_actualiza_datos_generales": '1' if data_policy else '0',
+            "x_studio_poltica_tratamiento_datos": '1' if data_treatment else '0'
+        }
+
+        odoo_employee.write(employee_data)
+
+        return employee_data
+
     
     def create__or_update_employee(self, employee_name="", employee_email=""):
         '''

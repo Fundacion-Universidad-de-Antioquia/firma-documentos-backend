@@ -1,29 +1,80 @@
 from rest_framework import serializers
 from .models import Employee
 
-class EmployeeSerializer(serializers.ModelSerializer):
+class EmployeeSerializer(serializers.Serializer):
 
-    # Validate the data from request in a method called validate
-    def validate(self, data):
+    # Campos relacionados con Odoo pasa con x_name
+    name = serializers.CharField()
+    genero = serializers.CharField()
+    # fecha_nacimiento = serializers.DateField()
+    # lugar_nacimiento = serializers.CharField()
+    email = serializers.EmailField()
+    work_email = serializers.BooleanField()
+    # address_home_id = serializers.IntegerField() # En odoo es address_id.name
+    home_neighborhood = serializers.CharField()
+    # home_city = serializers.IntegerField()
+    #telephone1 = serializers.CharField()
+    cellphone = serializers.CharField()
+    project = serializers.CharField()
+    job_title = serializers.BooleanField()
+    identification_id = serializers.CharField()
+    work_phone = serializers.BooleanField()
+    centro_costos = serializers.CharField()
+    numero_cuenta_bancaria = serializers.CharField()
+    # banco = serializers.CharField()
+    codigo_banco = serializers.CharField()
+    blood_type = serializers.BooleanField()
+    zona = serializers.BooleanField()
+    # eps = serializers.IntegerField()
+    # pension = serializers.IntegerField()
+    # severance = serializers.IntegerField()
+    # pant_size = serializers.IntegerField()
+    # shirt_size = serializers.IntegerField()
+    # shoes_size = serializers.IntegerField()
+    dress_style = serializers.BooleanField()
+    nivel_riesgo = serializers.BooleanField()
+    salario = serializers.FloatField()
+    fecha_de_ingreso = serializers.DateField()
+    actualiza_datos_generales = serializers.BooleanField()
+    politica_datos_generales = serializers.BooleanField()
 
-        if not self.full_name:
-            raise serializers.ValidationError('Falta nombre completo')
-        
-        # Complete the rest of validations from model Employee
-        if not self.id_document:
-            raise serializers.ValidationError('Falta documento de identidad')
-        
-        return data
-    
     def create(self, validated_data):
         return Employee.objects.create(**validated_data)
     
     def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.genero = validated_data.get('genero', instance.genero)
+        instance.fecha_nacimiento = validated_data.get('fecha_nacimiento', instance.fecha_nacimiento)
+        instance.lugar_nacimiento = validated_data.get('lugar_nacimiento', instance.lugar_nacimiento)
         instance.email = validated_data.get('email', instance.email)
-        ...
-
-    class Meta:
-        model = Employee
-        # exclude = ['id']
-        fields = '__all__'
+        instance.work_email = validated_data.get('work_email', instance.work_email)
+        instance.address_home_id = validated_data.get('address_home_id', instance.address_home_id)
+        instance.home_neighborhood = validated_data.get('home_neighborhood', instance.home_neighborhood)
+        instance.home_city = validated_data.get('home_city', instance.home_city)
+        instance.telephone1 = validated_data.get('telephone1', instance.telephone1)
+        instance.cellphone = validated_data.get('cellphone', instance.cellphone)
+        instance.project = validated_data.get('project', instance.project)
+        instance.job_title = validated_data.get('job_title', instance.job_title)
+        instance.identification_id = validated_data.get('identification_id', instance.identification_id)
+        instance.work_phone = validated_data.get('work_phone', instance.work_phone)
+        instance.centro_costos = validated_data.get('centro_costos', instance.centro_costos)
+        instance.numero_cuenta_bancaria = validated_data.get('numero_cuenta_bancaria', instance.numero_cuenta_bancaria)
+        instance.banco = validated_data.get('banco', instance.banco)
+        instance.codigo_banco = validated_data.get('codigo_banco', instance.codigo_banco)
+        instance.blood_type = validated_data.get('blood_type', instance.blood_type)
+        instance.zona = validated_data.get('zona', instance.zona)
+        instance.eps = validated_data.get('eps', instance.eps)
+        instance.pension = validated_data.get('pension', instance.pension)
+        instance.severance = validated_data.get('severance', instance.severance)
+        instance.pant_size = validated_data.get('pant_size', instance.pant_size)
+        instance.shirt_size = validated_data.get('shirt_size', instance.shirt_size)
+        instance.shoes_size = validated_data.get('shoes_size', instance.shoes_size)
+        instance.dress_style = validated_data.get('dress_style', instance.dress_style)
+        instance.nivel_riesgo = validated_data.get('nivel_riesgo', instance.nivel_riesgo)
+        instance.salario = validated_data.get('salario', instance.salario)
+        instance.fecha_de_ingreso = validated_data.get('fecha_de_ingreso', instance.fecha_de_ingreso)
+        instance.actualiza_datos_generales = validated_data.get('actualiza_datos_generales', instance.actualiza_datos_generales)
+        instance.politica_datos_generales = validated_data.get('politica_datos_generales', instance.politica_datos_generales)
+        instance.save()
+        return instance
 
