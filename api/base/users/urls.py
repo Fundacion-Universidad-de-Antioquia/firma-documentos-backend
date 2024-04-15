@@ -8,5 +8,5 @@ admin.autodiscover()
 urlpatterns = [
     # Create login and logout urls
     path('token/', Login.as_view(), name='token'),
-    path('venga_entre/', venga_entre, name='venga_entre'),
+    # path('venga_entre/', venga_entre, name='venga_entre'),
 ]

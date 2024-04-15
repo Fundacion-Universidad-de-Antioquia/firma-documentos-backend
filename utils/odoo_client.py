@@ -217,37 +217,36 @@ class OdooClient():
         
         odoo_employee = odoo_context.browse(odoo_employee_id)
         employee = {
-            "name": odoo_employee.identification_id,
-            "genero": odoo_employee.gender,
-            "fecha_nacimiento": odoo_employee.birth_date,
-            "lugar_nacimiento": odoo_employee.x_studio_lugar_de_nacimiento,
-            "email": odoo_employee.x_studio_correo_electrnico_personal,
-            "work_email": odoo_employee.work_email,
-            "address_home_id": odoo_employee.address_home_id,
-            "home_neighborhood": odoo_employee.x_studio_barrio,
-            "home_city": odoo_employee.x_studio_municipio,
-            "telephone1": odoo_employee.work_home,
-            "cellphone": odoo_employee.mobile_phone,
-            "project": odoo_employee.company_id.name,
-            "job_title": odoo_employee.job_title,
-            "identification_id": odoo_employee.name,
-            "work_phone": odoo_employee.work_phone,
-            "centro_costos": odoo_employee.x_studio_centro_de_costos,
-            "numero_cuenta_bancaria": odoo_employee.x_studio_nmero_de_cuenta_bancaria,
-            "banco": odoo_employee.x_studio_many2one_field_p7ucx,
-            "codigo_banco": odoo_employee.x_studio_cdigo_banco,
-            "blood_type": odoo_employee.x_studio_rh,
-            "zona": odoo_employee.x_studio_zona_proyecto_aseo,
-            "eps": odoo_employee.x_studio_many2one_field_qIGM2,
-            "pension": odoo_employee.x_studio_many2one_field_GtifE,
-            "severance": odoo_employee.x_studio_many2one_field_arquY,
-            "pant_size": odoo_employee.x_studio_many2one_field_ZfzC2,
-            "shirt_size": odoo_employee.x_studio_many2one_field_WqjQH,
-            "shoes_size": odoo_employee.x_studio_many2one_field_rv1KK,
-            "dress_style": odoo_employee.x_studio_estilo,
-            "nivel_riesgo": odoo_employee.x_studio_nivel_de_riesgo_1,
-            "salario": odoo_employee.x_studio_salario_empleado_actual,
-            "fecha_de_ingreso": odoo_employee.x_studio_fecha_de_ingreso_1,
+            "name": odoo_employee.identification_id if odoo_employee.identification_id else 'N/A',
+            "genero": odoo_employee.gender if odoo_employee else 'N/A',
+            "fecha_nacimiento": odoo_employee.birthday if odoo_employee.birthday else 'N/A',
+            "lugar_nacimiento": odoo_employee.x_studio_lugar_de_nacimiento.x_name if odoo_employee.x_studio_lugar_de_nacimiento.x_name else 'N/A',
+            "email": odoo_employee.x_studio_correo_electrnico_personal if odoo_employee.x_studio_correo_electrnico_personal else 'N/A',
+            "work_email": odoo_employee.work_email if odoo_employee.work_email else 'N/A',
+            "address_home_id": odoo_employee.address_home_id.name if odoo_employee.address_home_id.name else 'N/A',
+            "home_neighborhood": odoo_employee.x_studio_barrio if odoo_employee.x_studio_barrio else 'N/A',
+            "home_city": odoo_employee.x_studio_municipio.x_name if odoo_employee.x_studio_municipio.x_name else 'N/A',
+            "telephone1": odoo_employee.work_phone if odoo_employee.work_phone else 'N/A',
+            "cellphone": odoo_employee.mobile_phone if odoo_employee.mobile_phone else 'N/A',
+            "project": odoo_employee.company_id.name if odoo_employee.company_id.name else 'N/A',
+            "job_title": odoo_employee.job_title if odoo_employee.job_title else 'N/A',
+            "identification_id": odoo_employee.name if odoo_employee.name else 'N/A',
+            "centro_costos": odoo_employee.x_studio_centro_de_costos if odoo_employee.x_studio_centro_de_costos else 'N/A',
+            "numero_cuenta_bancaria": odoo_employee.x_studio_nmero_de_cuenta_bancaria if odoo_employee.x_studio_nmero_de_cuenta_bancaria else 'N/A',
+            "banco": odoo_employee.x_studio_many2one_field_p7Ucx.x_name if odoo_employee.x_studio_many2one_field_p7Ucx.x_name else 'N/A',
+            "codigo_banco": odoo_employee.x_studio_cdigo_banco if odoo_employee.x_studio_cdigo_banco else 'N/A',
+            "blood_type": odoo_employee.x_studio_rh if odoo_employee.x_studio_rh else 'N/A',
+            "zona": odoo_employee.x_studio_zona_proyecto_aseo if odoo_employee.x_studio_zona_proyecto_aseo else 'N/A',
+            "eps": odoo_employee.x_studio_many2one_field_qIGM2.x_name if odoo_employee.x_studio_many2one_field_qIGM2.x_name else 'N/A',
+            "pension": odoo_employee.x_studio_many2one_field_GtifE.x_name if odoo_employee.x_studio_many2one_field_GtifE.x_name else 'N/A',
+            "severance": odoo_employee.x_studio_many2one_field_arquY.x_name if odoo_employee.x_studio_many2one_field_arquY.x_name else 'N/A',
+            "pant_size": odoo_employee.x_studio_many2one_field_ZfzC2.x_name if odoo_employee.x_studio_many2one_field_ZfzC2.x_name else 'N/A',
+            "shirt_size": odoo_employee.x_studio_many2one_field_WqjQH.x_name if odoo_employee.x_studio_many2one_field_WqjQH.x_name else 'N/A',
+            "shoes_size": odoo_employee.x_studio_many2one_field_rv1KK.x_name if odoo_employee.x_studio_many2one_field_rv1KK.x_name else 'N/A',
+            "dress_style": odoo_employee.x_studio_estilo if odoo_employee.x_studio_estilo else 'N/A',
+            "nivel_riesgo": odoo_employee.x_studio_nivel_de_riesgo_1 if odoo_employee.x_studio_nivel_de_riesgo_1 else 'N/A',
+            "salario": odoo_employee.x_studio_salario_empleado_actual if odoo_employee.x_studio_salario_empleado_actual else 'N/A',
+            "fecha_de_ingreso": odoo_employee.x_studio_fecha_de_ingreso_1 if odoo_employee.x_studio_fecha_de_ingreso_1 else 'N/A',
             "actualiza_datos_generales": odoo_employee.x_studio_requiere_actualiza_datos_generales,
             "politica_datos_generales": odoo_employee.x_studio_poltica_tratamiento_datos
         }
@@ -341,7 +340,7 @@ class OdooClient():
         employee_data['x_studio_lugar_de_nacimiento'] = data['birth_place']
         employee_data['name'] = data['id_document']
         employee_data['x_studio_nmero_de_cuenta_bancaria'] = data['bank_account_number']
-        employee_data['x_studio_many2one_field_p7ucx'] = data['bank_name']
+        employee_data['x_studio_many2one_field_p7Ucx'] = data['bank_name']
         employee_data['gender'] = data['gender']
 
         employee_data['address_home_id'] = data['home_address']
