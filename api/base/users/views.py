@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view, permission_classes
 
 from .serializers import UserSerializer
 from .auth_backends import CustomUserModelBackend
+from utils.odoo_client import OdooClient
 
 
 User = get_user_model()
@@ -45,7 +46,16 @@ class Login(APIView):
          # Generate JWT Token
         access_token = CustomUserModelBackend.generate_access_token(user)
 
-        return Response({'access_token': access_token}, status=status.HTTP_200_OK)
+        # GEt user data from Odoo
+        odoo_client = OdooClient()
+        employee_status = odoo_client.get_employee_data_status(identification_number)
+        print("Employee: ", employee_status)
+
+
+        return Response({"access_token": access_token, 
+                         "is_data_accepted": employee_status['is_data_accepted'], 
+                         "is_data_updated": employee_status['is_data_updated']}, 
+                         status=status.HTTP_200_OK)
         
     
     def get(self, request):

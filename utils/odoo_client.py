@@ -267,7 +267,7 @@ class OdooClient():
         odoo_employee = odoo_context.browse(odoo_employee_id)
         employee_data = {
             "is_data_updated": odoo_employee.x_studio_requiere_actualiza_datos_generales,
-            "is_data_treatment_accepted": odoo_employee.x_studio_poltica_tratamiento_datos
+            "is_data_accepted": odoo_employee.x_studio_poltica_tratamiento_datos
         }
 
         return employee_data
