@@ -53,6 +53,7 @@ class CustomUserModelBackend(authentication.BaseAuthentication):
         if login is None:
             raise AuthenticationFailed('Usuario no encontrado en el token')
         
+        # TODO: Agregar Nombre de tabla desde el Settings
         with connections['auth_db'].cursor() as cursor:
             cursor.execute("SELECT id, login FROM INTRANET_EMPLEADOS_USUARIOS WHERE login = %s", [login])
             user = cursor.fetchone()

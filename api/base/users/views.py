@@ -49,8 +49,8 @@ class Login(APIView):
         # GEt user data from Odoo
         odoo_client = OdooClient()
         employee_status = odoo_client.get_employee_data_status(identification_number)
-        print("Employee: ", employee_status)
-
+        if employee_status is None:
+            return Response({'error': 'No existe datos de empleado'}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({"access_token": access_token, 
                          "is_data_accepted": employee_status['is_data_accepted'], 
