@@ -44,10 +44,7 @@ class EmployeesView(APIView):
         if serializer.is_valid():
             response_data = serializer.data
         else:
-            response_data = serializer.errors
-
-        print("Empleado encontrado en el ERP ", employee)
-        print("Employee serializer en GET: ", response_data)
+            response_data = employee
         
         return Response(response_data, status=status.HTTP_200_OK)
         

@@ -15,7 +15,7 @@ except mariadb.Error as e:
 # Get Cursor
 cur = conn.cursor()
 cur.execute(
-    "SELECT nombre,login FROM INTRANET_EMPLEADOS_USUARIOS")
+    "SELECT nombre,login FROM INTRANET_EMPLEADOS_USUARIOS WHERE LOGIN = 75099353")
 
 # Print Result-set
 for (name, login) in cur:

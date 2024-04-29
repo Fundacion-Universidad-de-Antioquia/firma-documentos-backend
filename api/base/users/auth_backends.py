@@ -40,7 +40,7 @@ class CustomUserModelBackend(authentication.BaseAuthentication):
             # The SECRET KEY changes in every stage, keep an eye on this
             payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=['HS256'], options={"verify_iat":False})
         except jwt.exceptions.InvalidSignatureError:
-            raise AuthenticationFailed('Invalid signature')
+            raise AuthenticationFailed("Datos de autenticación no válidos")
         except ExpiredSignatureError:
             raise AuthenticationFailed("Tiempo de sesión ha expirado")
         except jwt.exceptions.DecodeError as e:

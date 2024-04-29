@@ -31,3 +31,4 @@ celerybeat-schedule
 requirements-azure.txt
 __azurite_db_blob_extent__.json
 api/base/employees/migrations/
+db_intranet.py
