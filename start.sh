@@ -1,19 +1,19 @@
 #!/bin/bash -v 
+sudo apt install libjpeg-dev zlib1g-dev
 # . antenv/bin/activate
-# pip install -r requirements.txt
+pip install -r requirements.txt
 
 # export SECRET_KEY=$(python -c 'import secrets; print(secrets.token_hex())')
 
 # Install dependencies
 # sudo apt-get  install libpq-dev python-dev libpq-dev python3-dev -y
-sudo apt install libjpeg-dev zlib1g-dev
 
 # Start Celery worker
 # set -o errexit
 # set -o nounset
 
-echo "------------------------> Collect static"
-python3 manage.py collectstatic --noinput
+# echo "------------------------> Collect static"
+# python3 manage.py collectstatic --noinput
 
 # Create database tables
 echo "------------------------- >Start migratons"
