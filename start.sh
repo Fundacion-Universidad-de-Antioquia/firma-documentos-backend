@@ -6,10 +6,7 @@
 
 # Install dependencies
 # sudo apt-get  install libpq-dev python-dev libpq-dev python3-dev -y
-sudo apt-get install python3 python-dev python3-dev \
-     build-essential libssl-dev libffi-dev \
-     libxml2-dev libxslt1-dev zlib1g-dev \
-     python-pip -y
+sudo apt install libjpeg-dev zlib1g-dev
 
 # Start Celery worker
 # set -o errexit
