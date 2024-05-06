@@ -5,37 +5,37 @@ class EmployeeSerializer(serializers.Serializer):
 
     # Campos relacionados con Odoo pasa con x_name
     name = serializers.CharField()
-    genero = serializers.CharField()
-    fecha_nacimiento = serializers.DateField()
-    lugar_nacimiento = serializers.CharField()
-    email = serializers.EmailField()
-    work_email = serializers.CharField()
-    address_home_id = serializers.CharField()
-    home_neighborhood = serializers.CharField()
-    home_city = serializers.CharField()
-    telephone1 = serializers.CharField()
-    cellphone = serializers.CharField()
-    project = serializers.CharField()
-    job_title = serializers.CharField()
+    genero = serializers.CharField(required=False)
+    fecha_nacimiento = serializers.DateField(required=False)
+    lugar_nacimiento = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
+    work_email = serializers.CharField(required=False)
+    address_home_id = serializers.CharField(required=False)
+    home_neighborhood = serializers.CharField(required=False)
+    home_city = serializers.CharField(required=False)
+    telephone1 = serializers.CharField(required=False)
+    cellphone = serializers.CharField(required=False)
+    project = serializers.CharField(required=False)
+    job_title = serializers.CharField(required=False)
     identification_id = serializers.CharField()
-    centro_costos = serializers.CharField()
-    numero_cuenta_bancaria = serializers.CharField()
-    banco = serializers.CharField()
-    codigo_banco = serializers.CharField()
-    blood_type = serializers.CharField()
-    zona = serializers.CharField()
-    eps = serializers.CharField()
-    pension = serializers.CharField()
-    severance = serializers.CharField()
-    pant_size = serializers.IntegerField()
-    shirt_size = serializers.IntegerField()
-    shoes_size = serializers.IntegerField()
-    dress_style = serializers.CharField()
-    nivel_riesgo = serializers.CharField()
-    salario = serializers.FloatField()
-    fecha_de_ingreso = serializers.DateField()
-    actualiza_datos_generales = serializers.BooleanField()
-    politica_datos_generales = serializers.BooleanField()
+    centro_costos = serializers.CharField(required=False)
+    numero_cuenta_bancaria = serializers.CharField(required=False)
+    banco = serializers.CharField(required=False)
+    codigo_banco = serializers.CharField(required=False)
+    blood_type = serializers.CharField(required=False)
+    zona = serializers.CharField(required=False)
+    eps = serializers.CharField(required=False)
+    pension = serializers.CharField(required=False)
+    severance = serializers.CharField(required=False)
+    pant_size = serializers.IntegerField(required=False)
+    shirt_size = serializers.IntegerField(required=False)
+    shoes_size = serializers.IntegerField(required=False)
+    dress_style = serializers.CharField(required=False)
+    nivel_riesgo = serializers.CharField(required=False)
+    salario = serializers.FloatField(required=False)
+    fecha_de_ingreso = serializers.DateField(required=False)
+    actualiza_datos_generales = serializers.BooleanField(required=False)
+    politica_datos_generales = serializers.BooleanField(required=False)
 
     def create(self, validated_data):
         return Employee.objects.create(**validated_data)
@@ -77,3 +77,14 @@ class EmployeeSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+
+class EmployeeDataPoliciesSerializer(serializers.Serializer):
+    data_treatment = serializers.BooleanField(required=True)
+    data_policy = serializers.BooleanField(required=True)
+
+    def validate(self, attrs):
+        for attr in ['data_treatment', 'data_policy']:
+            if attr not in attrs or not isinstance(attrs[attr], bool):
+                raise serializers.ValidationError(f"{attr} Debe ser Verdadero o Falso.")
+
+        return attrs

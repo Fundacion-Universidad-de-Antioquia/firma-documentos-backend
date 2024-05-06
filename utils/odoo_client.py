@@ -266,8 +266,8 @@ class OdooClient():
         
         odoo_employee = odoo_context.browse(odoo_employee_id)
         employee_data = {
-            "is_data_updated": odoo_employee.x_studio_requiere_actualiza_datos_generales,
-            "is_data_accepted": odoo_employee.x_studio_poltica_tratamiento_datos
+            "is_data_updated": True if odoo_employee.x_studio_requiere_actualiza_datos_generales == "Si" else False,
+            "is_data_accepted": True if odoo_employee.x_studio_poltica_tratamiento_datos == "Si" else False
         }
 
         return employee_data
@@ -282,8 +282,8 @@ class OdooClient():
         
         odoo_employee = odoo_context.browse(odoo_employee_id)
         employee_data = {
-            "x_studio_requiere_actualiza_datos_generales": '1' if data_policy else '0',
-            "x_studio_poltica_tratamiento_datos": '1' if data_treatment else '0'
+            "x_studio_requiere_actualiza_datos_generales": 'Si' if data_policy else 'No',
+            "x_studio_poltica_tratamiento_datos": 'Si' if data_treatment else 'No'
         }
 
         odoo_employee.write(employee_data)
@@ -318,48 +318,41 @@ class OdooClient():
         return states
     '''
 
-    def get_employee_data(self, employee_odoo_id):
-        '''
-        También recibe un campo de empleado desde Odoo que indica que los campos generales están completos
-        '''
-
-    def update_employee_data(self, data):
+    def update_employee_data(self, employee_identification, data):
         '''
         Update data from employee in Odoo
         get employee_id (identification number) and data to update
         '''
         # Obtiene el empleado a partir del employee_id
-        employee_identification = data['id_document']
+        # employee_identification = data['id_document']
         
-        employee = self.search_employee_by_identification(employee_identification)
+        # employee = self.search_employee_by_identification(employee_identification)
+        odoo_context = self.odoo.env['hr.employee']
 
+        # Get list[] from employee with name = employee_identification
+        employee = odoo_context.search([('name', '=', employee_identification)])
+        employee = odoo_context.browse(employee[0])
         # Crear datos para actualizar en Odoo a partir de parámetro data
         employee_data = {}
 
-        employee_data['birthday'] = data['birth_date']
-        employee_data['x_studio_lugar_de_nacimiento'] = data['birth_place']
-        employee_data['name'] = data['id_document']
-        employee_data['x_studio_nmero_de_cuenta_bancaria'] = data['bank_account_number']
-        employee_data['x_studio_many2one_field_p7Ucx'] = data['bank_name']
-        employee_data['gender'] = data['gender']
+        employee_data['identification_id'] = data['name'] if data['name'] != 'N/A' else None
+        employee_data['birthday'] = data['fecha_nacimiento'] if data['fecha_nacimiento'] != 'N/A' else None
+        employee_data['x_studio_lugar_de_nacimiento'] = data['lugar_nacimiento'] if data['lugar_nacimiento'] != 'N/A' else None
+        employee_data['x_studio_nmero_de_cuenta_bancaria'] = data['numero_cuenta_bancaria'] if data['numero_cuenta_bancaria'] != 'N/A' else None
+        employee_data['gender'] = data['genero'] if data['genero'] != 'N/A' else None
+        employee_data['x_studio_rh'] = data['blood_type'] if data['blood_type'] != 'N/A' else None
+        employee_data['x_studio_barrio'] = data['home_neighborhood'] if data['home_neighborhood'] != 'N/A' else None
+        employee_data['x_studio_municipio'] = data['home_city'] if data['home_city'] != 'N/A' else None
+        employee_data['work_phone'] = data['telephone1'] if data['telephone1'] != 'N/A' else None
+        employee_data['mobile_phone'] = data['cellphone'] if data['cellphone'] != 'N/A' else None
+        employee_data['x_studio_correo_electrnico_personal'] = data['email'] if data['email'] != 'N/A' else None
 
-        employee_data['address_home_id'] = data['home_address']
-        employee_data['x_studio_barrio'] = data['home_neighborhood']
-        employee_data['x_studio_municipio'] = data['home_city']
-        employee_data['work_home'] = data['telephone1']
-        employee_data['mobile_phone'] = data['cellphone']
-        employee_data['x_studio_correo_electrnico_personal'] = data['email']
 
-        # Campo para validar que los datos estén completos
-        employee_data['x_studio_requiere_actualiza_datos_generales'] = data['is_data_updated']
-        
-        # Campo de autorización de tratamiento de datos personales
-        data['is_data_treatment_accepted ']
 
         # Actualiza los datos del empleado en Odoo
         employee.write(employee_data)
 
-        # Actualiza los datos del empleado
+        return employee.id
 
 
 

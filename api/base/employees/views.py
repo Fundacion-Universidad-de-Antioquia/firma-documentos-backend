@@ -8,7 +8,7 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 from utils.odoo_client import OdooClient
 
 from .models import Employee
-from .serializers import EmployeeSerializer
+from .serializers import EmployeeSerializer, EmployeeDataPoliciesSerializer
 
 class EmployeesView(APIView):
     parser_classes = (MultiPartParser, JSONParser)
@@ -52,23 +52,23 @@ class EmployeesView(APIView):
     # Post function to get employee data and use odoo_client to upload it
     def post(self, request):
 
+        # Get user id from token
+        user_login = request.user['login']
+        # Response error with when user is not authenticated
+        if user_login is None:
+            return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+
         employee_serializer = EmployeeSerializer(data=request.data or None)
 
-        print(f"Employee serializer en POST: {employee_serializer}")
-
         if employee_serializer.is_valid(raise_exception=True):
-            print("Employee serializer is valid")
-
-            # Get username from request
-
             odoo_client = OdooClient()
 
-            employee_id = odoo_client.update_employee_data(employee_serializer.data)
+            employee_id = odoo_client.update_employee_data(user_login, employee_serializer.data)
 
             if employee_id:
-                return Response('Datos de empleado creados', status=status.HTTP_201_CREATED)
+                return Response('Datos de empleado actualizados', status=status.HTTP_201_CREATED)
             
-            return Response('Error al crear datos de empleado', status=status.HTTP_400_BAD_REQUEST)
+            return Response('Error al actualizar datos de empleado', status=status.HTTP_400_BAD_REQUEST)
 
         return Response({employee_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -99,11 +99,19 @@ def employee_data_policies(request):
     
     if request.method == 'POST':
         employee_id_number = request.user['login']
-        odoo_client = OdooClient()
 
+        employeeSerializer = EmployeeDataPoliciesSerializer(data=request.data)
+
+        if not employeeSerializer.is_valid():
+            return Response(employeeSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
         # from request get data status
-        data_policy = request.data.get('data_policy')
-        data_treatment = request.data.get('data_treatment')
+        data_policy = employeeSerializer.data.get('data_policy')
+        data_treatment = employeeSerializer.data.get('data_treatment')
+
+        print(f"Data policy: {data_policy} - Data treatment: {data_treatment}")
+
+        odoo_client = OdooClient()
 
         employee_status = odoo_client.update_employee_data_policies(employee_id_number, data_policy, data_treatment)
 
