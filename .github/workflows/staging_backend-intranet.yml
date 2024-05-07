@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'Staging'
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
@@ -66,5 +66,5 @@ jobs:
         id: deploy-to-webapp
         with:
           app-name: 'backend-intranet'
-          slot-name: 'Staging'
+          slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_644522DBD40C40BB83D42680C0DDD65A }}
