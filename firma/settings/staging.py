@@ -6,10 +6,10 @@ from firma.settings.base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["webapp-firma-backend.azurewebsites.net"]
-CSRF_TRUSTED_ORIGINS = ["https://webapp-firma-backend.azurewebsites.net"]
-CSRF_ALLOWED_ORIGINS = ["https://webapp-firma-backend.azurewebsites.net"]
-CORS_ORIGINS_WHITELIST = ["https://webapp-firma-backend.azurewebsites.net"]
+ALLOWED_HOSTS = ["backend-intranet.azurewebsites.net"]
+CSRF_TRUSTED_ORIGINS = ["https://backend-intranet.azurewebsites.net"]
+CSRF_ALLOWED_ORIGINS = ["https://backend-intranet.azurewebsites.net"]
+CORS_ORIGINS_WHITELIST = ["https://backend-intranet.azurewebsites.net"]
 CSRF_COOKIE_SECURE = True
 
 # Create azure-test database connection for tests
