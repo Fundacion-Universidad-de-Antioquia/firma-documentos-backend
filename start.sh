@@ -1,7 +1,7 @@
 #!/bin/bash -v 
-sudo apt install libjpeg-dev zlib1g-dev
+# sudo apt install libjpeg-dev zlib1g-dev
 # . antenv/bin/activate
-pip install -r requirements.txt
+# pip install -r requirements.txt
 
 # export SECRET_KEY=$(python -c 'import secrets; print(secrets.token_hex())')
 
