@@ -26,8 +26,11 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
+      
+      - name: Install MariaDB development files
+        run: sudo apt-get install libmariadbclient-dev
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: pip install -r requirements.txt
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
