@@ -31,7 +31,10 @@ jobs:
         run: sudo apt-get install libmariadb-dev
 
       - name: Install Python dependencies
-        run: pip install -r requirements.txt
+        run: | 
+          pip install --upgrade setuptools
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       - name: Zip artifact for deployment
