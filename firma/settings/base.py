@@ -41,14 +41,18 @@ INSTALLED_APPS = [
 
     # Libs installed
     'rest_framework',
+    'rest_framework.authtoken',
     'oauth2_provider',
     'corsheaders',
+    'drf_yasg',
 
     # Apps
     'api.base.documents',
     'api.base.employees',
     'api.base.users',
 ]
+
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -118,7 +122,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL='users.User'
 
 OAUTH2_PROVIDER = {
     # this is the list of available scopes
@@ -133,21 +136,32 @@ OAUTH2_PROVIDER = {
 # LOGIN_URL='/admin/login/'
 LOGIN_URL='/admin/'
 
+# Set authentication backend setting
+AUTHENTICATION_BACKENDS = (
+    'api.base.users.auth_backends.CustomUserModelBackend',
+)
+
 # Authentication and Authorization
 # https://django-oauth-toolkit.readthedocs.io/en/latest/rest-framework/getting_started.html 
 REST_FRAMEWORK = {
     # Authentication backend
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-    ),
-    
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #    'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    # ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+    #    'rest_framework_simplejwt.authentication.JWTAuthentication',),
+        'api.base.users.auth_backends.CustomUserModelBackend',
+    ],
     # Persmissions
-    'DEFAULT_PERMISSION_CLASSES': (
-        # 'rest_framework.permissions.AllowAny',
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.IsAuthenticated',
+    ],
+}
 
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+JWT_CONF = {
+    'TOKEN_LIFETIME_HOURS': 24,
+    'REFRESH_TOKEN_LIFETIME_DAYS': 30
 }
 
 # CORS options, must enable in MIDDLEWARE section and INSTALLED_APPS section

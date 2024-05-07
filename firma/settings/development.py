@@ -16,7 +16,19 @@ DATABASES = {
         'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': os.getenv('POSTGRES_PORT'),
     },
+    # Users database with mariadb
+    'auth_db': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sitio_web',
+        'USER': 'UserIntranet',
+        'PASSWORD': '631353051DBF13D759F78BBB1320E36A',
+        'HOST': '10.0.0.6',
+        'PORT': '3306',
+    }
 }
+USERS_TABLE=os.getenv('USERS_TABLE')
+DATABASE_ROUTERS = ['api.base.users.models.UserRouter']
+
 
 if 'test' in sys.argv or 'test\_coverage' in sys.argv: #Covers regular testing and django-coverage
  DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'

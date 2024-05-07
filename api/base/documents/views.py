@@ -39,7 +39,7 @@ class FilesAPIView(APIView):
             # add task to celery
             print(f"Tipo new file{type(new_file)}")
             print(f"Contract: {new_file.contract_template}")
-            print(f"Data: {new_file.employees_data}")
+            print(f"Data: {new_file.employee_data}")
             send_contract_sign_task.delay(new_file.id)
 
             return Response(file_serializer.data, status=status.HTTP_201_CREATED)

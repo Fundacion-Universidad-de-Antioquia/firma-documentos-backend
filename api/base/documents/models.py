@@ -12,9 +12,9 @@ class Files(models.Model):
     contract_name = models.CharField(max_length=255, blank=True, null=False)
     contract_template = models.FileField(
         upload_to=upload_to, blank=True, null=False)
-    employees_data_name = models.CharField(
+    employee_data_name = models.CharField(
         max_length=255, blank=True, null=False)
-    employees_data = models.FileField(
+    employee_data = models.FileField(
         upload_to=upload_to, blank=True, null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     created_by = models.IntegerField(blank=True, null=True)

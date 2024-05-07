@@ -1,7 +1,0 @@
-#!/bin/bash
-
-set -o errexit
-set -o nounset
-
-echo 'Starting Celery Worker'
-celery -A firma worker -l INFO

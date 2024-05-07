@@ -16,14 +16,31 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-from . import views
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+from .views import home
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Intranet API",
+        default_version='v1',
+        description="API Intranet de Fundación Universidad de Antioquía",
+    ),
+    public=True,
+)
 
 urlpatterns = [
     
-    path('', views.home, name = 'home'),
+    path('', home, name = 'home'),
     path('admin/', admin.site.urls),
     #path('api/documents/', include('api.base.documents.urls')),
     path('api/documents/', include('api.base.documents.urls')),
+    path('api/employees/', include('api.base.employees.urls')),
     path('api/users/', include('api.base.users.urls')),
     path('api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
