@@ -4,7 +4,7 @@ from pathlib import Path
 from firma.settings.base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["backend-intranet.azurewebsites.net"]
 CSRF_TRUSTED_ORIGINS = ["https://backend-intranet.azurewebsites.net"]
