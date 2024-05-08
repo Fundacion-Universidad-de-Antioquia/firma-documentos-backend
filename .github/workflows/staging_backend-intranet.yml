@@ -26,9 +26,6 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-      
-      - name: Install MariaDB development files
-        run: sudo apt-get install libmariadb-dev
 
       - name: Install Python dependencies
         run: | 

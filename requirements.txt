@@ -41,7 +41,6 @@ Jinja2==3.1.2
 jwcrypto==1.4.2
 kombu==5.3.5
 lxml==5.1.0
-mariadb==1.1.10
 MarkupSafe==2.1.1
 mccabe==0.7.0
 msal==1.23.0
