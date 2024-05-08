@@ -22,7 +22,18 @@ DATABASES = {
         'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
     },
+    # Users database with mariadb
+    'auth_db': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('MARIADB_DB'),
+        'USER': os.getenv('MARIA_USER'),
+        'PASSWORD': os.getenv('MARIA_PASSWORD'),
+        'HOST': os.getenv('MARIADB_HOST'),
+        'PORT': os.getenv('MARIADB_PORT', '3306')
+    }
 }
+USERS_TABLE=os.getenv('USERS_TABLE')
+DATABASE_ROUTERS = ['api.base.users.models.UserRouter']
 
 
 # Create blob endpoint connection to azure storage for media files
