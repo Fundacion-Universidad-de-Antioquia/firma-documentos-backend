@@ -256,6 +256,7 @@ class OdooClient():
     '''
     def get_employee_data_status(self, employee_identification):
         odoo_context = self.odoo.env['hr.employee']
+        print("Employee identification: ", employee_identification)
      
         # Employee identification is Interger
         odoo_employee_id = odoo_context.search([('name', '=', employee_identification)])
@@ -267,7 +268,7 @@ class OdooClient():
             "is_data_updated": True if odoo_employee.x_studio_requiere_actualiza_datos_generales == "Si" else False,
             "is_data_accepted": True if odoo_employee.x_studio_poltica_tratamiento_datos == "Si" else False
         }
-
+        print("Employee data: ", employee_data)
         return employee_data
     
     def update_employee_data_policies(self, employee_identification, data_policy, data_treatment):
