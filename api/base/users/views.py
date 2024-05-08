@@ -46,18 +46,18 @@ class Login(APIView):
          # Generate JWT Token
         access_token = CustomUserModelBackend.generate_access_token(user)
 
-        return Response({"access_token": access_token, "is_data_treatment_accepted": True, "is_data_updated": True}, status=status.HTTP_200_OK)
+        # return Response({"access_token": access_token, "is_data_treatment_accepted": True, "is_data_updated": True}, status=status.HTTP_200_OK)
 
         # GEt user data from Odoo
-        # odoo_client = OdooClient()
-        #employee_status = odoo_client.get_employee_data_status(identification_number)
-        #if employee_status is None:
-        #    return Response({'error': 'No existe datos de empleado'}, status=status.HTTP_404_NOT_FOUND)
+        odoo_client = OdooClient()
+        employee_status = odoo_client.get_employee_data_status(identification_number)
+        if employee_status is None:
+            return Response({'error': 'No existe datos de empleado'}, status=status.HTTP_404_NOT_FOUND)
 
-        #return Response({"access_token": access_token, 
-        #                 "is_data_treatment_accepted": employee_status['is_data_accepted'],
-        #                 "is_data_updated": employee_status['is_data_updated']}, 
-        #                 status=status.HTTP_200_OK)
+        return Response({"access_token": access_token, 
+                         "is_data_treatment_accepted": employee_status['is_data_accepted'],
+                         "is_data_updated": employee_status['is_data_updated']}, 
+                         status=status.HTTP_200_OK)
         
     
     def get(self, request):
