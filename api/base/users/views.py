@@ -27,6 +27,8 @@ class Login(APIView):
         Campos en la intranet: login y contrasena
         '''
 
+        print(f'Datos de request: {request.data}')
+
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 

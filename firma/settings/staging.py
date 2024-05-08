@@ -6,7 +6,7 @@ from firma.settings.base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["backend-intranet.azurewebsites.net"]
+ALLOWED_HOSTS = ["backend-intranet.azurewebsites.net", "localhost"]
 CSRF_TRUSTED_ORIGINS = ["https://backend-intranet.azurewebsites.net"]
 CSRF_ALLOWED_ORIGINS = ["https://backend-intranet.azurewebsites.net"]
 CORS_ORIGINS_WHITELIST = ["https://backend-intranet.azurewebsites.net"]
