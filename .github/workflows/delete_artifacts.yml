@@ -11,5 +11,5 @@ jobs:
       uses: jimschubert/delete-artifacts-action@v1
       with:
         log_level:'error'
-        min_bytes: '0'
+        min_bytes:'0'
     
