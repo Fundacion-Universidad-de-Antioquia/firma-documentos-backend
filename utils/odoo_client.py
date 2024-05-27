@@ -1,4 +1,6 @@
+import base64
 import odoorpc
+from xmlrpc.client import Binary
 
 # import django setings
 from django.conf import settings
@@ -214,27 +216,28 @@ class OdooClient():
             return None
         
         odoo_employee = odoo_context.browse(odoo_employee_id)
+
+        # en Odoo identification_id es el nombre del empleado
         employee = {
-            "name": odoo_employee.identification_id if odoo_employee.identification_id else 'N/A',
-            "genero": odoo_employee.gender if odoo_employee else 'N/A',
-            "fecha_nacimiento": odoo_employee.birthday if odoo_employee.birthday else 'N/A',
-            "lugar_nacimiento": odoo_employee.x_studio_lugar_de_nacimiento.x_name if odoo_employee.x_studio_lugar_de_nacimiento.x_name else 'N/A',
+            "full_name": odoo_employee.identification_id if odoo_employee.identification_id else 'N/A',
+            "gender": odoo_employee.gender if odoo_employee else 'N/A',
+            "birth_date": odoo_employee.birthday if odoo_employee.birthday else 'N/A',
+            "birth_place": odoo_employee.x_studio_lugar_de_nacimiento.x_name if odoo_employee.x_studio_lugar_de_nacimiento.x_name else 'N/A',
             "email": odoo_employee.x_studio_correo_electrnico_personal if odoo_employee.x_studio_correo_electrnico_personal else 'N/A',
-            "work_email": odoo_employee.work_email if odoo_employee.work_email else 'N/A',
+            "email_work": odoo_employee.work_email if odoo_employee.work_email else 'N/A',
             "address_home_id": odoo_employee.address_home_id.name if odoo_employee.address_home_id.name else 'N/A',
             "home_neighborhood": odoo_employee.x_studio_barrio if odoo_employee.x_studio_barrio else 'N/A',
             "home_city": odoo_employee.x_studio_municipio.x_name if odoo_employee.x_studio_municipio.x_name else 'N/A',
             "telephone1": odoo_employee.work_phone if odoo_employee.work_phone else 'N/A',
             "cellphone": odoo_employee.mobile_phone if odoo_employee.mobile_phone else 'N/A',
-            "project": odoo_employee.company_id.name if odoo_employee.company_id.name else 'N/A',
-            "job_title": odoo_employee.job_title if odoo_employee.job_title else 'N/A',
-            "identification_id": odoo_employee.name if odoo_employee.name else 'N/A',
-            "centro_costos": odoo_employee.x_studio_centro_de_costos if odoo_employee.x_studio_centro_de_costos else 'N/A',
-            "numero_cuenta_bancaria": odoo_employee.x_studio_nmero_de_cuenta_bancaria if odoo_employee.x_studio_nmero_de_cuenta_bancaria else 'N/A',
-            "banco": odoo_employee.x_studio_many2one_field_p7Ucx.x_name if odoo_employee.x_studio_many2one_field_p7Ucx.x_name else 'N/A',
-            "codigo_banco": odoo_employee.x_studio_cdigo_banco if odoo_employee.x_studio_cdigo_banco else 'N/A',
+            "employee_project": odoo_employee.company_id.name if odoo_employee.company_id.name else 'N/A',
+            "employee_rol": odoo_employee.job_title if odoo_employee.job_title else 'N/A',
+            "id_document": odoo_employee.name if odoo_employee.name else 'N/A',
+            "cost_center": odoo_employee.x_studio_centro_de_costos if odoo_employee.x_studio_centro_de_costos else 'N/A',
+            "bank_account_number": odoo_employee.x_studio_nmero_de_cuenta_bancaria if odoo_employee.x_studio_nmero_de_cuenta_bancaria else 'N/A',
+            "bank_name": odoo_employee.x_studio_many2one_field_p7Ucx.x_name if odoo_employee.x_studio_many2one_field_p7Ucx.x_name else 'N/A',
             "blood_type": odoo_employee.x_studio_rh if odoo_employee.x_studio_rh else 'N/A',
-            "zona": odoo_employee.x_studio_zona_proyecto_aseo if odoo_employee.x_studio_zona_proyecto_aseo else 'N/A',
+            "employee_zone": odoo_employee.x_studio_zona_proyecto_aseo if odoo_employee.x_studio_zona_proyecto_aseo else 'N/A',
             "eps": odoo_employee.x_studio_many2one_field_qIGM2.x_name if odoo_employee.x_studio_many2one_field_qIGM2.x_name else 'N/A',
             "pension": odoo_employee.x_studio_many2one_field_GtifE.x_name if odoo_employee.x_studio_many2one_field_GtifE.x_name else 'N/A',
             "severance": odoo_employee.x_studio_many2one_field_arquY.x_name if odoo_employee.x_studio_many2one_field_arquY.x_name else 'N/A',
@@ -242,11 +245,11 @@ class OdooClient():
             "shirt_size": odoo_employee.x_studio_many2one_field_WqjQH.x_name if odoo_employee.x_studio_many2one_field_WqjQH.x_name else 'N/A',
             "shoes_size": odoo_employee.x_studio_many2one_field_rv1KK.x_name if odoo_employee.x_studio_many2one_field_rv1KK.x_name else 'N/A',
             "dress_style": odoo_employee.x_studio_estilo if odoo_employee.x_studio_estilo else 'N/A',
-            "nivel_riesgo": odoo_employee.x_studio_nivel_de_riesgo_1 if odoo_employee.x_studio_nivel_de_riesgo_1 else 'N/A',
-            "salario": odoo_employee.x_studio_salario_empleado_actual if odoo_employee.x_studio_salario_empleado_actual else 'N/A',
-            "fecha_de_ingreso": odoo_employee.x_studio_fecha_de_ingreso_1 if odoo_employee.x_studio_fecha_de_ingreso_1 else 'N/A',
-            "actualiza_datos_generales": odoo_employee.x_studio_requiere_actualiza_datos_generales,
-            "politica_datos_generales": odoo_employee.x_studio_poltica_tratamiento_datos
+            "level_risk": odoo_employee.x_studio_nivel_de_riesgo_1 if odoo_employee.x_studio_nivel_de_riesgo_1 else 'N/A',
+            "salary": odoo_employee.x_studio_salario_empleado_actual if odoo_employee.x_studio_salario_empleado_actual else 'N/A',
+            "entry_date": odoo_employee.x_studio_fecha_de_ingreso_1 if odoo_employee.x_studio_fecha_de_ingreso_1 else 'N/A',
+            "employee_code": odoo_employee.x_studio_codigo if odoo_employee.x_studio_codigo else 'N/A',
+            "employee_status": odoo_employee.x_studio_estado_empleado if odoo_employee.x_studio_estado_empleado else 'N/A'
         }
 
         return employee
@@ -256,7 +259,6 @@ class OdooClient():
     '''
     def get_employee_data_status(self, employee_identification):
         odoo_context = self.odoo.env['hr.employee']
-        print("Employee identification: ", employee_identification)
      
         # Employee identification is Interger
         odoo_employee_id = odoo_context.search([('name', '=', employee_identification)])
@@ -268,7 +270,6 @@ class OdooClient():
             "is_data_updated": True if odoo_employee.x_studio_requiere_actualiza_datos_generales == "Si" else False,
             "is_data_accepted": True if odoo_employee.x_studio_poltica_tratamiento_datos == "Si" else False
         }
-        print("Employee data: ", employee_data)
         return employee_data
     
     def update_employee_data_policies(self, employee_identification, data_policy, data_treatment):
@@ -334,24 +335,175 @@ class OdooClient():
         # Crear datos para actualizar en Odoo a partir de parámetro data
         employee_data = {}
 
-        employee_data['identification_id'] = data['name'] if data['name'] != 'N/A' else None
-        employee_data['birthday'] = data['fecha_nacimiento'] if data['fecha_nacimiento'] != 'N/A' else None
-        employee_data['x_studio_lugar_de_nacimiento'] = data['lugar_nacimiento'] if data['lugar_nacimiento'] != 'N/A' else None
-        employee_data['x_studio_nmero_de_cuenta_bancaria'] = data['numero_cuenta_bancaria'] if data['numero_cuenta_bancaria'] != 'N/A' else None
-        employee_data['gender'] = data['genero'] if data['genero'] != 'N/A' else None
-        employee_data['x_studio_rh'] = data['blood_type'] if data['blood_type'] != 'N/A' else None
-        employee_data['x_studio_barrio'] = data['home_neighborhood'] if data['home_neighborhood'] != 'N/A' else None
-        employee_data['x_studio_municipio'] = data['home_city'] if data['home_city'] != 'N/A' else None
-        employee_data['work_phone'] = data['telephone1'] if data['telephone1'] != 'N/A' else None
-        employee_data['mobile_phone'] = data['cellphone'] if data['cellphone'] != 'N/A' else None
-        employee_data['x_studio_correo_electrnico_personal'] = data['email'] if data['email'] != 'N/A' else None
+        try:
+            employee_data['identification_id'] = data['full_name'] if data['full_name'] != 'N/A' else None
+            employee_data['birthday'] = data['birth_date'] if data['birth_date'] != 'N/A' else None
+            employee_data['x_studio_lugar_de_nacimiento'] = data['birth_place'] if data['birth_place'] != 'N/A' else None
+            employee_data['x_studio_nmero_de_cuenta_bancaria'] = data['bank_account_number'] if data['bank_account_number'] != 'N/A' else None
+            employee_data['gender'] = data['gender'] if data['gender'] != 'N/A' else None
+            employee_data['x_studio_rh'] = data['blood_type'] if data['blood_type'] != 'N/A' else None
+            employee_data['address_home_id'] = data['address_home_id'] if data['address_home_id'] != 'N/A' else None
+            employee_data['x_studio_barrio'] = data['home_neighborhood'] if data['home_neighborhood'] != 'N/A' else None
+            employee_data['work_phone'] = data['telephone1'] if data['telephone1'] != 'N/A' else None
+            employee_data['mobile_phone'] = data['cellphone'] if data['cellphone'] != 'N/A' else None
+            employee_data['x_studio_correo_electrnico_personal'] = data['email'] if data['email'] != 'N/A' else None
+
+            employee_data['x_studio_estilo'] = data['dress_style'] if data['dress_style'] != 'N/A' else None
 
 
+            # Actualizar con relaciones con Otros modelos
+            context = self.odoo.env['x_banco']
+            bank_id = context.search([('x_name', '=', data['bank_name'])])
+            bank = context.browse(bank_id)
+            employee.x_studio_many2one_field_p7Ucx  = bank
+            
+            context = self.odoo.env['x_eps']
+            eps_id = context.search([('x_name', '=', data['eps'])])
+            eps = context.browse(eps_id)
+            employee.x_studio_many2one_field_qIGM2 = eps
 
-        # Actualiza los datos del empleado en Odoo
-        employee.write(employee_data)
+            context = self.odoo.env['x_bancos']
+            city_id = context.search([('x_studio_cdigo_municipio_1', '=', data['home_city'])])
+            city = context.browse(city_id)
+            employee.x_studio_municipio = city
 
-        return employee.id
+            context = self.odoo.env['x_afp']
+            pension_id = context.search([('x_name', '=', data['pension'])])
+            pension = context.browse(pension_id)
+            employee.x_studio_many2one_field_GtifE = pension
+            
+            context = self.odoo.env['x_arl']
+            arl_id = context.search([('x_name', '=', data['severance'])])
+            arl = context.browse(arl_id)
+            employee.x_studio_many2one_field_arquY = arl
+
+            context = self.odoo.env['x_talla_camisa']
+            shirt_id = context.search([('x_name', '=', data['shirt_size'])])
+            shirt = context.browse(shirt_id)
+            employee.x_studio_many2one_field_WqjQH = shirt
+
+            context = self.odoo.env['x_talla_pantalon']
+            pant_id = context.search([('x_name', '=', data['pant_size'])])
+            pant = context.browse(pant_id)
+            employee.x_studio_many2one_field_ZfzC2 = pant
+
+            context = self.odoo.env['x_talla_calzado']
+            shoe_id = context.search([('x_name', '=', data['shoes_size'])])
+            shoe = context.browse(shoe_id)
+            employee.x_studio_many2one_field_rv1KK = shoe
+
+            # Actualiza los datos del empleado en Odoo
+            employee.write(employee_data)
+            return employee.id
+        except Exception as e:
+            print(f"Error al actualizar datos de empleado: {e}")
+            return False
+    
+    def get_employee_profile_image(self, identification_number):
+        '''
+        Get the profile image of an employee in Odoo
+        '''
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', identification_number)])
+        if employee:
+            employee = odoo_context.browse(employee[0])
+            profile_image = employee.image_1920 if employee.image_1920 else None
+            return profile_image
+        else:
+            return None
+    
+    def update_employee_image(self, identification_number, image_base64):
+        '''
+        Update the profile image of an employee in Odoo
+        '''
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', identification_number)])
+        if employee:
+            employee = odoo_context.browse(employee[0])
+            employee_data = {}
+
+            # Remove the "data:image/png;base64," part from the base64 string
+            image_base64 = image_base64.split(",")[1]
+             # Convert the base64 string to binary data
+            image_binary = base64.b64decode(image_base64)
+
+            employee_data['image_1920'] = image_base64
+            employee.write(employee_data)
+            return True
+        else:
+            return False
+    
+    def get_list_options(self):
+        '''
+        Obtiene lista de opciones de los campos de Odoo para el formulario de registro
+        '''
+        list_options = {}
+
+        # Agrega EPS
+        odoo_context = self.odoo.env['x_eps']
+        eps_ids = odoo_context.search([])
+        eps_dict = {}
+        for eps in odoo_context.browse(eps_ids):
+            # Add eps name and eps code to the list
+            eps_dict[eps.id] = {"name": eps.x_name, "code": eps.x_studio_cdigo}        
+        list_options["eps"] = eps_dict
+
+        odoo_context = self.odoo.env['x_banco']
+        banks_ids = odoo_context.search([])
+        banks_dict = {}
+        for bank in odoo_context.browse(banks_ids):
+            banks_dict[bank.id] = {"name": bank.x_name, "code": bank.x_studio_cdigo_banco}
+        list_options["banks"] = banks_dict
+
+        odoo_context = self.odoo.env['x_afp']
+        pension_ids = odoo_context.search([])
+        pension_dict = {}
+        for pension in odoo_context.browse(pension_ids):
+            pension_dict[pension.id] = {"name": pension.x_name, "code": pension.x_studio_cdigo}
+        list_options["afp"] = pension_dict
+
+
+        odoo_context = self.odoo.env['x_cesantias']
+        severance_ids = odoo_context.search([])
+        severance_dict = {}
+        for severance in odoo_context.browse(severance_ids):
+            severance_dict[severance.id] = {"name": severance.x_name, "code": severance.x_studio_cdigo_nmina_1}
+        list_options["severance"] = severance_dict
+
+        # Tallajes
+        odoo_context = self.odoo.env['x_talla_camisa']
+        shirt_ids = odoo_context.search([])
+        shirt_dict = {}
+        for shirt in odoo_context.browse(shirt_ids):
+            shirt_dict[shirt.id] = {"name": shirt.x_name, "code": shirt.x_name}
+        list_options["shirt_size"] = shirt_dict
+
+        odoo_context = self.odoo.env['x_talla_pantalon']
+        pant_ids = odoo_context.search([])
+        pant_dict = {}
+        for pant in odoo_context.browse(pant_ids):
+            pant_dict[pant.id] = {"name": pant.x_name, "code": pant.x_name}
+        list_options["pant_size"] = pant_dict
+
+        odoo_context = self.odoo.env['x_talla_calzado']
+        shoe_ids = odoo_context.search([])
+        shoe_dict = {}
+        for shoe in odoo_context.browse(shoe_ids):
+            shoe_dict[shoe.id] = {"name": shoe.x_name, "code": shoe.x_name}
+        list_options["shoes_size"] = shoe_dict
+
+        # Ubicaciones
+        odoo_context = self.odoo.env['x_bancos']
+        cities_ids = odoo_context.search([])
+        cities_dict = {}
+        for city in odoo_context.browse(cities_ids):
+            cities_dict[city.id] = {"name": str(city.x_name)+'-'+str(city.x_studio_departamento), 
+                                   "code": city.x_studio_cdigo_municipio_1}
+        list_options["cities"] = cities_dict
+
+        return list_options
+        
+
 
 
 

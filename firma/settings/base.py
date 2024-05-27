@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     # Libs installed
     'rest_framework',
     'rest_framework.authtoken',
-    'oauth2_provider',
     'corsheaders',
     'drf_yasg',
 
@@ -52,7 +51,7 @@ INSTALLED_APPS = [
     'api.base.users',
 ]
 
-AUTH_USER_MODEL = 'users.User'
+# AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,6 +91,7 @@ DRF_TYPED_VIEWS = {
 WSGI_APPLICATION = 'firma.wsgi.application'
 
 load_dotenv(os.path.join(BASE_DIR, '.env'))
+
 # Odoo API
 ODOO_API = {
     'ODOO_URL': os.getenv('ODOO_URL'),
@@ -122,24 +122,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-OAUTH2_PROVIDER = {
-    # this is the list of available scopes
-    'SCOPES': {
-        'read': 'Read scope',
-        'write': 'Write scope',
-        'groups': 'Access to your groups',
-        'uploadfiles': 'Upload contract files and XLS database'
-    }
-}
-
 # LOGIN_URL='/admin/login/'
 LOGIN_URL='/admin/'
 
 # Set authentication backend setting
-AUTHENTICATION_BACKENDS = (
-    'api.base.users.auth_backends.CustomUserModelBackend',
-)
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    # 'api.base.users.auth_backends.CustomUserModelBackend',
+]
 
 # Authentication and Authorization
 # https://django-oauth-toolkit.readthedocs.io/en/latest/rest-framework/getting_started.html 

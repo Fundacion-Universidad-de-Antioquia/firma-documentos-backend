@@ -39,7 +39,6 @@ urlpatterns = [
     path('api/documents/', include('api.base.documents.urls')),
     path('api/employees/', include('api.base.employees.urls')),
     path('api/users/', include('api.base.users.urls')),
-    path('api/o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

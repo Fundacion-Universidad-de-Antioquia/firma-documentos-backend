@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
 
 from utils.odoo_client import OdooClient
+from utils.file_utils import base64_to_image, image_to_base64
 
 from .models import Employee
 from .serializers import EmployeeSerializer, EmployeeDataPoliciesSerializer
@@ -51,7 +52,6 @@ class EmployeesView(APIView):
     
     # Post function to get employee data and use odoo_client to upload it
     def post(self, request):
-
         # Get user id from token
         user_login = request.user['login']
         # Response error with when user is not authenticated
@@ -61,14 +61,15 @@ class EmployeesView(APIView):
         employee_serializer = EmployeeSerializer(data=request.data or None)
 
         if employee_serializer.is_valid(raise_exception=True):
+            print ("Data from client: ",employee_serializer.data)
             odoo_client = OdooClient()
 
             employee_id = odoo_client.update_employee_data(user_login, employee_serializer.data)
 
             if employee_id:
-                return Response('Datos de empleado actualizados', status=status.HTTP_201_CREATED)
+                return Response({"Datos de empleado actualizados"}, status=status.HTTP_201_CREATED)
             
-            return Response('Error al actualizar datos de empleado', status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error":"Error al actualizar datos de empleado"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({employee_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -119,3 +120,48 @@ def employee_data_policies(request):
             return Response({"error": "Empleado no encontrado en el ERP"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({"message": "datos de empleado actualizados"}, status=status.HTTP_200_OK)
+    
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+@api_view(['GET', 'POST'])
+def image_profile(request):
+    if request.method == 'GET':
+        employee_id_number = request.user['login']
+        print("Employee id number getting image: ", employee_id_number)
+        odoo_client = OdooClient()
+        image_base64 = odoo_client.get_employee_profile_image(employee_id_number)
+
+        if image_base64 is None:
+            return Response({"error": "Empleado sin imagen"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # image_profile = base64_to_image(image_profile)
+        return Response({"image_profile": image_base64}, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        employee_id_number = request.user['login']
+        image_profile = request.data.get('image_profile')
+        
+        try:
+            odoo_client = OdooClient()
+
+            employee_status = odoo_client.update_employee_image(employee_id_number, image_profile)
+
+            if not employee_status:
+                return Response({"error": "Empleado no encontrado en el ERP"}, status=status.HTTP_404_NOT_FOUND)
+
+            return Response({"message": "datos de empleado actualizados"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print("Error: ", e)
+            return Response({"error": "Error al actualizar imagen de empleado"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET'])
+def list_options(request):
+    odoo_client = OdooClient()
+    options = odoo_client.get_list_options()
+
+    if options is None:
+        return Response({"error": "Error al obtener opciones"}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(options, status=status.HTTP_200_OK)

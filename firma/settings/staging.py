@@ -32,6 +32,7 @@ DATABASES = {
         'PORT': os.getenv('MARIADB_PORT', '3306')
     }
 }
+
 USERS_TABLE=os.getenv('USERS_TABLE')
 DATABASE_ROUTERS = ['api.base.users.models.UserRouter']
 

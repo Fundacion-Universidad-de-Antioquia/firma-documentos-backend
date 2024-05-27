@@ -3,8 +3,6 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
-from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
-
 from .models import Files, ZipFile, SignTask
 from .serializers import FilesSerializer, ZipFileSerializer, SignTaskSerializer
 from .tasks import send_contract_sign_task, send_zip_file_task
@@ -66,7 +64,6 @@ class FilesAPIView(APIView):
 class ZipFileView(APIView):
 
     parser_classes = (MultiPartParser, JSONParser)
-    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
     queryset = ZipFile.objects.all()
 
     def get(self, request):
