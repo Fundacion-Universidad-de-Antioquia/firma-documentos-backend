@@ -9,7 +9,8 @@ from utils.odoo_client import OdooClient
 from utils.file_utils import base64_to_image, image_to_base64
 
 from .models import Employee
-from .serializers import EmployeeSerializer, EmployeeDataPoliciesSerializer
+from .serializers import EmployeeSerializer, EmployeeDataPoliciesSerializer, EmployeeImageProfileSerializer
+
 
 class EmployeesView(APIView):
     parser_classes = (MultiPartParser, JSONParser)
@@ -65,6 +66,7 @@ class EmployeesView(APIView):
             odoo_client = OdooClient()
 
             employee_id = odoo_client.update_employee_data(user_login, employee_serializer.data)
+            print("Pasó update en Odoo")
 
             if employee_id:
                 return Response({"Datos de empleado actualizados"}, status=status.HTTP_201_CREATED)
@@ -139,7 +141,9 @@ def image_profile(request):
     
     if request.method == 'POST':
         employee_id_number = request.user['login']
+
         image_profile = request.data.get('image_profile')
+        print("Image profile: ", image_profile)
         
         try:
             odoo_client = OdooClient()

@@ -93,3 +93,11 @@ class EmployeeDataPoliciesSerializer(serializers.Serializer):
                 raise serializers.ValidationError(f"{attr} Debe ser Verdadero o Falso.")
 
         return attrs
+
+class EmployeeImageProfileSerializer(serializers.Serializer):
+    image_profile = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        if 'image_profile' not in attrs:
+            raise serializers.ValidationError("image_profile es requerido")
+        return attrs

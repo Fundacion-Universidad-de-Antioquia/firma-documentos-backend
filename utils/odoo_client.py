@@ -335,68 +335,99 @@ class OdooClient():
         # Crear datos para actualizar en Odoo a partir de parámetro data
         employee_data = {}
 
+        gender_mapping = {"masculino": "male", "femenino": "female", "otro": "other"}
+
         try:
-            employee_data['identification_id'] = data['full_name'] if data['full_name'] != 'N/A' else None
-            employee_data['birthday'] = data['birth_date'] if data['birth_date'] != 'N/A' else None
-            employee_data['x_studio_lugar_de_nacimiento'] = data['birth_place'] if data['birth_place'] != 'N/A' else None
-            employee_data['x_studio_nmero_de_cuenta_bancaria'] = data['bank_account_number'] if data['bank_account_number'] != 'N/A' else None
-            employee_data['gender'] = data['gender'] if data['gender'] != 'N/A' else None
-            employee_data['x_studio_rh'] = data['blood_type'] if data['blood_type'] != 'N/A' else None
-            employee_data['address_home_id'] = data['address_home_id'] if data['address_home_id'] != 'N/A' else None
-            employee_data['x_studio_barrio'] = data['home_neighborhood'] if data['home_neighborhood'] != 'N/A' else None
-            employee_data['work_phone'] = data['telephone1'] if data['telephone1'] != 'N/A' else None
-            employee_data['mobile_phone'] = data['cellphone'] if data['cellphone'] != 'N/A' else None
-            employee_data['x_studio_correo_electrnico_personal'] = data['email'] if data['email'] != 'N/A' else None
+            if data.get('id_document') and data.get('id_document') != 'N/A':
+                employee_data['name'] = data.get('id_document')
+            
+            if data.get('full_name') and data.get('full_name') != 'N/A':
+                employee_data['identification_id'] = data.get('full_name')
 
-            employee_data['x_studio_estilo'] = data['dress_style'] if data['dress_style'] != 'N/A' else None
+            if data.get('birth_date') and data.get('birth_date') != 'N/A':
+                employee_data['birthday'] = data.get('birth_date')
+            
+            if  data.get('birth_place') and  data.get('birth_place') != 'N/A':
+                employee_data['x_studio_lugar_de_nacimiento'] = data.get('birth_place')
 
+            if data.get('bank_account_number') and data.get('bank_account_number') != 'N/A':
+                employee_data['x_studio_nmero_de_cuenta_bancaria'] = data.get('bank_account_number')
+            
+            if data.get('gender') and data.get('gender') != 'N/A':
+                gender_spanish = data.get('gender')
+                employee_data['gender'] = gender_mapping.get(gender_spanish.lower(), None)
+            
+            if data.get('blood_type') and data.get('blood_type') != 'N/A':
+                employee_data['x_studio_rh'] = data.get('blood_type')
+            
+            if data.get('address_home_id') and data.get('address_home_id') != 'N/A':
+                employee_data['address_home_id'] = data.get('address_home_id')
+   
+            if data.get('home_neighborhood') and data.get('home_neighborhood') != 'N/A':
+                employee_data['x_studio_barrio'] = data.get('home_neighborhood')
+            
+            if data.get('telephone1') and data.get('telephone1') != 'N/A':
+                employee_data['work_phone'] = data.get('telephone1')
+            
+            if data.get('cellphone') and data.get('cellphone') != 'N/A':
+                employee_data['mobile_phone'] = data.get('cellphone')
+            
+            if data.get('email') and data.get('email') != 'N/A':
+                employee_data['x_studio_correo_electrnico_personal'] = data.get('email')
+            
+            if data.get('dress_style') and data.get('dress_style') != 'N/A':
+                employee_data['x_studio_estilo'] = data.get('dress_style')
 
             # Actualizar con relaciones con Otros modelos
-            context = self.odoo.env['x_banco']
-            bank_id = context.search([('x_name', '=', data['bank_name'])])
-            bank = context.browse(bank_id)
-            employee.x_studio_many2one_field_p7Ucx  = bank
+
+            if  data.get('bank') and data.get('bank_name') != 'N/A':
+                context = self.odoo.env['x_banco']  
+                bank_id = context.search([('x_name', '=', data.get('bank_name'))])
+                bank = context.browse(bank_id)
+                employee.x_studio_many2one_field_p7Ucx  = bank
             
-            context = self.odoo.env['x_eps']
-            eps_id = context.search([('x_name', '=', data['eps'])])
-            eps = context.browse(eps_id)
-            employee.x_studio_many2one_field_qIGM2 = eps
+            if data.get('eps') and data.get('eps') != 'N/A':
+                context = self.odoo.env['x_eps']
+                eps_id = context.search([('x_name', '=', data.get('eps'))])
+                eps = context.browse(eps_id)
+                employee.x_studio_many2one_field_qIGM2 = eps
 
-            context = self.odoo.env['x_bancos']
-            city_id = context.search([('x_studio_cdigo_municipio_1', '=', data['home_city'])])
-            city = context.browse(city_id)
-            employee.x_studio_municipio = city
+            if data.get('home_city') and data.get('home_city') != 'N/A':
+                context = self.odoo.env['x_bancos']
+                city_id = context.search([('x_studio_cdigo_municipio_1', '=', data.get('home_city'))])
+                city = context.browse(city_id)
+                employee.x_studio_municipio = city
 
-            context = self.odoo.env['x_afp']
-            pension_id = context.search([('x_name', '=', data['pension'])])
-            pension = context.browse(pension_id)
-            employee.x_studio_many2one_field_GtifE = pension
+            if data.get('pension') and data.get('pension') != 'N/A':
+                context = self.odoo.env['x_afp']
+                pension_id = context.search([('x_name', '=', data.get('pension'))])
+                pension = context.browse(pension_id)
+                employee.x_studio_many2one_field_GtifE = pension
             
-            context = self.odoo.env['x_arl']
-            arl_id = context.search([('x_name', '=', data['severance'])])
-            arl = context.browse(arl_id)
-            employee.x_studio_many2one_field_arquY = arl
+      
+            if data.get('shirt_size') and data.get('shirt_size') != 'N/A':
+                context = self.odoo.env['x_talla_camisa']
+                shirt_id = context.search([('x_name', '=', data.get('shirt_size'))])
+                shirt = context.browse(shirt_id)
+                employee.x_studio_many2one_field_WqjQH = shirt
 
-            context = self.odoo.env['x_talla_camisa']
-            shirt_id = context.search([('x_name', '=', data['shirt_size'])])
-            shirt = context.browse(shirt_id)
-            employee.x_studio_many2one_field_WqjQH = shirt
+            if data.get('pant_size') and data.get('pant_size') != 'N/A':
+                context = self.odoo.env['x_talla_pantalon']
+                pant_id = context.search([('x_name', '=', data.get('pant_size'))])
+                pant = context.browse(pant_id)
+                employee.x_studio_many2one_field_ZfzC2 = pant
 
-            context = self.odoo.env['x_talla_pantalon']
-            pant_id = context.search([('x_name', '=', data['pant_size'])])
-            pant = context.browse(pant_id)
-            employee.x_studio_many2one_field_ZfzC2 = pant
-
-            context = self.odoo.env['x_talla_calzado']
-            shoe_id = context.search([('x_name', '=', data['shoes_size'])])
-            shoe = context.browse(shoe_id)
-            employee.x_studio_many2one_field_rv1KK = shoe
+            if data.get('shoes_size') and data.get('shoes_size') != 'N/A':
+                context = self.odoo.env['x_talla_calzado']
+                shoe_id = context.search([('x_name', '=', data.get('shoes_size'))])
+                shoe = context.browse(shoe_id)
+                employee.x_studio_many2one_field_rv1KK = shoe
 
             # Actualiza los datos del empleado en Odoo
             employee.write(employee_data)
             return employee.id
         except Exception as e:
-            print(f"Error al actualizar datos de empleado: {e}")
+            print(f"Error al actualizar datos de empleado: {e}, Causa: {e.__cause__}")
             return False
     
     def get_employee_profile_image(self, identification_number):

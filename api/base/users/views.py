@@ -43,6 +43,8 @@ class Login(APIView):
         if user is None or not self.check_md5_password(password, user["contrasena"]):
             return Response({'error': 'Nombre de usuario o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
         
+        
+
          # Generate JWT Token
         access_token = CustomUserModelBackend.generate_access_token(user)
 
