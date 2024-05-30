@@ -62,6 +62,7 @@ class EmployeesView(APIView):
         employee_serializer = EmployeeSerializer(data=request.data or None)
 
         if employee_serializer.is_valid(raise_exception=True):
+            print ("Data from client: ",employee_serializer.data)
             odoo_client = OdooClient()
 
             employee_id = odoo_client.update_employee_data(user_login, employee_serializer.data)
