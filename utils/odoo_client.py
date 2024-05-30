@@ -222,7 +222,7 @@ class OdooClient():
             "full_name": odoo_employee.identification_id if odoo_employee.identification_id else 'N/A',
             "gender": odoo_employee.gender if odoo_employee else 'N/A',
             "birth_date": odoo_employee.birthday if odoo_employee.birthday else 'N/A',
-            "birth_place": odoo_employee.x_studio_lugar_de_nacimiento.x_name if odoo_employee.x_studio_lugar_de_nacimiento.x_name else 'N/A',
+            "birth_place": odoo_employee.x_studio_lugar_de_nacimiento_empleado.x_studio_cdigo_municipio_1 if odoo_employee.x_studio_lugar_de_nacimiento.x_studio_cdigo_municipio_1 else 'N/A',
             "birth_country": odoo_employee.country_of_birth.name if odoo_employee.country_of_birth.name else 'N/A',
             "email": odoo_employee.x_studio_correo_electrnico_personal if odoo_employee.x_studio_correo_electrnico_personal else 'N/A',
             "email_work": odoo_employee.work_email if odoo_employee.work_email else 'N/A',
@@ -412,7 +412,7 @@ class OdooClient():
                 context = self.odoo.env['res.country']
                 country_id = context.search([('name', '=', data.get('birth_country'))])
                 country = context.browse(country_id)
-                employee.x_studio_pais_de_nacimiento = country
+                employee.country_of_birth = country
 
             if data.get('pension') and data.get('pension') != 'N/A':
                 context = self.odoo.env['x_afp']
