@@ -253,7 +253,6 @@ class OdooClient():
             "employee_status": odoo_employee.x_studio_estado_empleado if odoo_employee.x_studio_estado_empleado else 'N/A'
         }
 
-        print("Empleado: ", employee)
         return employee
     
     '''
@@ -348,9 +347,6 @@ class OdooClient():
 
             if data.get('birth_date') and data.get('birth_date') != 'N/A':
                 employee_data['birthday'] = data.get('birth_date')
-            
-            if  data.get('birth_place') and  data.get('birth_place') != 'N/A':
-                employee_data['x_studio_lugar_de_nacimiento'] = data.get('birth_place')
 
             if data.get('bank_account_number') and data.get('bank_account_number') != 'N/A':
                 employee_data['x_studio_nmero_de_cuenta_bancaria'] = data.get('bank_account_number')
@@ -408,7 +404,7 @@ class OdooClient():
             
             if data.get('birth_place') and data.get('birth_place') != 'N/A':
                 context = self.odoo.env['x_municipios']
-                city_id = context.search([('x_name', '=', data.get('birth_place'))])
+                city_id = context.search([('x_studio_cdigo_municipio_1', '=', data.get('birth_place'))])
                 city = context.browse(city_id)
                 employee.x_studio_lugar_de_nacimiento = city
             
