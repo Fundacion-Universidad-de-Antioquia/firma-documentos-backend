@@ -222,7 +222,7 @@ class OdooClient():
             "full_name": odoo_employee.identification_id if odoo_employee.identification_id else 'N/A',
             "gender": odoo_employee.gender if odoo_employee else 'N/A',
             "birth_date": odoo_employee.birthday if odoo_employee.birthday else 'N/A',
-            "birth_place": odoo_employee.x_studio_lugar_de_nacimiento_empleado.x_cdigo_municipio_1 if odoo_employee.x_studio_lugar_de_nacimiento_empleado.x_cdigo_municipio else 'N/A',
+            "birth_place": odoo_employee.x_studio_lugar_de_nacimiento.x_name if odoo_employee.x_studio_lugar_de_nacimiento.x_name else 'N/A',
             "birth_country": odoo_employee.country_of_birth.name if odoo_employee.country_of_birth.name else 'N/A',
             "email": odoo_employee.x_studio_correo_electrnico_personal if odoo_employee.x_studio_correo_electrnico_personal else 'N/A',
             "email_work": odoo_employee.work_email if odoo_employee.work_email else 'N/A',
@@ -253,6 +253,7 @@ class OdooClient():
             "employee_status": odoo_employee.x_studio_estado_empleado if odoo_employee.x_studio_estado_empleado else 'N/A'
         }
 
+        print("Empleado: ", employee)
         return employee
     
     '''
@@ -360,9 +361,6 @@ class OdooClient():
             
             if data.get('blood_type') and data.get('blood_type') != 'N/A':
                 employee_data['x_studio_rh'] = data.get('blood_type')
-            
-            if data.get('address_home_id') and data.get('address_home_id') != 'N/A':
-                employee_data['address_home_id'] = data.get('address_home_id')
    
             if data.get('home_neighborhood') and data.get('home_neighborhood') != 'N/A':
                 employee_data['x_studio_barrio'] = data.get('home_neighborhood')
@@ -382,11 +380,11 @@ class OdooClient():
 
             # Actualizar con relaciones con Otros modelos
 
-            if data.get('home_address_id') and data.get('home_address_id') != 'N/A':
+            if data.get('address_home_id') and data.get('address_home_id') != 'N/A':
                 context = self.odoo.env['res.partner']
-                address_id = context.search([('name', '=', data.get('home_address_id'))])
+                address_id = context.search([('name', '=', data.get('address_home_id'))])
                 if not address_id:
-                    address_id = context.create({'name': data.get('home_address_id')})
+                    address_id = context.create({'name': data.get('address_home_id')})
                 address = context.browse(address_id)
                 employee.address_home_id = address
 
@@ -409,10 +407,10 @@ class OdooClient():
                 employee.x_studio_municipio = city
             
             if data.get('birth_place') and data.get('birth_place') != 'N/A':
-                context = self.odoo.env['x_bancos']
-                city_id = context.search([('x_studio_cdigo_municipio_1', '=', data.get('birth_place'))])
+                context = self.odoo.env['x_municipios']
+                city_id = context.search([('x_name', '=', data.get('birth_place'))])
                 city = context.browse(city_id)
-                employee.x_studio_lugar_de_nacimiento_empleado = city
+                employee.x_studio_lugar_de_nacimiento = city
             
             if data.get('birth_country') and data.get('birth_country') != 'N/A':
                 context = self.odoo.env['res.country']
