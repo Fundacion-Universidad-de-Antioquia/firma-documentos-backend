@@ -222,12 +222,12 @@ class OdooClient():
             "full_name": odoo_employee.identification_id if odoo_employee.identification_id else 'N/A',
             "gender": odoo_employee.gender if odoo_employee else 'N/A',
             "birth_date": odoo_employee.birthday if odoo_employee.birthday else 'N/A',
-            "birth_place": odoo_employee.x_studio_lugar_de_nacimiento.x_name if odoo_employee.x_studio_lugar_de_nacimiento.x_name else 'N/A',
+            # "birth_place": odoo_employee.x_studio_lugar_de_nacimiento.x_cdigo_municipio_1 if odoo_employee.x_studio_lugar_de_nacimiento.x_name else 'N/A',
             "email": odoo_employee.x_studio_correo_electrnico_personal if odoo_employee.x_studio_correo_electrnico_personal else 'N/A',
             "email_work": odoo_employee.work_email if odoo_employee.work_email else 'N/A',
             "address_home_id": odoo_employee.address_home_id.name if odoo_employee.address_home_id.name else 'N/A',
             "home_neighborhood": odoo_employee.x_studio_barrio if odoo_employee.x_studio_barrio else 'N/A',
-            "home_city": odoo_employee.x_studio_municipio.x_name if odoo_employee.x_studio_municipio.x_name else 'N/A',
+            "home_city": odoo_employee.x_studio_municipio.x_studio_cdigo_municipio_1 if odoo_employee.x_studio_municipio.x_studio_cdigo_municipio_1 else 'N/A',
             "telephone1": odoo_employee.work_phone if odoo_employee.work_phone else 'N/A',
             "cellphone": odoo_employee.mobile_phone if odoo_employee.mobile_phone else 'N/A',
             "employee_project": odoo_employee.company_id.name if odoo_employee.company_id.name else 'N/A',
@@ -347,8 +347,8 @@ class OdooClient():
             if data.get('birth_date') and data.get('birth_date') != 'N/A':
                 employee_data['birthday'] = data.get('birth_date')
             
-            if  data.get('birth_place') and  data.get('birth_place') != 'N/A':
-                employee_data['x_studio_lugar_de_nacimiento'] = data.get('birth_place')
+            # if  data.get('birth_place') and  data.get('birth_place') != 'N/A':
+            #    employee_data['x_studio_lugar_de_nacimiento'] = data.get('birth_place')
 
             if data.get('bank_account_number') and data.get('bank_account_number') != 'N/A':
                 employee_data['x_studio_nmero_de_cuenta_bancaria'] = data.get('bank_account_number')
@@ -379,6 +379,14 @@ class OdooClient():
                 employee_data['x_studio_estilo'] = data.get('dress_style')
 
             # Actualizar con relaciones con Otros modelos
+
+            if data.get('home_address_id') and data.get('home_address_id') != 'N/A':
+                context = self.odoo.env['res.partner']
+                address_id = context.search([('name', '=', data.get('home_address_id'))])
+                if not address_id:
+                    address_id = context.create({'name': data.get('home_address_id')})
+                address = context.browse(address_id)
+                employee.address_home_id = address
 
             if  data.get('bank') and data.get('bank_name') != 'N/A':
                 context = self.odoo.env['x_banco']  
