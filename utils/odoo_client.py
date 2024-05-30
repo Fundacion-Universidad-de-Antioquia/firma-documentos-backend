@@ -406,11 +406,12 @@ class OdooClient():
                 context = self.odoo.env['x_municipios']
                 city_id = context.search([('x_studio_cdigo_municipio_1', '=', data.get('birth_place'))])
                 city = context.browse(city_id)
-                employee.x_studio_lugar_de_nacimiento = city
+                employee.x_studio_lugar_de_nacimiento_empleado = city
             
             if data.get('birth_country') and data.get('birth_country') != 'N/A':
                 context = self.odoo.env['res.country']
                 country_id = context.search([('name', '=', data.get('birth_country'))])
+                print("Country ID: ", country_id)
                 country = context.browse(country_id)
                 employee.country_of_birth = country
 

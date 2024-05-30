@@ -38,3 +38,4 @@ __azurite_db_blob_extent__.json
 api/base/employees/migrations/
 db_intranet.py
 api/base/documents/__pycache__/__init__.cpython-310.pyc
+utils/__pycache__/odoo_client.cpython-310.pyc
