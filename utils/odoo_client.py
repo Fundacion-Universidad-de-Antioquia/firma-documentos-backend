@@ -379,6 +379,7 @@ class OdooClient():
             if data.get('dress_style') and data.get('dress_style') != 'N/A':
                 employee_data['x_studio_estilo'] = data.get('dress_style')
 
+
             # Actualizar con relaciones con Otros modelos
 
             if data.get('home_address_id') and data.get('home_address_id') != 'N/A':
