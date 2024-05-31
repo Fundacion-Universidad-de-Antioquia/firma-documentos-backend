@@ -403,7 +403,7 @@ class OdooClient():
                 employee.x_studio_municipio = city
             
             if data.get('birth_place') and data.get('birth_place') != 'N/A':
-                context = self.odoo.env['x_municipios']
+                context = self.odoo.env['x_bancos']
                 city_id = context.search([('x_studio_cdigo_municipio_1', '=', data.get('birth_place'))])
                 city = context.browse(city_id)
                 employee.x_studio_lugar_de_nacimiento_empleado = city
