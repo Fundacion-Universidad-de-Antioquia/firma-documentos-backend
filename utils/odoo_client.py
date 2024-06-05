@@ -229,6 +229,7 @@ class OdooClient():
             "address_home_id": odoo_employee.address_home_id.name if odoo_employee.address_home_id.name else 'N/A',
             "home_neighborhood": odoo_employee.x_studio_barrio if odoo_employee.x_studio_barrio else 'N/A',
             "home_city": odoo_employee.x_studio_municipio.x_studio_cdigo_municipio_1 if odoo_employee.x_studio_municipio.x_studio_cdigo_municipio_1 else 'N/A',
+            "home_city_name": odoo_employee.x_studio_municipio.x_name if odoo_employee.x_studio_municipio.x_name else 'N/A',
             "telephone1": odoo_employee.work_phone if odoo_employee.work_phone else 'N/A',
             "cellphone": odoo_employee.mobile_phone if odoo_employee.mobile_phone else 'N/A',
             "employee_project": odoo_employee.company_id.name if odoo_employee.company_id.name else 'N/A',
@@ -384,9 +385,10 @@ class OdooClient():
                 address = context.browse(address_id)
                 employee.address_home_id = address
 
-            if  data.get('bank') and data.get('bank_name') != 'N/A':
-                context = self.odoo.env['x_banco']  
+            if  data.get('bank_name') and data.get('bank_name') != 'N/A':
+                context = self.odoo.env['x_banco']
                 bank_id = context.search([('x_name', '=', data.get('bank_name'))])
+                print("Banco ID: ", bank_id)
                 bank = context.browse(bank_id)
                 employee.x_studio_many2one_field_p7Ucx  = bank
             
@@ -411,7 +413,6 @@ class OdooClient():
             if data.get('birth_country') and data.get('birth_country') != 'N/A':
                 context = self.odoo.env['res.country']
                 country_id = context.search([('name', '=', data.get('birth_country'))])
-                print("Country ID: ", country_id)
                 country = context.browse(country_id)
                 employee.country_of_birth = country
 
@@ -540,14 +541,22 @@ class OdooClient():
             shoe_dict[shoe.id] = {"name": shoe.x_name, "code": shoe.x_name}
         list_options["shoes_size"] = shoe_dict
 
-        # Ubicaciones
+        # Departamentos y ciudades
         odoo_context = self.odoo.env['x_bancos']
         cities_ids = odoo_context.search([])
         cities_dict = {}
+        states = {}
         for city in odoo_context.browse(cities_ids):
-            cities_dict[city.id] = {"name": str(city.x_name)+'-'+str(city.x_studio_departamento), 
+            state = city.x_studio_departamento
+            code_state = city.x_studio_cdigo_departamento_1
+            if state not in states:
+                states[state] = []
+            cities_dict[city.id] = {"name": str(city.x_name)+'-'+str(city.x_studio_departamento),
                                    "code": city.x_studio_cdigo_municipio_1}
+            states[state].append({"name": str(city.x_name),
+                                  "code": city.x_studio_cdigo_municipio_1})
         list_options["cities"] = cities_dict
+        list_options["states"] = states
 
         odoo_context = self.odoo.env['res.country']
         countries_ids = odoo_context.search([])
