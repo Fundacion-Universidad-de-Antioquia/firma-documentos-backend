@@ -14,4 +14,5 @@ urlpatterns = [
     path('data_status/', views.employee_data_policies),
     path('image_profile/', views.image_profile),
     path('list_options/', views.list_options),
+    path('sign_documents/', views.sign_documents)
 ]

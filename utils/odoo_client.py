@@ -567,18 +567,36 @@ class OdooClient():
         list_options["countries"] = countries_dict
 
         return list_options
+    
+    def get_sign_documents(self, employee_identification):
+        '''
+        Get the sign documents of an employee in Odoo
+        '''
+
+        # Get the employee email
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', employee_identification)])
+        if not employee:
+            return None
+        else:
+            employee = odoo_context.browse(employee[0])
+            employee_email = employee.x_studio_correo_electrnico_personal if employee.x_studio_correo_electrnico_personal else None
+            if not employee_email:
+                return None
         
+        odoo_context = self.odoo.env['sign.request.item']
+        sign_items = odoo_context.search([('signer_email', '=', employee_email)])
 
+        sign_requests = {}
+        request_context = self.odoo.env['sign.request']
+        for sign_item in odoo_context.browse(sign_items):            
+            # request = request_context.browse(sign_item.sign_request_id.id)
 
-
-
-'''
-user_count = api.execute_kw(database, uid, password,
-                            "res.users", "search_count", [[]])
-print(f"User count is: {user_count}")
-
-companies = api.execute_kw(database, uid, password, "res.users", "read", [
-                           uid, ["login", "name", "company_id"]])
-print("User companies: ")
-print(companies)
-'''
+            sign_requests[sign_item.sign_request_id.id] = {"reference": sign_item.sign_request_id.reference,
+                                        "create_date": sign_item.sign_request_id.create_date,
+                                        "state": sign_item.sign_request_id.state,
+                                        "access_token": sign_item.sign_request_id.access_token,
+                                        "signer_email": sign_item.signer_email}
+        
+        print("Sign request: ", sign_requests)
+        return sign_requests

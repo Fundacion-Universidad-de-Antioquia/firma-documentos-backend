@@ -167,3 +167,14 @@ def list_options(request):
         return Response({"error": "Error al obtener opciones"}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response(options, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def sign_documents(request):
+    odoo_client = OdooClient()
+    employee_identification = request.user['login']
+    documents = odoo_client.get_sign_documents(employee_identification)
+
+    if documents is None:
+        return Response({"error": "No hay datos de documentos para firmar de empleado"}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(documents, status=status.HTTP_200_OK)
