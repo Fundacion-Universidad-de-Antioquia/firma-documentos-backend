@@ -588,15 +588,12 @@ class OdooClient():
         sign_items = odoo_context.search([('signer_email', '=', employee_email)])
 
         sign_requests = {}
-        request_context = self.odoo.env['sign.request']
         for sign_item in odoo_context.browse(sign_items):            
             # request = request_context.browse(sign_item.sign_request_id.id)
 
             sign_requests[sign_item.sign_request_id.id] = {"reference": sign_item.sign_request_id.reference,
                                         "create_date": sign_item.sign_request_id.create_date,
                                         "state": sign_item.sign_request_id.state,
-                                        "access_token": sign_item.sign_request_id.access_token,
+                                        "access_token": sign_item.access_token,
                                         "signer_email": sign_item.signer_email}
-        
-        print("Sign request: ", sign_requests)
         return sign_requests
