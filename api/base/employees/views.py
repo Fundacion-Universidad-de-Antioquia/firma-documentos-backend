@@ -9,7 +9,7 @@ from utils.odoo_client import OdooClient
 from utils.file_utils import base64_to_image, image_to_base64
 
 from .models import Employee
-from .serializers import EmployeeSerializer, EmployeeDataPoliciesSerializer, EmployeeBaseFilesSerializer
+from .serializers import EmployeeSerializer, EmployeeDataPoliciesSerializer, EmployeeDocumentsSerializer
 
 
 class EmployeesView(APIView):
@@ -182,7 +182,7 @@ def sign_documents(request):
 @api_view(['POST'])
 def employee_files(request):
 
-    serializer = EmployeeBaseFilesSerializer(data=request.data)
+    serializer = EmployeeDocumentsSerializer(data=request.data)
     odoo_client = OdooClient()
     employee_identification = request.user['login']
     files = odoo_client.upload_employee_base_files(employee_identification, request.data)

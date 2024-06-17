@@ -624,9 +624,5 @@ class OdooClient():
                 'store_fname': file['name'],
                 'datas': file['base64']
             }
-            attachment_id = attachment.create(attachment_vals)
-
-            # Add the attachment to the employee
-            employee.write({'x_studio_documentos': [(4, attachment_id)]})
         
         return True
