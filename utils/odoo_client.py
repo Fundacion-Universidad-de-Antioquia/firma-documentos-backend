@@ -237,6 +237,7 @@ class OdooClient():
             "id_document": odoo_employee.name if odoo_employee.name else 'N/A',
             "cost_center": odoo_employee.x_studio_centro_de_costos if odoo_employee.x_studio_centro_de_costos else 'N/A',
             "bank_account_number": odoo_employee.x_studio_nmero_de_cuenta_bancaria if odoo_employee.x_studio_nmero_de_cuenta_bancaria else 'N/A',
+            "bank_account_type": odoo_employee.x_studio_tipo_cuenta_bancaria if odoo_employee.xstudio.tipo_cuenta_bancaria else 'N/A',
             "bank_name": odoo_employee.x_studio_many2one_field_p7Ucx.x_name if odoo_employee.x_studio_many2one_field_p7Ucx.x_name else 'N/A',
             "blood_type": odoo_employee.x_studio_rh if odoo_employee.x_studio_rh else 'N/A',
             "employee_zone": odoo_employee.x_studio_zona_proyecto_aseo if odoo_employee.x_studio_zona_proyecto_aseo else 'N/A',
@@ -351,6 +352,9 @@ class OdooClient():
 
             if data.get('bank_account_number') and data.get('bank_account_number') != 'N/A':
                 employee_data['x_studio_nmero_de_cuenta_bancaria'] = data.get('bank_account_number')
+            
+            if data.get('bank_account_type') and data.get('bank_account_type') != 'N/A':
+                employee_data['x_studio_tipo_cuenta_bancaria'] = data.get('bank_account_type')
             
             if data.get('gender') and data.get('gender') != 'N/A':
                 gender_spanish = data.get('gender')
@@ -597,3 +601,32 @@ class OdooClient():
                                         "access_token": sign_item.access_token,
                                         "signer_email": sign_item.signer_email}
         return sign_requests
+    
+    def upload_employee_base_files(self, employee_identification, files):
+        '''
+        Upload files to the employee in Odoo
+        '''
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', employee_identification)])
+        if not employee:
+            return None
+        else:
+            employee = odoo_context.browse(employee[0])
+            
+        # Create the attachment
+        for file in files:
+            # Upload files to Sharepoint
+            
+            attachment_vals = {
+                'name': file['name'],
+                'type': 'binary',
+                'mimetype': file['mimetype'],
+                'store_fname': file['name'],
+                'datas': file['base64']
+            }
+            attachment_id = attachment.create(attachment_vals)
+
+            # Add the attachment to the employee
+            employee.write({'x_studio_documentos': [(4, attachment_id)]})
+        
+        return True

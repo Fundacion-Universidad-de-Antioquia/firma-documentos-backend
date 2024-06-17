@@ -22,6 +22,7 @@ class EmployeeSerializer(serializers.Serializer):
     id_document = serializers.CharField()
     cost_center = serializers.CharField(required=False)
     bank_account_number = serializers.CharField(required=False)
+    bank_account_type = serializers.CharField(required=False)
     bank_name = serializers.CharField(required=False)
     codigo_banco = serializers.CharField(required=False)
     blood_type = serializers.CharField(required=False)
@@ -105,3 +106,30 @@ class EmployeeImageProfileSerializer(serializers.Serializer):
         if 'image_profile' not in attrs:
             raise serializers.ValidationError("image_profile es requerido")
         return attrs
+
+class EmployeeDocumentsSerializer(serializers.Serializer):
+
+    # Base Documents
+    bank_certification = serializers.CharField(required=False)
+    curriculum_vitae = serializers.CharField(required=False)
+    id_file = serializers.CharField(required=False)
+    judicial_background = serializers.CharField(required=False)
+
+    # Academic Documents
+    bachelor_certification = serializers.CharField(required=False)
+    high_school_certification = serializers.CharField(required=False)
+    master_certification = serializers.CharField(required=False)
+    postgraduate_certification = serializers.CharField(required=False)
+
+    # Work Documents
+    working_letter_1 = serializers.CharField(required=False)
+    working_letter_2 = serializers.CharField(required=False)
+    working_letter_3 = serializers.CharField(required=False)
+
+    # Social Security Documents
+    eps_certification = serializers.CharField(required=False)
+    pension_certification = serializers.CharField(required=False)
+    severance_certification = serializers.CharField(required=False)
+
+    # Other Documents
+    sworn_declaration_comfama = serializers.CharField(required=False)

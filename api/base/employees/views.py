@@ -9,7 +9,7 @@ from utils.odoo_client import OdooClient
 from utils.file_utils import base64_to_image, image_to_base64
 
 from .models import Employee
-from .serializers import EmployeeSerializer, EmployeeDataPoliciesSerializer, EmployeeImageProfileSerializer
+from .serializers import EmployeeSerializer, EmployeeDataPoliciesSerializer, EmployeeBaseFilesSerializer
 
 
 class EmployeesView(APIView):
@@ -178,3 +178,16 @@ def sign_documents(request):
         return Response({"error": "No hay datos de documentos para firmar de empleado"}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response(documents, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def employee_files(request):
+
+    serializer = EmployeeBaseFilesSerializer(data=request.data)
+    odoo_client = OdooClient()
+    employee_identification = request.user['login']
+    files = odoo_client.upload_employee_base_files(employee_identification, request.data)
+
+    if files is None:
+        return Response({"error": "No hay archivos de empleado"}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(files, status=status.HTTP_200_OK)
