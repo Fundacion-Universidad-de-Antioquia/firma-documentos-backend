@@ -33,14 +33,14 @@ class EmployeesView(APIView):
 
         if odoo_client == None:
             return Response({"error": "Error al conectar con el ERP"}, status=status.HTTP_400_BAD_REQUEST)
-
-        # El empleado ya viene en formato JSON, por eso no hay que serializarlo
+        
         employee = odoo_client.search_employee_by_identification(user_login)
 
         if employee is None:
             print("Employee not found in ERP")
             return Response({"error": "Empleado no encontrado en el ERP"}, status=status.HTTP_404_NOT_FOUND)
 
+        print("Employee data: ", employee)
         serializer = EmployeeSerializer(data=employee)
 
         if serializer.is_valid():
@@ -95,7 +95,7 @@ def employee_data_policies(request):
 
         if employee_status is None:
             return Response({"error": "Empleado no encontrado en el ERP"}, status=status.HTTP_404_NOT_FOUND)
-
+        
         return Response(employee_status, status=status.HTTP_200_OK)
     
     if request.method == 'POST':
