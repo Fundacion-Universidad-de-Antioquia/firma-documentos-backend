@@ -237,7 +237,7 @@ class OdooClient():
             "id_document": odoo_employee.name if odoo_employee.name else 'N/A',
             "cost_center": odoo_employee.x_studio_centro_de_costos if odoo_employee.x_studio_centro_de_costos else 'N/A',
             "bank_account_number": odoo_employee.x_studio_nmero_de_cuenta_bancaria if odoo_employee.x_studio_nmero_de_cuenta_bancaria else 'N/A',
-            "bank_account_type": odoo_employee.x_studio_tipo_cuenta_bacaria if odoo_employee.xstudio_tipo_cuenta_bacaria else 'N/A',
+            "bank_account_type": odoo_employee.x_studio_tipo_cuenta_bacaria if odoo_employee.x_studio_tipo_cuenta_bacaria else 'N/A',
             "bank_name": odoo_employee.x_studio_many2one_field_p7Ucx.x_name if odoo_employee.x_studio_many2one_field_p7Ucx.x_name else 'N/A',
             "blood_type": odoo_employee.x_studio_rh if odoo_employee.x_studio_rh else 'N/A',
             "employee_zone": odoo_employee.x_studio_zona_proyecto_aseo if odoo_employee.x_studio_zona_proyecto_aseo else 'N/A',
