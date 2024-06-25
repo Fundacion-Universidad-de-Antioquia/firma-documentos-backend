@@ -626,3 +626,55 @@ class OdooClient():
             }
         
         return True
+
+    def get_employee_sons(self, employee_identification):
+        '''
+        Get the sons of an employee in Odoo
+        '''
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', employee_identification)])
+        if not employee:
+            return None
+        else:
+            # "bank_name": odoo_employee.x_studio_many2one_field_p7Ucx.x_name
+            employee = odoo_context.browse(employee[0])
+           
+            son_data = {}
+            for son in employee.x_studio_hijos_empleado:
+                print("Hijo: ", son)
+                son_data[son.x_name] = {
+                    "child_full_name": son.x_studio_nombre,
+                    "child_age": son.x_studio_edad,
+                    "child_gender": son.x_studio_gnero,
+                    "child_birth_date": son.x_studio_fecha_de_nacimiento
+                    }
+
+            print("Todos los hijos: ", son_data)
+            return son_data
+        
+    def update_employee_sons(self, employee_identification, sons):
+        '''
+        Update the sons of an employee in Odoo
+        '''
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', employee_identification)])
+        if not employee:
+            return None
+        else:
+            employee = odoo_context.browse(employee[0])
+            sons_ids = []
+
+            for child_id_document, details in sons.items():
+                son_data = {
+                    'x_name': child_id_document,
+                    'x_studio_nombre': details['child_full_name'],
+                    'x_studio_gnero': details['child_gender'],
+                    'x_studio_fecha_de_nacimiento': details['child_birth_date'],
+                    'x_studio_company_id': employee.company_id.id,
+                    'x_studio_many2one_field_XctqN': employee.id
+                }
+                son_id = odoo_context.env['x_hijos'].create(son_data)
+                sons_ids.append(son_id)
+            
+            return sons_ids
+

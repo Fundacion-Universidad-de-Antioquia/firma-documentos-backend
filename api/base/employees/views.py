@@ -191,3 +191,24 @@ def employee_files(request):
         return Response({"error": "No hay archivos de empleado"}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response(files, status=status.HTTP_200_OK)
+
+@api_view(['GET', 'POST'])
+def employee_sons(request):
+    if request.method == 'GET':
+        odoo_client = OdooClient()
+        employee_identification = request.user['login']
+        sons = odoo_client.get_employee_sons(employee_identification)
+
+        return Response(sons, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        odoo_client = OdooClient()
+        employee_identification = request.user['login']
+        sons_id = odoo_client.update_employee_sons(employee_identification, request.data)
+        
+        if sons_id is None:
+            return Response({"error": "Error al actualizar hijos de empleado"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": "Hijos de empleado actualizados"}, status=status.HTTP_200_OK)
+
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
