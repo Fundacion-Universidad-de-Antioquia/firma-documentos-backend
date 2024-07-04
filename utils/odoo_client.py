@@ -570,6 +570,37 @@ class OdooClient():
         
         list_options["countries"] = countries_dict
 
+        # Lista de opciones de empleados
+        odoo_context = self.odoo.env['hr.employee']
+
+        maritals = odoo_context.fields_get('marital')
+        marital_dict = {}
+        for marital in maritals['marital']['selection']:
+            marital_dict[marital[0]] = {"name": marital[1], "code": marital[0]}
+
+        list_options["marital_status"] = marital_dict
+
+        races = odoo_context.fields_get('x_studio_raza')
+        race_dict = {}
+        for race in races['x_studio_raza']['selection']:
+            race_dict[race[0]] = {"name": race[1], "code": race[0]}
+        
+        list_options["races"] = race_dict
+
+        scholarship = odoo_context.fields_get('x_studio_nivel_de_escolaridad')
+        scholarship_dict = {}
+        for school in scholarship['x_studio_nivel_de_escolaridad']['selection']:
+            scholarship_dict[school[0]] = {"name": school[1], "code": school[0]}
+        
+        list_options["scholarship"] = scholarship_dict
+
+        relationship = odoo_context.fields_get('x_studio_parentesco')
+        relationship_dict = {}
+        for relation in relationship['x_studio_parentesco']['selection']:
+            relationship_dict[relation[0]] = {"name": relation[1], "code": relation[0]}
+
+        list_options["relationship"] = relationship_dict
+
         return list_options
     
     def get_sign_documents(self, employee_identification):
@@ -655,6 +686,7 @@ class OdooClient():
     def update_employee_sons(self, employee_identification, sons):
         '''
         Update the sons of an employee in Odoo
+        Validar el hijo por el documento de identificación
         '''
         odoo_context = self.odoo.env['hr.employee']
         employee = odoo_context.search([('name', '=', employee_identification)])
@@ -677,4 +709,37 @@ class OdooClient():
                 sons_ids.append(son_id)
             
             return sons_ids
+        
+    def remove_employee_son(self, employee_identification, son_identification):
+        pass
+        
+    def get_sharepoint_id(self, employee_identification):
+        '''
+        Ver los datos de sharepoing en el modelo empleados: Acceso_GD
+        Campos: Sitio, biblioteca
+        '''
+        pass
+        
+    def get_sharepoint_data(self, employee_identification) -> set:
+        '''
+        Obtiene datos de Sharepoint: site_id, library_name
+        Return: 
+        '''
+        odoo_employee = self.odoo.env['hr.employee']
+        odoo_documents = self.odoo.env['x_gestion_documental']
+        
+        employee = odoo_employee.search([('name', '=', employee_identification)])
+        # site_id = odoo_context.x_studio_sitio
+        # library_name = odoo_context.x_studio_biblioteca
+
+        return self.url
+    
+    
+    def get_employee_required_documents(self, employee_idenfication):
+        '''
+        Obtiene los documentos requeridos del empleado.
+        el modelo se llama: Conexión microsoft
+        allí la pestaña Documentos GH, se obtiene la lista de documentos que tiene el campo 'Requiere actualiza' en Si
+        '''
+        pass
 

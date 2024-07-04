@@ -15,6 +15,7 @@ urlpatterns = [
     path('image_profile/', views.image_profile),
     path('list_options/', views.list_options),
     path('sign_documents/', views.sign_documents),
-    path('employee_sons/', views.employee_sons)
+    path('employee_sons/', views.employee_sons),
+    
     # path('employee_files/', views.employee_files)
 ]
