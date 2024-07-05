@@ -226,6 +226,12 @@ class OdooClient():
             "birth_country": odoo_employee.country_of_birth.name if odoo_employee.country_of_birth.name else 'N/A',
             "email": odoo_employee.x_studio_correo_electrnico_personal if odoo_employee.x_studio_correo_electrnico_personal else 'N/A',
             "email_work": odoo_employee.work_email if odoo_employee.work_email else 'N/A',
+            "marital_status": odoo_employee.marital if odoo_employee.marital else 'N/A',
+            "emergency_contact_name": odoo_employee.emergency_contact if odoo_employee.emergency_contact else 'N/A',
+            "emergency_contact_relationship": odoo_employee.x_studio_parentesco if odoo_employee.x_studio_parentesco else 'N/A',
+            "emergency_contact_number": odoo_employee.emergency_phone if odoo_employee.emergency_phone else 'N/A',
+            "race": odoo_employee.x_studio_raza if odoo_employee.x_studio_raza else 'N/A',
+            "scholarship": odoo_employee.x_studio_nivel_de_escolaridad if odoo_employee.x_studio_nivel_de_escolaridad else 'N/A',
             "address_home_id": odoo_employee.address_home_id.name if odoo_employee.address_home_id.name else 'N/A',
             "home_neighborhood": odoo_employee.x_studio_barrio if odoo_employee.x_studio_barrio else 'N/A',
             "home_city": odoo_employee.x_studio_municipio.x_studio_cdigo_municipio_1 if odoo_employee.x_studio_municipio.x_studio_cdigo_municipio_1 else 'N/A',
@@ -377,8 +383,25 @@ class OdooClient():
             
             if data.get('dress_style') and data.get('dress_style') != 'N/A':
                 employee_data['x_studio_estilo'] = data.get('dress_style')
-
-
+            
+            if data.get('race') and data.get('race') != 'N/A':
+                employee_data['x_studio_raza'] = data.get('race')
+            
+            if data.get('scholarship') and data.get('scholarship') != 'N/A':
+                employee_data['x_studio_nivel_de_escolaridad'] = data.get('scholarship')
+            
+            if data.get('relationship') and data.get('relationship') != 'N/A':
+                employee_data['x_studio_parentesco'] = data.get('relationship')
+            
+            if data.get('marital_status') and data.get('marital_status') != 'N/A':
+                employee_data['marital'] = data.get('marital_status')
+            
+            if data.get('emergency_contact_name') and data.get('emergency_contact_name') != 'N/A':
+                employee_data['emergency_contact'] = data.get('emergency_contact_name')
+            
+            if data.get('emergency_contact_number') and data.get('emergency_contact_number') != 'N/A':
+                employee_data['emergency_phone'] = data.get('emergency_contact_number')
+            
             # Actualizar con relaciones con Otros modelos
 
             if data.get('address_home_id') and data.get('address_home_id') != 'N/A':

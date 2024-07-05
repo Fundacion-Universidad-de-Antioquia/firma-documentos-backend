@@ -37,10 +37,8 @@ class EmployeesView(APIView):
         employee = odoo_client.search_employee_by_identification(user_login)
 
         if employee is None:
-            print("Employee not found in ERP")
             return Response({"error": "Empleado no encontrado en el ERP"}, status=status.HTTP_404_NOT_FOUND)
-
-        print("Employee data: ", employee)
+        
         serializer = EmployeeSerializer(data=employee)
 
         if serializer.is_valid():
@@ -110,8 +108,6 @@ def employee_data_policies(request):
         data_policy = employeeSerializer.data.get('data_policy')
         data_treatment = employeeSerializer.data.get('data_treatment')
 
-        print(f"Data policy: {data_policy} - Data treatment: {data_treatment}")
-
         odoo_client = OdooClient()
 
         employee_status = odoo_client.update_employee_data_policies(employee_id_number, data_policy, data_treatment)
@@ -127,7 +123,6 @@ def employee_data_policies(request):
 def image_profile(request):
     if request.method == 'GET':
         employee_id_number = request.user['login']
-        print("Employee id number getting image: ", employee_id_number)
         odoo_client = OdooClient()
         image_base64 = odoo_client.get_employee_profile_image(employee_id_number)
 
@@ -141,7 +136,6 @@ def image_profile(request):
         employee_id_number = request.user['login']
 
         image_profile = request.data.get('image_profile')
-        print("Image profile: ", image_profile)
         
         try:
             odoo_client = OdooClient()
