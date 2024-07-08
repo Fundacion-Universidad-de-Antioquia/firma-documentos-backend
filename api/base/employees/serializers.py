@@ -25,7 +25,7 @@ class EmployeeSerializer(serializers.Serializer):
     cellphone = serializers.CharField(required=False)
     employee_project = serializers.CharField(required=False)
     employee_rol = serializers.CharField(required=False)
-    id_document = serializers.CharField()
+    id_document = serializers.CharField(required=False)
     cost_center = serializers.CharField(required=False)
     bank_account_number = serializers.CharField(required=False)
     bank_account_type = serializers.CharField(required=False)
