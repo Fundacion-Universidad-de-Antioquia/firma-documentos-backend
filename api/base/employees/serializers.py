@@ -45,6 +45,8 @@ class EmployeeSerializer(serializers.Serializer):
     entry_date = serializers.DateField(required=False)
     employee_code = serializers.CharField(required=False)
     employee_status = serializers.CharField(required=False)
+    university = serializers.CharField(required=False)
+    career = serializers.CharField(required=False)
     actualiza_datos_generales = serializers.BooleanField(required=False)
     politica_datos_generales = serializers.BooleanField(required=False)
 

@@ -191,7 +191,7 @@ def employee_files(request):
         pass
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'UPDATE', 'DELETE'])
 def employee_sons(request):
     if request.method == 'GET':
         odoo_client = OdooClient()
@@ -203,11 +203,23 @@ def employee_sons(request):
     if request.method == 'POST':
         odoo_client = OdooClient()
         employee_identification = request.user['login']
-        sons_id = odoo_client.update_employee_sons(employee_identification, request.data)
+        created = odoo_client.create_employee_sons(employee_identification, request.data)
         
-        if sons_id is None:
+        if not created:
             return Response({"error": "Error al actualizar hijos de empleado"}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response({"message": "Hijos de empleado actualizados"}, status=status.HTTP_200_OK)
+
+
+
+    if request.method == 'DELETE':
+        odoo_client = OdooClient()
+        employee_identification = request.user['login']
+        sons_id = odoo_client.remove_employee_son(employee_identification, request.data)
+        
+        if sons_id is None:
+            return Response({"error": "Error al eliminar hijos de empleado"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": "Hijos de empleado eliminados"}, status=status.HTTP_200_OK)
 
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)

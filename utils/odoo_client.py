@@ -593,6 +593,23 @@ class OdooClient():
         
         list_options["countries"] = countries_dict
 
+        # Universidades y programas
+        odoo_context = self.odoo.env['x_universidades']
+        universities_ids = odoo_context.search([])
+        universities_dict = {}
+        for university in odoo_context.browse(universities_ids):
+            universities_dict[university.id] = {"name": university.x_name, "code": university.id}
+
+        list_options["universities"] = universities_dict
+
+        odoo_context = self.odoo.env['x_programas']
+        programs_ids = odoo_context.search([])
+        programs_dict = {}
+        for program in odoo_context.browse(programs_ids):
+            programs_dict[program.id] = {"name": program.x_name, "code": program.id}
+        
+        list_options["university_programs"] = programs_dict
+
         # Lista de opciones de empleados
         odoo_context = self.odoo.env['hr.employee']
 
@@ -690,23 +707,18 @@ class OdooClient():
         if not employee:
             return None
         else:
-            # "bank_name": odoo_employee.x_studio_many2one_field_p7Ucx.x_name
             employee = odoo_context.browse(employee[0])
-           
             son_data = {}
             for son in employee.x_studio_hijos_empleado:
-                print("Hijo: ", son)
                 son_data[son.x_name] = {
                     "child_full_name": son.x_studio_nombre,
                     "child_age": son.x_studio_edad,
                     "child_gender": son.x_studio_gnero,
                     "child_birth_date": son.x_studio_fecha_de_nacimiento
-                    }
-
-            print("Todos los hijos: ", son_data)
+                    }   
             return son_data
         
-    def update_employee_sons(self, employee_identification, sons):
+    def create_employee_sons(self, employee_identification, sons_details):
         '''
         Update the sons of an employee in Odoo
         Validar el hijo por el documento de identificación
@@ -715,26 +727,96 @@ class OdooClient():
         employee = odoo_context.search([('name', '=', employee_identification)])
         if not employee:
             return None
-        else:
-            employee = odoo_context.browse(employee[0])
-            sons_ids = []
 
-            for child_id_document, details in sons.items():
-                son_data = {
+        employee = odoo_context.browse(employee[0])
+
+        sons_ids = [son.x_name for son in employee.x_studio_hijos_empleado]
+
+        for child_id_document, details in sons_details.items():
+            if child_id_document in sons_ids:
+                domain = [
+                    ('x_name', '=', child_id_document),
+                    ('x_studio_many2one_field_XctqN', '=', employee.id)
+                ]
+
+                son = self.odoo.env['x_hijos'].search(domain)[0]
+                son = self.odoo.env['x_hijos'].browse(son)
+                son.x_studio_nombre = details['child_full_name']
+                son.x_studio_gnero = details['child_gender']
+                son.x_studio_fecha_de_nacimiento = details['child_birth_date']
+            else:
+                self.odoo.env['x_hijos'].create({
                     'x_name': child_id_document,
                     'x_studio_nombre': details['child_full_name'],
                     'x_studio_gnero': details['child_gender'],
                     'x_studio_fecha_de_nacimiento': details['child_birth_date'],
                     'x_studio_company_id': employee.company_id.id,
                     'x_studio_many2one_field_XctqN': employee.id
-                }
-                son_id = odoo_context.env['x_hijos'].create(son_data)
-                sons_ids.append(son_id)
-            
-            return sons_ids
+                })
         
-    def remove_employee_son(self, employee_identification, son_identification):
-        pass
+        return True
+        
+    def remove_employee_son(self, employee_identification, data):
+        '''
+        Remove a son of an employee in Odoo
+        '''
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', employee_identification)])
+        if not employee:
+            return None
+        else:
+            employee = odoo_context.browse(employee[0])
+            
+            print(f"Employee sons: {employee.x_studio_hijos_empleado}")
+            for son in employee.x_studio_hijos_empleado:
+                if son.x_name == data['child_id_document']:
+                    son.unlink()
+                    return True
+            return True
+        
+    def get_employee_academic_data(self, employee_identification):
+        '''
+        Get the academic data of an employee in Odoo
+        '''
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', employee_identification)])
+        if not employee:
+            return None
+        else:
+            employee = odoo_context.browse(employee[0])
+            academic_data = {}
+            for academic in employee.x_studio_one2many_field_PkJQu:
+                academic_data[academic.x_name] = {
+                    "university": academic.x_studio_many2one_field_bSLmt.x_name,
+                    "program": academic.x_studio_many2one_field_7J4eP.x_name,
+                }
+            print("Estudios: ", academic_data)
+            return academic_data
+    
+    def update_employee_academic_data(self, employee_identification, academic_data):
+        '''
+        Update the academic data of an employee in Odoo
+        '''
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', employee_identification)])
+        if not employee:
+            return None
+        else:
+            employee = odoo_context.browse(employee[0])
+            academic_ids = []
+
+            academic_context = odoo_context['x_historial']
+            for study in academic_data.items():
+                data = {
+                    'x_studio_many2one_field_bSLmt': study['university'],
+                    'x_studio_many2one_field_7J4eP': study['program'],
+                    'x_studio_x_studio_many2one_field_bSLmt': employee.id
+                }
+                academic_id = academic_context.create(academic_data)
+                academic_ids.append(academic_id)
+            
+            return academic_ids
+
         
     def get_sharepoint_id(self, employee_identification):
         '''
