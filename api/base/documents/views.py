@@ -69,6 +69,8 @@ class ZipFileView(APIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
     queryset = ZipFile.objects.all()
 
+    print("ZipFileView")
+
     def get(self, request):
         '''
         Get the list of tasks:

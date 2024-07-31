@@ -104,7 +104,6 @@ def send_zip_file_task(zip_task_id):
                 blob_client = blob_service_client.get_blob_client(container=settings.AZURE_STORAGE_CONTAINER, blob=file_path)
                 print(f"Blob client: {str(blob_client)}")
                 with open(file=file_path, mode='rb') as data:
-                    print(f"###### Open binary file {type(data)}")
                     blob_client.upload_blob(data=data)
 
                 logger.info("File uploaded to Azure: " + contract_file.filename)
@@ -172,8 +171,8 @@ def send_zip_file_task(zip_task_id):
         # Transform PDF to base64, get number of pages to add sign fields in the last page
         nombre_archivo = employee_data['NOMBRE_ARCHIVO']
 
-        # Full path to the file
-        full_contract_path = 'media/docs/' + folder_name + '/' +  generated_dir + '/'+ nombre_archivo + '.pdf'
+        full_contract_path = f'media/docs/{folder_name}/{generated_dir}/{nombre_archivo}.pdf'
+        print("Path del contrato: " + full_contract_path)
         try:
             document_64, numpages = document.convert_pdf_to_base64(full_contract_path)
             # Upload PDF file

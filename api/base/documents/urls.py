@@ -8,5 +8,5 @@ admin.autodiscover()
 # /api/documents
 urlpatterns = [
     # path('', FilesAPIView.as_view()),
-    path('zipfiles/', ZipFileView.as_view()),
+    path('zipfiles/', ZipFileView.as_view(), name='zipfiles'),
 ]
