@@ -609,6 +609,21 @@ class OdooClient():
         
         list_options["university_programs"] = programs_dict
 
+        # Estado de programa
+        odoo_context = self.odoo.env['x_historial']
+        academic_state = odoo_context.fields_get('x_studio_estado')
+        academic_state_dict = {}
+        for state in academic_state['x_studio_estado']['selection']:
+            academic_state_dict[state[0]] = {"name": state[1], "code": state[0]}
+        list_options["academic_state"] = academic_state_dict
+
+        # Nivel de estudio
+        academic_level = odoo_context.fields_get('x_studio_nivel_de_estudio')
+        academic_level_dict = {}
+        for level in academic_level['x_studio_nivel_de_estudio']['selection']:
+            academic_level_dict[level[0]] = {"name": level[1], "code": level[0]}
+        list_options["academic_level"] = academic_level_dict
+
         # Lista de opciones de empleados
         odoo_context = self.odoo.env['hr.employee']
 
