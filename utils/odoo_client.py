@@ -415,7 +415,6 @@ class OdooClient():
             if  data.get('bank_name') and data.get('bank_name') != 'N/A':
                 context = self.odoo.env['x_banco']
                 bank_id = context.search([('x_name', '=', data.get('bank_name'))])
-                print("Banco ID: ", bank_id)
                 bank = context.browse(bank_id)
                 employee.x_studio_many2one_field_p7Ucx  = bank
             
@@ -766,8 +765,6 @@ class OdooClient():
             return None
         else:
             employee = odoo_context.browse(employee[0])
-            
-            print(f"Employee sons: {employee.x_studio_hijos_empleado}")
             for son in employee.x_studio_hijos_empleado:
                 if son.x_name == data['child_id_document']:
                     son.unlink()
@@ -786,14 +783,16 @@ class OdooClient():
             employee = odoo_context.browse(employee[0])
             academic_data = {}
             for academic in employee.x_studio_one2many_field_PkJQu:
-                academic_data[academic.x_name] = {
-                    "university": academic.x_studio_many2one_field_bSLmt.x_name,
+                academic_data[f"{academic.x_studio_nivel_de_estudio}-{academic.x_studio_many2one_field_7J4eP.x_name}"] = {
                     "program": academic.x_studio_many2one_field_7J4eP.x_name,
+                    "academic_state": academic.x_studio_estado,
+                    "university": academic.x_studio_many2one_field_bSLmt.x_name,
+                    "academic_level": academic.x_studio_nivel_de_estudio,
+                    "graduation_year": str(academic.x_studio_ao_de_graduacin)
                 }
-            print("Estudios: ", academic_data)
             return academic_data
     
-    def update_employee_academic_data(self, employee_identification, academic_data):
+    def add_employee_academic_data(self, employee_identification, academic_data):
         '''
         Update the academic data of an employee in Odoo
         '''
@@ -803,20 +802,39 @@ class OdooClient():
             return None
         else:
             employee = odoo_context.browse(employee[0])
-            academic_ids = []
+            academic_ids = [academic.id for academic in employee.x_studio_one2many_field_PkJQu] 
 
-            academic_context = odoo_context['x_historial']
-            for study in academic_data.items():
-                data = {
-                    'x_studio_many2one_field_bSLmt': study['university'],
-                    'x_studio_many2one_field_7J4eP': study['program'],
-                    'x_studio_x_studio_many2one_field_bSLmt': employee.id
-                }
-                academic_id = academic_context.create(academic_data)
-                academic_ids.append(academic_id)
+            for academic, detail in academic_data.items():
+
+                # Search for the academic registry
+                programa = self.odoo.env['x_programas'].search([('x_name', '=', detail['program'])])[0]
+                universidad = self.odoo.env['x_universidades'].search([('x_name', '=', detail['university'])])[0]
+
+                self.odoo.env['x_historial'].create({
+                    'x_studio_many2one_field_7J4eP': programa,
+                    'x_studio_many2one_field_bSLmt': universidad,
+                    'x_studio_estado': detail['academic_state'],
+                    'x_studio_nivel_de_estudio': detail['academic_level'],
+                    'x_studio_ao_de_graduacin': detail['graduation_year'],
+                    'x_studio_many2one_field_bEe70': employee.id
+                })
             
-            return academic_ids
-
+        return True
+    
+    def remove_employee_academic_data(self, employee_identification, academic_data):
+        '''
+        Remove the academic data of an employee in Odoo
+        '''
+        odoo_context = self.odoo.env['hr.employee']
+        employee = odoo_context.search([('name', '=', employee_identification)])
+        if not employee:
+            return None
+        else:
+            employee = odoo_context.browse(employee[0])
+            for academic in employee.x_studio_one2many_field_PkJQu:
+                if academic.x_studio_nivel_de_estudio == academic_data['academic_level'] and academic.x_studio_many2one_field_7J4eP.x_name == academic_data['program']:
+                    academic.unlink()
+            return True
         
     def get_sharepoint_id(self, employee_identification):
         '''

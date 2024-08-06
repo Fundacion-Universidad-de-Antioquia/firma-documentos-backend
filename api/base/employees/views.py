@@ -211,7 +211,6 @@ def employee_sons(request):
         return Response({"message": "Hijos de empleado actualizados"}, status=status.HTTP_200_OK)
 
 
-
     if request.method == 'DELETE':
         odoo_client = OdooClient()
         employee_identification = request.user['login']
@@ -221,5 +220,37 @@ def employee_sons(request):
             return Response({"error": "Error al eliminar hijos de empleado"}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response({"message": "Hijos de empleado eliminados"}, status=status.HTTP_200_OK)
+
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET', 'POST', 'DELETE'])
+def employee_academic(request):
+    if request.method == 'GET':
+        odoo_client = OdooClient()
+        employee_identification = request.user['login']
+        academic = odoo_client.get_employee_academic_data(employee_identification)
+
+        return Response(academic, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        odoo_client = OdooClient()
+        employee_identification = request.user['login']
+        created = odoo_client.add_employee_academic_data(employee_identification, request.data)
+        
+        if not created:
+            return Response({"error": "Error al actualizar estudios de empleado"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": "Estudios de empleado actualizados"}, status=status.HTTP_200_OK)
+
+
+    if request.method == 'DELETE':
+        odoo_client = OdooClient()
+        employee_identification = request.user['login']
+        academic_id = odoo_client.remove_employee_academic_data(employee_identification, request.data)
+        
+        if academic_id is None:
+            return Response({"error": "Error al eliminar estudios de empleado"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": "Estudios de empleado eliminados"}, status=status.HTTP_200_OK)
 
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
